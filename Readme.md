@@ -1,7 +1,7 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Алексей Кунчий](https://up.htmlacademy.ru/ecmascript/8/user/247489).
-* Наставник: `Неизвестно`.
+* Наставник: [Сергей Ufocoder](https://up.htmlacademy.ru/ecmascript/8/user/573445).
 
 ---
 
