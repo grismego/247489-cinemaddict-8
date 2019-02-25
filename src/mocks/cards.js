@@ -1,4 +1,4 @@
-export const DATA = [
+export default [
   {
     title: `The Assassination Of Jessie James By The Coward Robert Ford`,
     rating: 9.8,

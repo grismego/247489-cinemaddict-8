@@ -1,7 +1,7 @@
 import {createTemplate as createFilterTemplate} from './templates/filters';
 import {createTemplate as createCardTemplate} from './templates/cards';
-import {DATA as FILTERS} from './mocks/filters';
-import {DATA as CARDS} from './mocks/cards';
+import FILTERS from './mocks/filters';
+import CARDS from './mocks/cards';
 
 const generateRandomNumber = (min, max) => Math.round(min - 0.5 + Math.random() * (max - min + 1));
 

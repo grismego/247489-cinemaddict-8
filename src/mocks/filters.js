@@ -1,4 +1,4 @@
-export const DATA = [
+export default [
   {
     name: `All movies`,
     state: `main-navigation__item--active`,
