@@ -9,7 +9,7 @@ const createContentTemplate = () => (
 export const createTemplate = (cards, options) => (
   cards
   .map((card) => (
-    `<article class="film-card ${options ? `film-card--no-controls` : ``}">
+    `<article class="film-card ${options ? `` : `film-card--no-controls`}">
       <h3 class="film-card__title">${card.title}</h3>
       <p class="film-card__rating">${card.rating}</p>
       <p class="film-card__info">

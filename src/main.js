@@ -1,6 +1,4 @@
-// import {createCardTemplate} from './templates/cards';
 import {createTemplate as createNavigationTemplate} from './templates/navigation';
-// import {createNoControlsTemplate as createCardNoControlsTemplate} from './templates/cards';
 import {createTemplate as createCardTemplate} from './templates/cards';
 
 const CARDS = [
