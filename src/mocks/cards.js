@@ -21,6 +21,10 @@ const generateRandomRating = () => (
   `${generateRandomNumber(0, 9)}.${generateRandomNumber(0, 9)}`
 );
 
+const generateRandomDuration = () => (
+  `${generateRandomNumber(0, 3)}h ${generateRandomNumber(0, 59)}m`
+);
+
 const getRandomArrayElement = (array) => array[generateRandomNumber(0, array.length - 1)];
 const getRandomArrayElements = (array, limit) => (
   array
@@ -28,7 +32,7 @@ const getRandomArrayElements = (array, limit) => (
     .slice(0, generateRandomNumber(1, limit))
 );
 
-export const generateCard = () => TITLES.map((title) => {
+export const generateCards = () => TITLES.map((title) => {
   const rating = generateRandomRating();
   const poster = `../images/posters/${getRandomArrayElement(POSTERS)}.jpg`;
 
@@ -38,14 +42,8 @@ export const generateCard = () => TITLES.map((title) => {
     rating,
     description: getRandomArrayElements(description.split(`. `), 3).join(` `),
     genre: getRandomArrayElement(GENRES),
-    duration: {
-      hour: 1,
-      minutes: 10
-    },
+    duration: generateRandomDuration(),
     year: generateRandomNumber(1900, 2019),
     commentsCount: generateRandomNumber(0, 50)
   };
 });
-
-
-// export const generateCards = (limit) => [...Array(limit).keys()].map(generateCard);

@@ -12,7 +12,7 @@ export const createTemplate = (cards, options) => cards.map((card) => {
   <p class="film-card__rating">${card.rating}</p>
   <p class="film-card__info">
     <span class="film-card__year">${card.year}</span>
-    <span class="film-card__duration">${card.duration.hour}h ${card.duration.minutes}m</span>
+    <span class="film-card__duration">${card.duration}</span>
     <span class="film-card__genre">${card.genre}</span>
   </p>
   <img src="${card.poster}" alt="" class="film-card__poster">
@@ -20,4 +20,4 @@ export const createTemplate = (cards, options) => cards.map((card) => {
   <button class="film-card__comments">${card.commentsCount} comments</button>
   ${options ? createContentTemplate() : ``}
 </article>`);
-});
+}).join(``);
