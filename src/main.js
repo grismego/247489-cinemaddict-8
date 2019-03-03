@@ -1,5 +1,9 @@
 import {createTemplate as createFilterTemplate} from './templates/filters';
 import {createTemplate as createCardTemplate} from './templates/cards';
+
+import {generateFilters} from './mocks/filters';
+import {generateCard} from './mocks/cards';
+ 
 import FILTERS from './mocks/filters';
 import CARDS from './mocks/cards';
 
@@ -12,9 +16,12 @@ const filmListCommentedElement = document.querySelector(`.films-list--extra:nth-
 
 
 navigationElement.innerHTML = createFilterTemplate(FILTERS);
-filmListElement.innerHTML = createCardTemplate(CARDS, true);
-filmListRatedElement.innerHTML = createCardTemplate(CARDS.slice(-2), false);
-filmListCommentedElement.innerHTML = createCardTemplate(CARDS.slice(-2), false);
+
+filmListElement.innerHTML = createCardTemplate(generateCard(), true);
+
+
+// filmListRatedElement.innerHTML = createCardTemplate(CARDS.slice(-2), false);
+// filmListCommentedElement.innerHTML = createCardTemplate(CARDS.slice(-2), false);
 
 document.querySelectorAll(`.main-navigation__item:not(.main-navigation__item--additional)`)
 .forEach((element) => {

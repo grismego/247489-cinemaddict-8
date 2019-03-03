@@ -1,107 +1,51 @@
-export default [
-  {
-    title: `The Assassination Of Jessie James By The Coward Robert Ford`,
-    rating: 9.8,
-    year: 2018,
+const description = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. 
+Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis
+sed finibus eget, sollicitudin eget ante. Phasellus eros mauris,
+condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit,
+eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut
+dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam
+erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus
+sit amet tempus`;
+
+const POSTERS = [`accused`, `blackmail`, `blue-blazes`, `fuga-da-new-york`, `moonrise`, `three-friends`];
+
+const GENRES = [`Action`, `Adventure `, `Comedies`, `Horror`, `Westerns`, `Comedy`];
+
+const TITLES = [`Silence of the Lambs`, `Raiders of the Lost Ark`, `Rear Window`, `The Good, The Bad, and The Ugly`, `Matrix`, `Jurassic Park`, `White Christmas`,
+  `Goodfellas`, `Lord of the Rings: Fellowship of the Ring`, `Fight Club`, `Star Wars: Episode V – The Empire Strikes Back`, `Star Wars: Episode V – The Empire Strikes Back`, `Spirited Away`];
+
+const generateRandomNumber = (min, max) => Math.floor(min + Math.random() * (max - min + 1));
+
+const generateRandomRating = () => (
+  `${generateRandomNumber(0, 9)}.${generateRandomNumber(0, 9)}`
+);
+
+const getRandomArrayElement = (array) => array[generateRandomNumber(0, array.length - 1)];
+const getRandomArrayElements = (array, limit) => (
+  array
+    .sort(() => Math.random() - 0.5)
+    .slice(0, generateRandomNumber(1, limit))
+);
+
+export const generateCard = () => TITLES.map((title) => {
+  const rating = generateRandomRating();
+  const poster = `../images/posters/${getRandomArrayElement(POSTERS)}.jpg`;
+
+  return {
+    title,
+    poster,
+    rating,
+    description: getRandomArrayElements(description.split(`. `), 3).join(` `),
+    genre: getRandomArrayElement(GENRES),
     duration: {
       hour: 1,
-      minutes: 13
+      minutes: 10
     },
-    genre: `Comedy`,
-    poster: `./images/posters/three-friends.jpg`,
-    description: `A priest with a haunted past and a novice on the threshold of her 
-    final vows are sent by the Vatican to investigate the death of a young nun in Romania and confront a malevolent force in the form of a demonic nun.`,
-    commentsCount: 13
-  },
-  {
-    title: `Incredibles 2`,
-    rating: 9.8,
-    year: 2018,
-    duration: {
-      hour: 1,
-      minutes: 13
-    },
-    genre: `Comedy`,
-    poster: `./images/posters/moonrise.jpg`,
-    description: `A priests Romania and confront a malevolent force in the form of a demonic nun.`,
-    commentsCount: 14
-  },
-  {
-    title: `Incredibles 3`,
-    rating: 4.8,
-    year: 2018,
-    duration: {
-      hour: 1,
-      minutes: 13
-    },
-    genre: `Comedy`,
-    poster: `./images/posters/blue-blazes.jpg`,
-    description: `A priests Romania and confront a malevolent force in the form of a demonic nun.`,
-    commentsCount: 25
-  },
-  {
-    title: `Incredibles 4`,
-    rating: 5.8,
-    year: 2018,
-    duration: {
-      hour: 1,
-      minutes: 56
-    },
-    genre: `Comedy`,
-    poster: `./images/posters/three-friends.jpg`,
-    description: `A priests Romania and confront a malevolent force in the form of a demonic nun.`,
-    commentsCount: 23
-  },
-  {
-    title: `Incredibles 4`,
-    rating: 5.8,
-    year: 2018,
-    duration: {
-      hour: 1,
-      minutes: 13
-    },
-    genre: `Comedy`,
-    poster: `./images/posters/three-friends.jpg`,
-    description: `A priests Romania and confront a malevolent force in the form of a demonic nun.`,
-    commentsCount: 88
-  },
-  {
-    title: `Incredibles 4`,
-    rating: 5.8,
-    year: 2018,
-    duration: {
-      hour: 1,
-      minutes: 17
-    },
-    genre: `Comedy`,
-    poster: `./images/posters/three-friends.jpg`,
-    description: `A priests Romania and confront a malevolent force in the form of a demonic nun.`,
-    commentsCount: 99
-  },
-  {
-    title: `Incredibles 4`,
-    rating: 5.8,
-    year: 2018,
-    duration: {
-      hour: 1,
-      minutes: 13
-    },
-    genre: `Comedy`,
-    poster: `./images/posters/three-friends.jpg`,
-    description: `A priests Romania and confront a malevolent force in the form of a demonic nun.`,
-    commentsCount: 44
-  },
-  {
-    title: `Incredibles 4`,
-    rating: 5.8,
-    year: 2018,
-    duration: {
-      hour: 1,
-      minutes: 13
-    },
-    genre: `Comedy`,
-    poster: `./images/posters/three-friends.jpg`,
-    description: `A priests Romania and confront a malevolent force in the form of a demonic nun.`,
-    commentsCount: 110
-  },
-];
+    year: generateRandomNumber(1900, 2019),
+    commentsCount: generateRandomNumber(0, 50)
+  };
+});
+
+
+// export const generateCards = (limit) => [...Array(limit).keys()].map(generateCard);
