@@ -15,7 +15,7 @@ const filmListRatedElement = document.querySelector(`.films-list--extra:nth-chil
 const filmListCommentedElement = document.querySelector(`.films-list--extra:nth-child(3) .films-list__container`);
 
 
-navigationElement.innerHTML = createFilterTemplate(FILTERS);
+// navigationElement.innerHTML = createFilterTemplate(FILTERS);
 
 filmListElement.innerHTML = createCardTemplate(generateCards(), true);
 
