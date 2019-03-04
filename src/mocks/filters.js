@@ -3,7 +3,7 @@ import {generateRandomNumber} from '../util';
 export const filters = [
   {
     name: `All movies`,
-    state: `main-navigation__item--active`,
+    classNameModificator: `main-navigation__item--active`,
     anchor: `all`
   },
   {

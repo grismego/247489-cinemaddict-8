@@ -20,7 +20,6 @@ filmListElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT.default)
 filmListRatedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT.extra), false);
 filmListCommentedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT.extra), false);
 
-// @TODO
 document.querySelectorAll(`.main-navigation__item:not(.main-navigation__item--additional)`)
 .forEach((element) => {
   element.addEventListener(`click`, () => {
