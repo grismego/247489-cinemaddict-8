@@ -51,6 +51,14 @@ const TITLES = [
   `Spirited Away`
 ];
 
+const YEAR_MIN = 1900;
+const YEAR_MAX = 2019;
+
+const COMMENTS_MIN_COUNT = 0;
+const COMMENTS_MAX_COUNT = 50;
+
+const DESCRIPTIONS_MAX_COUNT = 3;
+
 const generateRandomRating = () => (
   `${generateRandomNumber(0, 9)}.${generateRandomNumber(0, 9)}`
 );
@@ -63,11 +71,11 @@ const generateCard = () => ({
   title: getRandomArrayElement(TITLES),
   poster: `../images/posters/${getRandomArrayElement(POSTERS)}.jpg`,
   rating: generateRandomRating(),
-  description: getRandomArrayElements(DESCRIPTIONS, 3),
+  description: getRandomArrayElements(DESCRIPTIONS, DESCRIPTIONS_MAX_COUNT),
   genre: getRandomArrayElement(GENRES),
   duration: generateRandomDuration(),
-  year: generateRandomNumber(1900, 2019),
-  commentsCount: generateRandomNumber(0, 50)
+  year: generateRandomNumber(YEAR_MIN, YEAR_MAX),
+  commentsCount: generateRandomNumber(COMMENTS_MIN_COUNT, COMMENTS_MAX_COUNT)
 });
 
 export const generateCards = (limit) => [...Array(limit).keys()].map(generateCard);
