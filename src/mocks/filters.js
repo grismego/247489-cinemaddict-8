@@ -1,30 +1,21 @@
-import {generateRandomNumber} from '../util';
+import {generateRandomNumber} from '../random';
 
-export const filters = [
+const FILMS_MAX_COUNT = 20;
+
+export const generateFilters = () => [
   {
     name: `All movies`,
-    classNameModificator: `main-navigation__item--active`,
+    state: `active`,
     anchor: `all`
   },
-  {
-    name: `Watchlist`,
-    count: generateRandomNumber(1, 20),
-    anchor: `watchlist`
-  },
-  {
-    name: `History`,
-    count: generateRandomNumber(1, 20),
-    anchor: `history`
-  },
-  {
-    name: `Favorites`,
-    count: generateRandomNumber(1, 20),
-    anchor: `favorites`
-  },
+  ...[`Watchlist`, `History`, `Favorites`].map((name) => ({
+    name,
+    count: generateRandomNumber(0, FILMS_MAX_COUNT),
+    anchor: name.toLowerCase()
+  })),
   {
     name: `stats`,
-    classNameModificator: `main-navigation__item--additional`,
+    state: `additional`,
     anchor: `stats`
   }
 ];
-
