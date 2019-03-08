@@ -67,7 +67,7 @@ const generateRandomDuration = () => (
   `${generateRandomNumber(0, 3)}h ${generateRandomNumber(0, 59)}m`
 );
 
-const generateCard = () => ({
+export const generateCard = () => ({
   title: getRandomArrayElement(TITLES),
   poster: `../images/posters/${getRandomArrayElement(POSTERS)}.jpg`,
   rating: generateRandomRating(),

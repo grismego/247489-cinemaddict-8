@@ -1,8 +1,12 @@
 import {createTemplate as createFilterTemplate} from './templates/filters';
-import {createTemplate as createCardTemplate} from './templates/cards';
+import {createTemplates as createCardTemplate} from './templates/cards';
 
 import {generateFilters} from './mocks/filters';
-import {generateCards} from './mocks/cards';
+import {generateCards, generateCard} from './mocks/cards';
+
+import {Card} from './components/card';
+import {CardPopup} from './components/card-popup';
+
 
 const CARD_LIMIT_DEFAULT = 10;
 const CARD_LIMIT_EXTRA = 2;
@@ -14,7 +18,7 @@ const filmListCommentedElement = document.querySelector(`.films-list--extra:nth-
 
 navigationElement.innerHTML = createFilterTemplate(generateFilters());
 
-filmListElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_DEFAULT), true);
+// filmListElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_DEFAULT), true);
 filmListRatedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
 filmListCommentedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
 
@@ -25,3 +29,26 @@ filtersElements.forEach((element) => {
     filmListElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_DEFAULT), true);
   });
 });
+
+
+const card = new Card(generateCard());
+const popup = new CardPopup(card._data);
+// console.log(popup._data)
+
+filmListElement.appendChild(card.render());
+// document.body.appendChild(popup.render());
+
+// console.log(card.render());
+
+
+card.onPopup = () => {
+  popup.render();
+  document.body.appendChild(popup.element);
+};
+
+popup.onClose = () => {
+  document.body.removeChild(popup.element);
+  popup.unrender();
+  // document.body.removeChild(popup.unrender());
+  // popup.unrender();
+};
