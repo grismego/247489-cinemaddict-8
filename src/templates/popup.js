@@ -52,7 +52,7 @@ const createScoreTemplate = () => {
     arr.push(`
       <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${i}" id="rating-${i}" ${i === 5 ? `checked` : ``}>
       <label class="film-details__user-rating-label" for="rating-${i}">${i}</label>
-      `);
+    `);
   }
   return arr.join(``);
 };
@@ -62,18 +62,19 @@ const createGenresTemplate = (card) => {
     `<span class="film-details__genre">${genre}</span>`
   )).join(``).split(` `);
 
-  return (`<tr class="film-details__row">
-            <td class="film-details__term">Genres</td>
-            <td class="film-details__cell">
-            ${block}
-          </tr>`);
+  return (
+    `<tr class="film-details__row">
+      <td class="film-details__term">Genres</td>
+      <td class="film-details__cell">
+      ${block}
+    </tr>`);
 };
 
 const createRuntimeTemplate = (card) => (
   `<tr class="film-details__row">
     <td class="film-details__term">Runtime</td>
     <td class="film-details__cell">${card.duration}</td>
-</tr>`
+  </tr>`
 );
 
 export const createPopupTemplate = (data) => (`<section class="film-details">

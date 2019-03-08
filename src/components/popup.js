@@ -1,9 +1,10 @@
 import {createPopupTemplate} from '../templates/popup';
 import {createElement} from '../util';
 
-export class CardPopup {
+export default class CardPopup {
   constructor(data) {
     this._data = data;
+    this._element = null;
     this._onCloseClick = this._onCloseClick.bind(this);
   }
   get template() {
@@ -31,6 +32,7 @@ export class CardPopup {
   render() {
     this._element = createElement(this.template);
     this.bind();
+
     return this._element;
   }
   unrender() {

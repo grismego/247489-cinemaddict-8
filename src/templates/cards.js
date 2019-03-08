@@ -23,10 +23,10 @@ const createControlsTemplate = () => (
   </form>`
 );
 
-export const createTemplates = (cards, options) => (
+export const createTemplates = (cards, withOptions) => (
   cards
     .map((card) => (
-      `<article class="film-card ${options ? `` : `film-card--no-controls`}">
+      `<article class="film-card ${withOptions ? `` : `film-card--no-controls`}">
         <h3 class="film-card__title">${card.title}</h3>
         <p class="film-card__rating">${card.rating}</p>
         <p class="film-card__info">
@@ -37,14 +37,14 @@ export const createTemplates = (cards, options) => (
         <img src="${card.poster}" alt="" class="film-card__poster">
         <p class="film-card__description">${card.description}</p>
         <button class="film-card__comments">${card.commentsCount} comments</button>
-        ${options ? createControlsTemplate() : ``}
+        ${withOptions ? createControlsTemplate() : ``}
       </article>`
     ))
     .join(``)
 );
 
-export const createTemplate = (card, options) => (
-  `<article class="film-card ${options ? `` : `film-card--no-controls`}">
+export const createTemplate = (card, withOptions) => (
+  `<article class="film-card ${withOptions ? `` : `film-card--no-controls`}">
     <h3 class="film-card__title">${card.title}</h3>
     <p class="film-card__rating">${card.rating}</p>
     <p class="film-card__info">
@@ -55,6 +55,6 @@ export const createTemplate = (card, options) => (
     <img src="${card.poster}" alt="" class="film-card__poster">
     <p class="film-card__description">${card.description}</p>
     <button class="film-card__comments">${card.commentsCount} comments</button>
-    ${options ? createControlsTemplate() : ``}
+    ${withOptions ? createControlsTemplate() : ``}
   </article>`
 );
