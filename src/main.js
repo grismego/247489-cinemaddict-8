@@ -18,7 +18,6 @@ const filmListCommentedElement = document.querySelector(`.films-list--extra:nth-
 
 navigationElement.innerHTML = createFilterTemplate(generateFilters());
 
-// filmListElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_DEFAULT), true);
 filmListRatedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
 filmListCommentedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
 
@@ -31,15 +30,11 @@ filtersElements.forEach((element) => {
 });
 
 
-const card = new Card(generateCard());
-const popup = new CardPopup(card._data);
-// console.log(popup._data)
+const data = generateCard();
+const card = new Card(data);
+const popup = new CardPopup(data);
 
 filmListElement.appendChild(card.render());
-// document.body.appendChild(popup.render());
-
-// console.log(card.render());
-
 
 card.onPopup = () => {
   popup.render();
@@ -49,6 +44,4 @@ card.onPopup = () => {
 popup.onClose = () => {
   document.body.removeChild(popup.element);
   popup.unrender();
-  // document.body.removeChild(popup.unrender());
-  // popup.unrender();
 };

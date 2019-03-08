@@ -4,6 +4,7 @@ import {createElement} from '../util';
 export class CardPopup {
   constructor(data) {
     this._data = data;
+    this._onCloseClick = this._onCloseClick.bind(this);
   }
   get template() {
     return createPopupTemplate(this._data);
@@ -21,10 +22,10 @@ export class CardPopup {
   }
 
   bind() {
-    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseClick.bind(this));
+    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseClick);
   }
   unbind() {
-    this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseClick.bind(this));
+    this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseClick);
   }
 
   render() {
