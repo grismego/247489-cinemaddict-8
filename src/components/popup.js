@@ -3,8 +3,7 @@ import {Component} from './component';
 
 export default class CardPopup extends Component {
   constructor(data) {
-    super();
-    this._data = data;
+    super(data);
     this._onCloseClick = this._onCloseClick.bind(this);
   }
 
@@ -20,15 +19,14 @@ export default class CardPopup extends Component {
     return typeof this._onClose === `function` && this._onClose();
   }
 
-  bind() {
-    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseClick);
+  _bind() {
+    this._element
+      .querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, this._onCloseClick);
   }
-  unbind() {
-    this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseClick);
-  }
-
-  unrender() {
-    this.unbind();
-    this._element = null;
+  _unbind() {
+    this._element
+      .querySelector(`.film-details__close-btn`)
+      .removeEventListener(`click`, this._onCloseClick);
   }
 }

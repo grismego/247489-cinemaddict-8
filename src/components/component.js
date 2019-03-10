@@ -1,11 +1,12 @@
 import {createElement} from '../util';
 
 export class Component {
-  constructor() {
+  constructor(data) {
     if (new.target === Component) {
       throw new Error(`Can't instantiate Component, only concrete one.`);
     }
 
+    this._data = data;
     this._element = null;
   }
 
@@ -17,10 +18,22 @@ export class Component {
     throw new Error(`You have to define template.`);
   }
 
+  _bind() {
+    throw new Error(`You have to define bind.`);
+  }
+
+  _unbind() {
+    throw new Error(`You have to define unbind.`);
+  }
+
   render() {
     this._element = createElement(this.template);
-    this.bind();
+    this._bind();
     return this._element;
   }
 
+  unrender() {
+    this._unbind();
+    this._element = null;
+  }
 }
