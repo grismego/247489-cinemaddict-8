@@ -1,12 +1,13 @@
 import {createTemplate} from '../templates/cards';
-import {createElement} from '../util';
+import {Component} from './component';
 
-export default class Card {
+export default class Card extends Component {
   constructor(data) {
+    super();
     this._data = data;
-    this._element = null;
     this._onClick = this._onClick.bind(this);
   }
+
   get template() {
     return createTemplate(this._data, true);
   }
@@ -19,13 +20,6 @@ export default class Card {
   }
   _onClick() {
     return typeof this._onPopup === `function` && this._onPopup();
-  }
-
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-
-    return this._element;
   }
 
   unrender() {

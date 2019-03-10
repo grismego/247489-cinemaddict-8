@@ -1,17 +1,15 @@
 import {createPopupTemplate} from '../templates/popup';
-import {createElement} from '../util';
+import {Component} from './component';
 
-export default class CardPopup {
+export default class CardPopup extends Component {
   constructor(data) {
+    super();
     this._data = data;
-    this._element = null;
     this._onCloseClick = this._onCloseClick.bind(this);
   }
+
   get template() {
     return createPopupTemplate(this._data);
-  }
-  get element() {
-    return this._element;
   }
 
   set onClose(fn) {
@@ -29,12 +27,6 @@ export default class CardPopup {
     this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseClick);
   }
 
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-
-    return this._element;
-  }
   unrender() {
     this.unbind();
     this._element = null;
