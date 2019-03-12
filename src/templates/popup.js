@@ -46,11 +46,11 @@ const createControlsTemplate = () => (
   </section>`
 );
 
-const createScoreTemplate = () => {
+const createScoreTemplate = (data) => {
   const arr = [];
   for (let i = 1; i < 10; i++) {
     arr.push(`
-      <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${i}" id="rating-${i}" ${i === 5 ? `checked` : ``}>
+      <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${i}" id="rating-${i}" ${i === Math.floor(data) ? `checked` : ``}>
       <label class="film-details__user-rating-label" for="rating-${i}">${i}</label>
     `);
   }
@@ -86,7 +86,7 @@ export const createPopupTemplate = (data) => (
     <div class="film-details__info-wrap">
       <div class="film-details__poster">
         <img class="film-details__poster-img" src="${data.poster}" alt="${data.title}">
-        <p class="film-details__age">18+</p>
+        <p class="film-details__age">${data.ageRating}+</p>
       </div>
 
       <div class="film-details__info">
@@ -103,24 +103,24 @@ export const createPopupTemplate = (data) => (
         <table class="film-details__table">
           <tr class="film-details__row">
             <td class="film-details__term">Director</td>
-            <td class="film-details__cell">Brad Bird</td>
+            <td class="film-details__cell">${data.director}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Writers</td>
-            <td class="film-details__cell">Brad Bird</td>
+            <td class="film-details__cell">${data.writers}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Actors</td>
-            <td class="film-details__cell">Samuel L. Jackson, Catherine Keener, Sophia Bush</td>
+            <td class="film-details__cell">${data.actors}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Release Date</td>
-            <td class="film-details__cell">15 June 2018 (USA)</td>
+            <td class="film-details__cell">15 June 2018 (${data.country})</td>
           </tr>
           ${createRuntimeTemplate(data)}
           <tr class="film-details__row">
             <td class="film-details__term">Country</td>
-            <td class="film-details__cell">USA</td>
+            <td class="film-details__cell">${data.country}</td>
           </tr>
           ${createGenresTemplate(data)}
         </table>
@@ -178,7 +178,7 @@ export const createPopupTemplate = (data) => (
         <p class="film-details__user-rating-feelings">How you feel it?</p>
 
         <div class="film-details__user-rating-score">
-        ${createScoreTemplate()}
+        ${createScoreTemplate(data.rating)}
         </div>
       </section>
     </div>

@@ -30,4 +30,8 @@ export default class Card extends Component {
       .querySelector(`.film-card__comments`)
       .removeEventListener(`click`, this._onClick);
   }
+
+  update(data) {
+    this._rating = data.rating;
+  }
 }

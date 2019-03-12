@@ -112,14 +112,14 @@ export const generateCard = () => ({
   title: getRandomArrayElement(TITLES),
   poster: `../images/posters/${getRandomArrayElement(POSTERS)}.jpg`,
   rating: generateRandomRating(),
-  description: getRandomArrayElements(DESCRIPTIONS, DESCRIPTIONS_MAX_COUNT),
+  description: getRandomArrayElements(DESCRIPTIONS, DESCRIPTIONS_MAX_COUNT).join(`, `),
   genre: getRandomArrayElement(GENRES),
   duration: generateRandomDuration(),
   year: generateRandomNumber(YEAR_MIN, YEAR_MAX),
   commentsCount: generateRandomNumber(COMMENTS_MIN_COUNT, COMMENTS_MAX_COUNT),
   director: getRandomArrayElement(DIRECTOR),
   ageRating: getRandomArrayElement(AGE_RATING),
-  actors: getRandomArrayElements(ACTORS, ACTORS.length),
+  actors: getRandomArrayElements(ACTORS, ACTORS.length).join(`, `),
   writers: getRandomArrayElement(WRITERS),
   country: getRandomArrayElement(COUNTRY)
 });
