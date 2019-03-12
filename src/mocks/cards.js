@@ -35,6 +35,48 @@ const GENRES = [
   `Comedy`
 ];
 
+const DIRECTOR = [
+  `Brad Bird`,
+  `Kventin Tarantino`,
+  `David Lynch`,
+  `Martin Scorsese`,
+  `Steven Soderbergh`,
+  `Lukas Moodysson`
+];
+
+const WRITERS = [
+  `Paul Savage`,
+  `Richard Side`,
+  `David Seidler`,
+  `Dirk Wayne Summers`,
+  `Keith Samples`
+];
+
+const ACTORS = [
+  `Tim Robbins`,
+  `Morgan Freeman`,
+  `Bob Gunton`,
+  `Christian Bale`,
+  `Heath Ledger`,
+  `Aaron Eckhart`
+];
+
+const COUNTRY = [
+  `USA`,
+  `RUSSIA`,
+  `CHINA`,
+  `FRANCE`,
+  `UK`
+];
+// @ RENAME?
+const AGE_RATING = [
+  0,
+  6,
+  12,
+  16,
+  18
+];
+
 const TITLES = [
   `Silence of the Lambs`,
   `Raiders of the Lost Ark`,
@@ -46,7 +88,6 @@ const TITLES = [
   `Goodfellas`,
   `Lord of the Rings: Fellowship of the Ring`,
   `Fight Club`,
-  `Star Wars: Episode V – The Empire Strikes Back`,
   `Star Wars: Episode V – The Empire Strikes Back`,
   `Spirited Away`
 ];
@@ -75,7 +116,12 @@ export const generateCard = () => ({
   genre: getRandomArrayElement(GENRES),
   duration: generateRandomDuration(),
   year: generateRandomNumber(YEAR_MIN, YEAR_MAX),
-  commentsCount: generateRandomNumber(COMMENTS_MIN_COUNT, COMMENTS_MAX_COUNT)
+  commentsCount: generateRandomNumber(COMMENTS_MIN_COUNT, COMMENTS_MAX_COUNT),
+  director: getRandomArrayElement(DIRECTOR),
+  ageRating: getRandomArrayElement(AGE_RATING),
+  actors: getRandomArrayElements(ACTORS, ACTORS.length),
+  writers: getRandomArrayElement(WRITERS),
+  country: getRandomArrayElement(COUNTRY)
 });
 
 export const generateCards = (limit) => [...Array(limit).keys()].map(generateCard);

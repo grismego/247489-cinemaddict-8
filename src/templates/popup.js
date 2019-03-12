@@ -77,61 +77,59 @@ const createRuntimeTemplate = (card) => (
   </tr>`
 );
 
-export const createPopupTemplate = (data) => (`<section class="film-details">
-<form class="film-details__inner" action="" method="get">
-  <div class="film-details__close">
-    <button class="film-details__close-btn" type="button">close</button>
-  </div>
-  <div class="film-details__info-wrap">
-    <div class="film-details__poster">
-      <img class="film-details__poster-img" src="${data.poster}" alt="${data.title}">
-
-      <p class="film-details__age">18+</p>
+export const createPopupTemplate = (data) => (
+  `<section class="film-details">
+  <form class="film-details__inner" action="" method="get">
+    <div class="film-details__close">
+      <button class="film-details__close-btn" type="button">close</button>
     </div>
-
-    <div class="film-details__info">
-      <div class="film-details__info-head">
-        <div class="film-details__title-wrap">
-          <h3 class="film-details__title">${data.title}</h3>
-          <p class="film-details__title-original">Original: ${data.title}</p>
-        </div>
-
-        <div class="film-details__rating">
-          <p class="film-details__total-rating">${data.rating}</p>
-          <p class="film-details__user-rating">Your rate ${Math.floor(data.rating)}</p>
-        </div>
+    <div class="film-details__info-wrap">
+      <div class="film-details__poster">
+        <img class="film-details__poster-img" src="${data.poster}" alt="${data.title}">
+        <p class="film-details__age">18+</p>
       </div>
 
-      <table class="film-details__table">
-        <tr class="film-details__row">
-          <td class="film-details__term">Director</td>
-          <td class="film-details__cell">Brad Bird</td>
-        </tr>
-        <tr class="film-details__row">
-          <td class="film-details__term">Writers</td>
-          <td class="film-details__cell">Brad Bird</td>
-        </tr>
-        <tr class="film-details__row">
-          <td class="film-details__term">Actors</td>
-          <td class="film-details__cell">Samuel L. Jackson, Catherine Keener, Sophia Bush</td>
-        </tr>
-        <tr class="film-details__row">
-          <td class="film-details__term">Release Date</td>
-          <td class="film-details__cell">15 June 2018 (USA)</td>
-        </tr>
-        ${createRuntimeTemplate(data)}
-        <tr class="film-details__row">
-          <td class="film-details__term">Country</td>
-          <td class="film-details__cell">USA</td>
-        </tr>
-        ${createGenresTemplate(data)}
-      </table>
+      <div class="film-details__info">
+        <div class="film-details__info-head">
+          <div class="film-details__title-wrap">
+            <h3 class="film-details__title">${data.title}</h3>
+            <p class="film-details__title-original">Original: ${data.title}</p>
+          </div>
+          <div class="film-details__rating">
+            <p class="film-details__total-rating">${data.rating}</p>
+            <p class="film-details__user-rating">Your rate ${Math.floor(data.rating)}</p>
+          </div>
+        </div>
+        <table class="film-details__table">
+          <tr class="film-details__row">
+            <td class="film-details__term">Director</td>
+            <td class="film-details__cell">Brad Bird</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Writers</td>
+            <td class="film-details__cell">Brad Bird</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Actors</td>
+            <td class="film-details__cell">Samuel L. Jackson, Catherine Keener, Sophia Bush</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Release Date</td>
+            <td class="film-details__cell">15 June 2018 (USA)</td>
+          </tr>
+          ${createRuntimeTemplate(data)}
+          <tr class="film-details__row">
+            <td class="film-details__term">Country</td>
+            <td class="film-details__cell">USA</td>
+          </tr>
+          ${createGenresTemplate(data)}
+        </table>
 
-      <p class="film-details__film-description">
-        ${data.description}
-      </p>
+        <p class="film-details__film-description">
+          ${data.description}
+        </p>
+      </div>
     </div>
-  </div>
 
   ${createControlsTemplate()}
 
@@ -186,4 +184,5 @@ export const createPopupTemplate = (data) => (`<section class="film-details">
     </div>
   </section>
 </form>
-</section>`);
+</section>`
+);
