@@ -1,5 +1,6 @@
 import {createPopupTemplate} from '../templates/popup';
 import {Component} from './component';
+import {createElement} from '../util';
 
 export default class CardPopup extends Component {
   constructor(data) {
@@ -45,13 +46,14 @@ export default class CardPopup extends Component {
   }
 
   _partialUpdate() {
-    this._element = this.template;
+    document.body.replaceChild(createElement(this.template), this._element);
+    // this._element = createElement(this.template);
   }
 
   _onChangeRating(evt) {
     this._unbind();
     this._data.rating = evt.target.value;
-    // this._partialUpdate();
+    this._partialUpdate();
     this._bind();
   }
 
