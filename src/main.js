@@ -40,7 +40,14 @@ card.onPopup = () => {
   document.body.appendChild(popup.element);
 };
 
-popup.onClose = () => {
+// popup.onClose = () => {
+//   // document.body.removeChild(popup.element);
+//   // popup.unrender();
+// };
+
+popup.onSubmit = (newObject) => {
+  data.rating = newObject.rating;
+  card.update(data);
   document.body.removeChild(popup.element);
   popup.unrender();
 };
