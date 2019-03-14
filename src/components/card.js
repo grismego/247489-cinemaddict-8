@@ -5,18 +5,19 @@ export default class Card extends Component {
   constructor(data) {
     super(data);
     this._onClick = this._onClick.bind(this);
+    this._onCommentsClick = null;
   }
 
   get template() {
     return createTemplate(this._data, true);
   }
 
-  set onPopup(fn) {
-    this._onPopup = fn;
+  set onCommentsClick(fn) {
+    this._onCommentsClick = fn;
   }
 
   _onClick() {
-    return typeof this._onPopup === `function` && this._onPopup();
+    return typeof this._onCommentsClick === `function` && this._onCommentsClick();
   }
 
   _bind() {
@@ -32,6 +33,12 @@ export default class Card extends Component {
   }
 
   update(data) {
-    this._rating = data.rating;
+    if (data.rating) {
+      this._data.rating = data.rating;
+    }
+
+    if (data.comments) {
+      this._data.comments = data.comments;
+    }
   }
 }

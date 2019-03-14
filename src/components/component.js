@@ -29,6 +29,7 @@ export class Component {
   render() {
     this._element = createElement(this.template);
     this._bind();
+
     return this._element;
   }
 
@@ -36,7 +37,8 @@ export class Component {
     this._unbind();
     this._element = null;
   }
-  update() {
 
+  update() {
+    throw new Error(`You have to define unbind.`);
   }
 }

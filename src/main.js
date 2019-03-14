@@ -4,8 +4,8 @@ import {createTemplates as createCardTemplate} from './templates/cards';
 import {generateFilters} from './mocks/filters';
 import {generateCards, generateCard} from './mocks/cards';
 
-import Card from './components/card';
-import Popup from './components/popup';
+import CardComponent from './components/card';
+import PopupComponent from './components/popup';
 
 const CARD_LIMIT_DEFAULT = 10;
 const CARD_LIMIT_EXTRA = 2;
@@ -29,20 +29,28 @@ filtersElements.forEach((element) => {
 });
 
 const data = generateCard();
-const card = new Card(data);
-const popup = new Popup(data);
+const card = new CardComponent(data);
+const popup = new PopupComponent(data);
 
-filmListElement.appendChild(card.render());
+let cardElement = card.render();
+let popupElement;
 
-card.onPopup = () => {
-  popup.render();
-  document.body.appendChild(popup.element);
+filmListElement.appendChild(cardElement);
+
+card.onCommentsClick = () => {
+  popupElement = popup.render();
+  document.body.appendChild(popupElement);
 };
 
-popup.onSubmit = (newObject) => {
-  data.rating = newObject.rating;
-  card.update(newObject);
-  popup.update(newObject);
+popup.onSubmit = (newData) => {
+  filmListElement.removeChild(cardElement);
+  card.unrender();
+  card.update(newData);
+  cardElement = card.render();
+  filmListElement.appendChild(cardElement);
+  document.body.removeChild(popupElement);
+  popupElement = null;
+  popup.unrender();
 };
 
 popup.onClose = () => {
