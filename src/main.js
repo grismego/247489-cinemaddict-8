@@ -21,7 +21,6 @@ filmListRatedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXT
 filmListCommentedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
 
 const filtersElements = document.querySelectorAll(`.main-navigation__item:not(.main-navigation__item--additional)`);
-// const form = document.querySelector(`.film-details__inner`);
 
 filtersElements.forEach((element) => {
   element.addEventListener(`click`, () => {
@@ -40,13 +39,13 @@ card.onPopup = () => {
   document.body.appendChild(popup.element);
 };
 
-// popup.onClose = () => {
-//   // document.body.removeChild(popup.element);
-//   // popup.unrender();
-// };
-
 popup.onSubmit = (newObject) => {
   data.rating = newObject.rating;
+  card.update(newObject);
+  popup.update(newObject);
+};
+
+popup.onClose = () => {
   card.update(data);
   document.body.removeChild(popup.element);
   popup.unrender();

@@ -121,7 +121,21 @@ export const generateCard = () => ({
   ageRating: getRandomArrayElement(AGE_RATING),
   actors: getRandomArrayElements(ACTORS, ACTORS.length).join(`, `),
   writers: getRandomArrayElement(WRITERS),
-  country: getRandomArrayElement(COUNTRY)
+  country: getRandomArrayElement(COUNTRY),
+  comments: [
+    {
+      author: `Tim Macoveev`,
+      time: `3 days ago`,
+      comment: `So long-long story, boring!`,
+      emoji: `😴`,
+    },
+    {
+      author: `Denis Popov`,
+      time: `1 days ago`,
+      comment: `Pretty good!`,
+      emoji: `😀`,
+    },
+  ],
 });
 
 export const generateCards = (limit) => [...Array(limit).keys()].map(generateCard);

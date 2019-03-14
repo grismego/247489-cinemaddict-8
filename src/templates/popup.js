@@ -81,7 +81,7 @@ export const createPopupTemplate = (data) => (
   `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
     <div class="film-details__close">
-      <button class="film-details__close-btn" type="submit">close</button>
+      <button class="film-details__close-btn" type="button">close</button>
     </div>
     <div class="film-details__info-wrap">
       <div class="film-details__poster">
