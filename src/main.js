@@ -51,9 +51,3 @@ popup.onSubmit = (newObject) => {
   document.body.removeChild(popup.element);
   popup.unrender();
 };
-
-// document.querySelectorAll(`.film-details__user-rating-input`).forEach((elem) => {
-//   elem.addEventListener(`click`, function (evt) {
-//     console.log(evt.target.value);
-//   })
-// })
