@@ -152,7 +152,7 @@ export const createPopupTemplate = (data) => (
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">15 June 2018 (${data.country})</td>
+              <td class="film-details__cell">${data.year} (${data.country})</td>
             </tr>
             ${createRuntimeTemplate(data)}
             <tr class="film-details__row">

@@ -4,6 +4,8 @@ import {
   getRandomArrayElements
 } from '../random';
 
+import moment from 'moment';
+
 const DESCRIPTIONS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget`,
@@ -115,7 +117,7 @@ export const generateCard = () => ({
   description: getRandomArrayElements(DESCRIPTIONS, DESCRIPTIONS_MAX_COUNT).join(`, `),
   genre: getRandomArrayElement(GENRES),
   duration: generateRandomDuration(),
-  year: generateRandomNumber(YEAR_MIN, YEAR_MAX),
+  year: moment(`${generateRandomNumber(1, 12)}-${generateRandomNumber(1, 28)}-${generateRandomNumber(YEAR_MIN, YEAR_MAX)}`, `MM-DD-YYYY`).format(`DD MMMM YYYY`),
   commentsCount: generateRandomNumber(COMMENTS_MIN_COUNT, COMMENTS_MAX_COUNT),
   director: getRandomArrayElement(DIRECTOR),
   ageRating: getRandomArrayElement(AGE_RATING),

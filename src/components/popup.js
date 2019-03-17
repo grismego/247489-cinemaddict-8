@@ -29,7 +29,7 @@ export default class CardPopup extends Component {
   _processForm(formData) {
     const entry = {
       rating: ``,
-      comment: {}
+      comment: ``,
     };
 
     const taskEditMapper = CardPopup.createMapper(entry); //
@@ -73,16 +73,30 @@ _onChangeRating(evt) {
   }
 */
 
+  _emojiMapper(key) {
+    switch (key) {
+      case `sleeping`:
+        return `😴`;
+      case `neutral-face`:
+        return `😐`;
+      case `grinning`:
+        return `😀`;
+      default:
+        return ``;
+    }
+  }
+
   _onFormSubmit() {
     const formData = new FormData(this._element.querySelector(`.film-details__inner`));
     const data = this._processForm(formData);
 
     const comments = this._data.comments.slice();
-
+    // debugger;
     comments.push({
-      author: ``,
+      author: `asd`,
       time: new Date(),
-      comment: data.comment.comment,
+      comment: data.comment,
+      emoji: this._emojiMapper(data.emoji)
     });
 
     this._unbind();
@@ -101,8 +115,15 @@ _onChangeRating(evt) {
 
   static createMapper(target) {
     return {
-      score: (value) => (target.rating = value),
-      comment: (value) => (target.comment = value)
+      score: (value) => {
+        target.rating = value;
+      },
+      comment: (value) => {
+        target.comment = value;
+      },
+      [`comment-emoji`]: (value) => {
+        target.emoji = value;
+      }
     };
   }
 
