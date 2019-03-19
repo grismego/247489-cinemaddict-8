@@ -1,3 +1,4 @@
+import moment from 'moment';
 const CONTROLS = [
   {
     name: `watchlist`,
@@ -46,7 +47,7 @@ const createCommentsTemplate = (data) => (
         <p class="film-details__comment-text">${comment.comment}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comment.author}</span>
-          <span class="film-details__comment-day">${comment.time}</span>
+          <span class="film-details__comment-day">${moment(comment.time).fromNow()}</span>
         </p>
       </div>
     </li>`)
@@ -94,7 +95,7 @@ const createGenresTemplate = (card) => {
 const createRuntimeTemplate = (card) => (
   `<tr class="film-details__row">
     <td class="film-details__term">Runtime</td>
-    <td class="film-details__cell">${card.duration}</td>
+    <td class="film-details__cell">${card.duration}m</td>
   </tr>`
 );
 
@@ -115,6 +116,13 @@ export const createCommentsSectionTemplate = (data) => (
     </section>`
 );
 
+export const createRatingTemplate = (data) => (
+  `<div class="film-details__rating">
+  <p class="film-details__total-rating">${data.rating}</p>
+  <p class="film-details__user-rating">Your rate ${Math.floor(data.rating)}</p>
+</div>`
+);
+
 export const createPopupTemplate = (data) => (
   `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -133,10 +141,7 @@ export const createPopupTemplate = (data) => (
               <h3 class="film-details__title">${data.title}</h3>
               <p class="film-details__title-original">Original: ${data.title}</p>
             </div>
-            <div class="film-details__rating">
-              <p class="film-details__total-rating">${data.rating}</p>
-              <p class="film-details__user-rating">Your rate ${Math.floor(data.rating)}</p>
-            </div>
+            ${createRatingTemplate(data)}
           </div>
           <table class="film-details__table">
             <tr class="film-details__row">

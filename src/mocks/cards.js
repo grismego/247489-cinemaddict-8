@@ -70,7 +70,7 @@ const COUNTRY = [
   `FRANCE`,
   `UK`
 ];
-// @ RENAME?
+
 const AGE_RATING = [
   0,
   6,
@@ -94,9 +94,6 @@ const TITLES = [
   `Spirited Away`
 ];
 
-const YEAR_MIN = 1900;
-const YEAR_MAX = 2019;
-
 const COMMENTS_MIN_COUNT = 0;
 const COMMENTS_MAX_COUNT = 50;
 
@@ -106,9 +103,10 @@ const generateRandomRating = () => (
   `${generateRandomNumber(0, 9)}.${generateRandomNumber(0, 9)}`
 );
 
-const generateRandomDuration = () => (
-  `${generateRandomNumber(0, 3)}h ${generateRandomNumber(0, 59)}m`
-);
+const generateReleaseDate = () => {
+  return moment(Math.floor(Math.random() * new Date().getTime())
+  ).format(`DD MMMM YYYY`);
+};
 
 export const generateCard = () => ({
   title: getRandomArrayElement(TITLES),
@@ -116,8 +114,8 @@ export const generateCard = () => ({
   rating: generateRandomRating(),
   description: getRandomArrayElements(DESCRIPTIONS, DESCRIPTIONS_MAX_COUNT).join(`, `),
   genre: getRandomArrayElement(GENRES),
-  duration: generateRandomDuration(),
-  year: moment(`${generateRandomNumber(1, 12)}-${generateRandomNumber(1, 28)}-${generateRandomNumber(YEAR_MIN, YEAR_MAX)}`, `MM-DD-YYYY`).format(`DD MMMM YYYY`),
+  duration: generateRandomNumber(0, 300),
+  year: generateReleaseDate(),
   commentsCount: generateRandomNumber(COMMENTS_MIN_COUNT, COMMENTS_MAX_COUNT),
   director: getRandomArrayElement(DIRECTOR),
   ageRating: getRandomArrayElement(AGE_RATING),
@@ -127,13 +125,13 @@ export const generateCard = () => ({
   comments: [
     {
       author: `Tim Macoveev`,
-      time: `3 days ago`,
+      time: `20190313`,
       comment: `So long-long story, boring!`,
       emoji: `😴`,
     },
     {
       author: `Denis Popov`,
-      time: `1 days ago`,
+      time: `20190314`,
       comment: `Pretty good!`,
       emoji: `😀`,
     },

@@ -3,7 +3,7 @@ import {createTemplates as createCardTemplate} from './templates/cards';
 
 import {generateFilters} from './mocks/filters';
 import {generateCards, generateCard} from './mocks/cards';
-import moment from 'moment';
+
 import CardComponent from './components/card';
 import PopupComponent from './components/popup';
 

@@ -1,7 +1,8 @@
 import {
   createPopupTemplate,
   createScoreTemplate,
-  createCommentsSectionTemplate
+  createCommentsSectionTemplate,
+  createRatingTemplate
 } from '../templates/popup';
 
 import moment from 'moment';
@@ -18,6 +19,7 @@ export default class CardPopup extends Component {
     // this._data = _.cloneDeep(data);
     this._onCloseClick = this._onCloseClick.bind(this);
     this._onFormSubmit = this._onFormSubmit.bind(this);
+    this._onChangeRating = this._onChangeRating.bind(this);
     this._onCommentInputKeydown = this._onCommentInputKeydown.bind(this);
 
     this._onClose = null;
@@ -76,11 +78,10 @@ export default class CardPopup extends Component {
 
     comments.push({
       author: `User`,
-      time: moment().fromNow(),
+      time: new Date(),
       comment: data.comment,
       emoji: this._emojiMapper(data.emoji)
     });
-    // console.log(data);
 
     this._unbind();
     this.update({comments});
@@ -90,7 +91,7 @@ export default class CardPopup extends Component {
   }
 
   _onCommentInputKeydown(evt) {
-    if (evt.keyCode === KEYCODE_ENTER) {
+    if (evt.keyCode === KEYCODE_ENTER && evt.ctrlKey) {
       this._onFormSubmit();
     }
   }
@@ -107,6 +108,19 @@ export default class CardPopup extends Component {
         target.emoji = value;
       }
     };
+  }
+
+  _onChangeRating(evt) {
+    if (evt.target.tagName === `INPUT`) {
+      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+      const newData = this._processForm(formData);
+
+      this._unbind();
+      this.update(newData);
+      this._partialUpdate();
+      this._bind();
+
+    }
   }
 
   _bind() {
@@ -151,8 +165,12 @@ export default class CardPopup extends Component {
     const prevScoreElement = this._element.querySelector(`.film-details__user-rating-score`);
     const prevCommentsElement = this._element.querySelector(`.film-details__comments-wrap`);
 
+    const nextRatingElement = createElement(createRatingTemplate(this._data));
+    const prevRatingElement = this._element.querySelector(`.film-details__rating`);
+
     prevCommentsElement.parentNode.replaceChild(nextCommentsElement, prevCommentsElement);
     prevScoreElement.parentNode.replaceChild(nextScoreElement, prevScoreElement);
+    prevRatingElement.parentNode.replaceChild(nextRatingElement, prevRatingElement);
   }
 
   update(data) {
