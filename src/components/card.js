@@ -1,9 +1,11 @@
 import {createTemplate} from '../templates/cards';
 import {Component} from './component';
+import _ from 'lodash';
 
 export default class Card extends Component {
   constructor(data) {
     super(data);
+
     this._onClick = this._onClick.bind(this);
     this._onCommentsClick = null;
   }

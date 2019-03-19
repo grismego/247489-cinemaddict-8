@@ -58,5 +58,3 @@ popup.onClose = () => {
   document.body.removeChild(popup.element);
   popup.unrender();
 };
-
-// console.log(moment().format("HH:mm a"))

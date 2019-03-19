@@ -20,7 +20,8 @@ const EMOJI = [
   },
   {
     icon: `😐`,
-    name: `neutral-face`
+    name: `neutral-face`,
+    isChecked: true
   },
   {
     icon: `😀`,
@@ -31,7 +32,7 @@ const EMOJI = [
 const createEmojiTemplate = () => (
   `<div class="film-details__emoji-list">
     ${EMOJI.map((emoji) => (
-    `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji.name}" value="${emoji.name}">
+    `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji.name}" value="${emoji.name}" ${emoji.isChecked ? `checked` : ``}>
     <label class="film-details__emoji-label" for="emoji-${emoji.name}">${emoji.icon}</label>`
   )).join(``)}
   </div>`
@@ -99,7 +100,7 @@ const createRuntimeTemplate = (card) => (
 
 export const createCommentsSectionTemplate = (data) => (
   `<section class="film-details__comments-wrap">
-      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">1</span></h3>
+      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${data.comments.length}</span></h3>
       ${createCommentsTemplate(data)}
       <div class="film-details__new-comment">
         <div>

@@ -54,7 +54,7 @@ export const createTemplate = (card, withOptions) => (
     </p>
     <img src="${card.poster}" alt="" class="film-card__poster">
     <p class="film-card__description">${card.description}</p>
-    <button class="film-card__comments">${card.commentsCount} comments</button>
+    <button class="film-card__comments">${card.comments.length} comments</button>
     ${withOptions ? createControlsTemplate() : ``}
   </article>`
 );

@@ -4,23 +4,21 @@ import {
   createCommentsSectionTemplate
 } from '../templates/popup';
 
+import moment from 'moment';
+
 import {createElement} from '../util';
 import {Component} from './component';
+import _ from 'lodash';
 
 const KEYCODE_ENTER = 13;
 
 export default class CardPopup extends Component {
   constructor(data) {
     super(data);
-
+    // this._data = _.cloneDeep(data);
     this._onCloseClick = this._onCloseClick.bind(this);
     this._onFormSubmit = this._onFormSubmit.bind(this);
     this._onCommentInputKeydown = this._onCommentInputKeydown.bind(this);
-
-
-    // this._onChangeRating = this._onChangeRating.bind(this);
-    // this._onResetClick = this._onResetClick.bind(this);
-
 
     this._onClose = null;
     this._onSubmit = null;
@@ -58,21 +56,6 @@ export default class CardPopup extends Component {
   }
 
 
-  /*
-_onChangeRating(evt) {
-    if (evt.target.tagName === `INPUT`) {
-      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-      const data = this._processForm(formData);
-
-      this._unbind(); // ???
-      this.update(newData);
-      this._partialUpdate();
-      this._bind(); // ????
-      this._onSubmit(newData);
-    }
-  }
-*/
-
   _emojiMapper(key) {
     switch (key) {
       case `sleeping`:
@@ -89,21 +72,20 @@ _onChangeRating(evt) {
   _onFormSubmit() {
     const formData = new FormData(this._element.querySelector(`.film-details__inner`));
     const data = this._processForm(formData);
-
     const comments = this._data.comments.slice();
-    // debugger;
+
     comments.push({
-      author: `asd`,
-      time: new Date(),
+      author: `User`,
+      time: moment().fromNow(),
       comment: data.comment,
       emoji: this._emojiMapper(data.emoji)
     });
+    // console.log(data);
 
     this._unbind();
     this.update({comments});
     this._partialUpdate();
     this._bind();
-
     return typeof this._onSubmit === `function` && this._onSubmit(data);
   }
 
