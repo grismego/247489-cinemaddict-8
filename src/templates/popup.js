@@ -95,7 +95,7 @@ const createGenresTemplate = (card) => {
 const createRuntimeTemplate = (card) => (
   `<tr class="film-details__row">
     <td class="film-details__term">Runtime</td>
-    <td class="film-details__cell">${card.duration}m</td>
+    <td class="film-details__cell">${card.duration} m</td>
   </tr>`
 );
 

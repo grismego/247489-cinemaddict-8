@@ -1,11 +1,11 @@
 import moment from 'moment';
 
-const countDuration = (duration) => {
-  const hour = Math.floor(duration / 60);
-  const min = duration - hour * 60;
-  const durations = [hour, min];
-  return durations;
-};
+const countDuration = (duration) => (
+  [
+    Math.floor(duration / 60),
+    duration % 60
+  ]
+);
 
 const CONTROLS = [
   {
