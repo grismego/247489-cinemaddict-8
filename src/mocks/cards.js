@@ -103,10 +103,7 @@ const generateRandomRating = () => (
   `${generateRandomNumber(0, 9)}.${generateRandomNumber(0, 9)}`
 );
 
-const generateReleaseDate = () => {
-  return moment(Math.floor(Math.random() * new Date().getTime())
-  ).format(`DD MMMM YYYY`);
-};
+const generateReleaseDate = () => moment(Math.floor(Math.random() * new Date().getTime())).format(`DD MMMM YYYY`);
 
 export const generateCard = () => ({
   title: getRandomArrayElement(TITLES),
