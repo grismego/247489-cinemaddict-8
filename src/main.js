@@ -3,7 +3,7 @@ import {createTemplates as createCardTemplate} from './templates/cards';
 
 import {generateFilters} from './mocks/filters';
 import {generateCards, generateCard} from './mocks/cards';
-import moment from 'moment';
+
 import CardComponent from './components/card';
 import PopupComponent from './components/popup';
 
@@ -32,24 +32,22 @@ const data = generateCard();
 const card = new CardComponent(data);
 const popup = new PopupComponent(data);
 
-let cardElement = card.render();
-let popupElement;
 
-filmListElement.appendChild(cardElement);
+card.render();
+filmListElement.appendChild(card.render());
 
 card.onCommentsClick = () => {
-  popupElement = popup.render();
-  document.body.appendChild(popupElement);
+  popup.render();
+  document.body.appendChild(popup.element);
 };
 
 popup.onSubmit = (newData) => {
-  filmListElement.removeChild(cardElement);
+  filmListElement.removeChild(card.element);
   card.unrender();
   card.update(newData);
-  cardElement = card.render();
-  filmListElement.appendChild(cardElement);
-  document.body.removeChild(popupElement);
-  popupElement = null;
+  card.render();
+  filmListElement.appendChild(card.element);
+  document.body.removeChild(popup.element);
   popup.unrender();
 };
 

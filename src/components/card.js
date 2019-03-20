@@ -1,11 +1,12 @@
 import {createTemplate} from '../templates/cards';
 import {Component} from './component';
-import _ from 'lodash';
+
+import cloneDeep from 'lodash.clonedeep';
 
 export default class Card extends Component {
   constructor(data) {
     super(data);
-
+    this._data = cloneDeep(data);
     this._onClick = this._onClick.bind(this);
     this._onCommentsClick = null;
   }
