@@ -4,8 +4,8 @@ import {createTemplates as createCardTemplate} from './templates/cards';
 import {generateFilters} from './mocks/filters';
 import {generateCards, generateCard} from './mocks/cards';
 
-import Card from './components/card';
-import Popup from './components/popup';
+import CardComponent from './components/card';
+import PopupComponent from './components/popup';
 
 const CARD_LIMIT_DEFAULT = 10;
 const CARD_LIMIT_EXTRA = 2;
@@ -29,17 +29,30 @@ filtersElements.forEach((element) => {
 });
 
 const data = generateCard();
-const card = new Card(data);
-const popup = new Popup(data);
+const card = new CardComponent(data);
+const popup = new PopupComponent(data);
 
+
+card.render();
 filmListElement.appendChild(card.render());
 
-card.onPopup = () => {
+card.onCommentsClick = () => {
   popup.render();
   document.body.appendChild(popup.element);
 };
 
+popup.onSubmit = (newData) => {
+  filmListElement.removeChild(card.element);
+  card.unrender();
+  card.update(newData);
+  card.render();
+  filmListElement.appendChild(card.element);
+  document.body.removeChild(popup.element);
+  popup.unrender();
+};
+
 popup.onClose = () => {
+  card.update(data);
   document.body.removeChild(popup.element);
   popup.unrender();
 };

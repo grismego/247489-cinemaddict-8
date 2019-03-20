@@ -1,22 +1,26 @@
 import {createTemplate} from '../templates/cards';
 import {Component} from './component';
 
+import cloneDeep from 'lodash.clonedeep';
+
 export default class Card extends Component {
   constructor(data) {
     super(data);
+    this._data = cloneDeep(data);
     this._onClick = this._onClick.bind(this);
+    this._onCommentsClick = null;
   }
 
   get template() {
     return createTemplate(this._data, true);
   }
 
-  set onPopup(fn) {
-    this._onPopup = fn;
+  set onCommentsClick(fn) {
+    this._onCommentsClick = fn;
   }
 
   _onClick() {
-    return typeof this._onPopup === `function` && this._onPopup();
+    return typeof this._onCommentsClick === `function` && this._onCommentsClick();
   }
 
   _bind() {
@@ -29,5 +33,15 @@ export default class Card extends Component {
     this._element
       .querySelector(`.film-card__comments`)
       .removeEventListener(`click`, this._onClick);
+  }
+
+  update(data) {
+    if (data.rating) {
+      this._data.rating = data.rating;
+    }
+
+    if (data.comments) {
+      this._data.comments = data.comments;
+    }
   }
 }

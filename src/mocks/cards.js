@@ -4,6 +4,8 @@ import {
   getRandomArrayElements
 } from '../random';
 
+import moment from 'moment';
+
 const DESCRIPTIONS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget`,
@@ -35,6 +37,48 @@ const GENRES = [
   `Comedy`
 ];
 
+const DIRECTOR = [
+  `Brad Bird`,
+  `Kventin Tarantino`,
+  `David Lynch`,
+  `Martin Scorsese`,
+  `Steven Soderbergh`,
+  `Lukas Moodysson`
+];
+
+const WRITERS = [
+  `Paul Savage`,
+  `Richard Side`,
+  `David Seidler`,
+  `Dirk Wayne Summers`,
+  `Keith Samples`
+];
+
+const ACTORS = [
+  `Tim Robbins`,
+  `Morgan Freeman`,
+  `Bob Gunton`,
+  `Christian Bale`,
+  `Heath Ledger`,
+  `Aaron Eckhart`
+];
+
+const COUNTRY = [
+  `USA`,
+  `RUSSIA`,
+  `CHINA`,
+  `FRANCE`,
+  `UK`
+];
+
+const AGE_RATING = [
+  0,
+  6,
+  12,
+  16,
+  18
+];
+
 const TITLES = [
   `Silence of the Lambs`,
   `Raiders of the Lost Ark`,
@@ -47,12 +91,8 @@ const TITLES = [
   `Lord of the Rings: Fellowship of the Ring`,
   `Fight Club`,
   `Star Wars: Episode V – The Empire Strikes Back`,
-  `Star Wars: Episode V – The Empire Strikes Back`,
   `Spirited Away`
 ];
-
-const YEAR_MIN = 1900;
-const YEAR_MAX = 2019;
 
 const COMMENTS_MIN_COUNT = 0;
 const COMMENTS_MAX_COUNT = 50;
@@ -63,19 +103,36 @@ const generateRandomRating = () => (
   `${generateRandomNumber(0, 9)}.${generateRandomNumber(0, 9)}`
 );
 
-const generateRandomDuration = () => (
-  `${generateRandomNumber(0, 3)}h ${generateRandomNumber(0, 59)}m`
-);
+const generateReleaseDate = () => moment(Math.floor(Math.random() * new Date().getTime())).format(`DD MMMM YYYY`);
 
 export const generateCard = () => ({
   title: getRandomArrayElement(TITLES),
   poster: `../images/posters/${getRandomArrayElement(POSTERS)}.jpg`,
   rating: generateRandomRating(),
-  description: getRandomArrayElements(DESCRIPTIONS, DESCRIPTIONS_MAX_COUNT),
+  description: getRandomArrayElements(DESCRIPTIONS, DESCRIPTIONS_MAX_COUNT).join(`, `),
   genre: getRandomArrayElement(GENRES),
-  duration: generateRandomDuration(),
-  year: generateRandomNumber(YEAR_MIN, YEAR_MAX),
-  commentsCount: generateRandomNumber(COMMENTS_MIN_COUNT, COMMENTS_MAX_COUNT)
+  duration: generateRandomNumber(0, 300),
+  year: generateReleaseDate(),
+  commentsCount: generateRandomNumber(COMMENTS_MIN_COUNT, COMMENTS_MAX_COUNT),
+  director: getRandomArrayElement(DIRECTOR),
+  ageRating: getRandomArrayElement(AGE_RATING),
+  actors: getRandomArrayElements(ACTORS, ACTORS.length).join(`, `),
+  writers: getRandomArrayElement(WRITERS),
+  country: getRandomArrayElement(COUNTRY),
+  comments: [
+    {
+      author: `Tim Macoveev`,
+      time: `20190313`,
+      comment: `So long-long story, boring!`,
+      emoji: `😴`,
+    },
+    {
+      author: `Denis Popov`,
+      time: `20190314`,
+      comment: `Pretty good!`,
+      emoji: `😀`,
+    },
+  ],
 });
 
 export const generateCards = (limit) => [...Array(limit).keys()].map(generateCard);
