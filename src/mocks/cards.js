@@ -133,7 +133,7 @@ export const generateCard = () => ({
       emoji: `😀`,
     },
   ],
-  isWathced: false,
+  isWatched: false,
   addedToWathed: false
 });
 

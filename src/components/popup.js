@@ -30,7 +30,7 @@ export default class CardPopup extends Component {
       comment: ``,
     };
 
-    const taskEditMapper = CardPopup.createMapper(entry); //
+    const taskEditMapper = CardPopup.createMapper(entry);
 
     Array.from(formData.entries()).forEach(
         ([property, value]) => taskEditMapper[property] && taskEditMapper[property](value)
@@ -172,9 +172,11 @@ export default class CardPopup extends Component {
     if (data.rating) {
       this._data.rating = data.rating;
     }
-
     if (data.comments) {
       this._data.comments = data.comments;
+    }
+    if (data.addedToWathed) {
+      this._data.addedToWathed = data.addedToWathed;
     }
   }
 }

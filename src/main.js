@@ -41,7 +41,10 @@ card.onCommentsClick = () => {
   document.body.appendChild(popup.element);
 };
 
-card.onAddToWatchList = () => {}
+card.onAddToWatchList = () => {
+  card.update(data);
+  console.log(data);
+};
 
 popup.onSubmit = (newData) => {
   filmListElement.removeChild(card.element);

@@ -34,12 +34,13 @@ export default class Card extends Component {
 
   _onMarkAsWatched(evt) {
     evt.preventDefault();
-    this._data.isWathced = !this._data.isWathced;
+    // this._data.isWatched = !this._data.isWatched;
   }
 
   _onAddToWatchList(evt) {
     evt.preventDefault();
     this._data.addedToWathed = !this._data.addedToWathed;
+    return typeof this._onAddToWatchList === `function` && this._onAddToWatchList();
   }
 
   _bind() {
@@ -67,6 +68,9 @@ export default class Card extends Component {
 
     if (data.comments) {
       this._data.comments = data.comments;
+    }
+    if (data.addedToWathed) {
+      this._data.addedToWathed = data.addedToWathed;
     }
   }
 }
