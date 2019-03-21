@@ -8,6 +8,8 @@ export default class Card extends Component {
     super(data);
     this._data = cloneDeep(data);
     this._onClick = this._onClick.bind(this);
+    this._onAddToWatchList = this._onAddToWatchList.bind(this);
+    this._onMarkAsWatched = this._onMarkAsWatched.bind(this);
     this._onCommentsClick = null;
   }
 
@@ -19,20 +21,43 @@ export default class Card extends Component {
     this._onCommentsClick = fn;
   }
 
+  set onAddToWatchList(fn) {
+    this._onAddToWatchList = fn;
+  }
+  set onMarkAsWatched(fn) {
+    this._onMarkAsWatched = fn;
+  }
+
   _onClick() {
     return typeof this._onCommentsClick === `function` && this._onCommentsClick();
+  }
+
+  _onMarkAsWatched(evt) {
+    evt.preventDefault();
+    this._data.isWathced = !this._data.isWathced;
+  }
+
+  _onAddToWatchList(evt) {
+    evt.preventDefault();
+    this._data.addedToWathed = !this._data.addedToWathed;
   }
 
   _bind() {
     this._element
       .querySelector(`.film-card__comments`)
       .addEventListener(`click`, this._onClick);
+    this._element
+      .querySelector(`.film-card__controls-item--add-to-watchlist`)
+      .addEventListener(`click`, this._onAddToWatchList);
   }
 
   _unbind() {
     this._element
       .querySelector(`.film-card__comments`)
       .removeEventListener(`click`, this._onClick);
+    this._element
+      .querySelector(`.film-card__controls-item--add-to-watchlist`)
+      .removeEventListener(`click`, this._onAddToWatchList);
   }
 
   update(data) {

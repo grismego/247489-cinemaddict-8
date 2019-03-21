@@ -133,6 +133,8 @@ export const generateCard = () => ({
       emoji: `😀`,
     },
   ],
+  isWathced: false,
+  addedToWathed: false
 });
 
 export const generateCards = (limit) => [...Array(limit).keys()].map(generateCard);
