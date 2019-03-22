@@ -24,16 +24,16 @@ export default class Filter extends Component {
   }
 
   _bind() {
-    if (!this._element.querySelector(`.main-navigation__item--additional`)) {
-      this._element
-        .querySelector(`.main-navigation__item`)
-        .addEventListener(`click`, this._onFilterClick);
-    }
+    // if (!this._element.querySelector(`.main-navigation__item--additional`)) {
+    //   this._element
+    //     .querySelector(`.main-navigation__item`)
+    //     .addEventListener(`click`, this._onFilterClick);
+    // }
   }
 
   _unbind() {
-    this._element
-      .querySelector(`.main-navigation__item`)
-      .removeEventListener(`click`, this._onFilterClick);
+    // this._element
+    //   .querySelector(`.main-navigation__item`)
+    //   .removeEventListener(`click`, this._onFilterClick);
   }
 }

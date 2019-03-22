@@ -6,6 +6,7 @@ import {generateCards, generateCard} from './mocks/cards';
 
 import CardComponent from './components/card';
 import PopupComponent from './components/popup';
+import FilterComponent from './components/filter';
 
 const CARD_LIMIT_DEFAULT = 10;
 const CARD_LIMIT_EXTRA = 2;
@@ -15,30 +16,66 @@ const filmListElement = document.querySelector(`.films-list .films-list__contain
 const filmListRatedElement = document.querySelector(`.films-list--extra:nth-child(2) .films-list__container`);
 const filmListCommentedElement = document.querySelector(`.films-list--extra:nth-child(3) .films-list__container`);
 
-navigationElement.innerHTML = createFilterTemplate(generateFilters());
+const statBoard = document.querySelector(`.statistic`);
+const filmBoard = document.querySelector(`.films`);
+
+// navigationElement.innerHTML = createFilterTemplate(generateFilters());
 
 filmListRatedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
 filmListCommentedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
 
 const filtersElements = document.querySelectorAll(`.main-navigation__item:not(.main-navigation__item--additional)`);
 
-filtersElements.forEach((element) => {
-  element.addEventListener(`click`, () => {
-    filmListElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_DEFAULT), true);
-  });
-});
+// filtersElements.forEach((element) => {
+//   element.addEventListener(`click`, () => {
+//     filmListElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_DEFAULT), true);
+//   });
+// });
 
 // const data = generateCard();
 // const card = new CardComponent(data);
 // const popup = new PopupComponent(data);
 
-const initialCards = generateCards(7);
+
+const filterCards = (cards, filterName) => {
+  switch (filterName) {
+    case `All`:
+      statBoard.classList.remove(`visually-hidden`);
+      filmBoard.classList.add(`visually-hidden`);
+      return cards;
+
+    case `Watchlist`:
+      return cards.filter((it) => it.isInWatchlist);
+
+    case `History`:
+      return cards.filter((it) => it.isWatched);
+
+    case `Favorites`:
+      return cards.filter((it) => it.isFavourite);
+
+    default:
+      return cards;
+  }
+};
 
 
-// initialCards.forEach((item) => );
+const filtersData = generateFilters();
+
+filtersData.forEach((item) => {
+  const filter = new FilterComponent(item);
+  navigationElement.appendChild(filter.render());
+
+  filter.onFilter = (evt) => {
+    const filterName = evt.target.textContent;
+    const filteredTasks = filterCards(initialCards, filterName);
+  };
+});
+
 
 // card.render();
 // filmListElement.appendChild(card.render());
+
+const initialCards = generateCards(7);
 
 const renderCards = (cards) => {
   for (const data of cards) {
