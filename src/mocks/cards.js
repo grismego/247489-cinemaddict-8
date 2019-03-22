@@ -133,8 +133,9 @@ export const generateCard = () => ({
       emoji: `😀`,
     },
   ],
-  isWatched: false,
-  addedToWathed: false,
+  // isWatched: false,
+  isWatched: Math.random() > 0.5,
+  addedToWathed: true,
   isFavorite: false
 });
 

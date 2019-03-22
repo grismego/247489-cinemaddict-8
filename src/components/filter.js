@@ -1,11 +1,10 @@
 import {Component} from './component';
-import cloneDeep from 'lodash.clonedeep';
 import {createTemplate} from '../templates/filters';
 
 export default class Filter extends Component {
   constructor(data) {
     super(data);
-    this._data = cloneDeep(data);
+    this._onFilterClick = this._onFilterClick.bind(this);
   }
 
   get template() {
@@ -26,14 +25,12 @@ export default class Filter extends Component {
   _bind() {
     if (!this._element.querySelector(`.main-navigation__item--additional`)) {
       this._element
-        .querySelector(`.main-navigation__item`)
         .addEventListener(`click`, this._onFilterClick);
     }
   }
 
   _unbind() {
-    // this._element
-    //   .querySelector(`.main-navigation__item`)
-    //   .removeEventListener(`click`, this._onFilterClick);
+    this._element
+      .removeEventListener(`click`, this._onFilterClick);
   }
 }

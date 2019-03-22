@@ -1,4 +1,5 @@
 import {createElement} from '../util';
+import cloneDeep from 'lodash.clonedeep';
 
 export class Component {
   constructor(data) {
@@ -6,7 +7,7 @@ export class Component {
       throw new Error(`Can't instantiate Component, only concrete one.`);
     }
 
-    this._data = data;
+    this._data = cloneDeep(data);
     this._element = null;
   }
 
@@ -38,7 +39,9 @@ export class Component {
     this._element = null;
   }
 
-  update() {
-    throw new Error(`You have to define unbind.`);
+  update(data) {
+    Object.keys(data).forEach((key) => {
+      this._data[key] = data[key];
+    });
   }
 }

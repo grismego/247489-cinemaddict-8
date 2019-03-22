@@ -16,9 +16,6 @@ const filmListElement = document.querySelector(`.films-list .films-list__contain
 const filmListRatedElement = document.querySelector(`.films-list--extra:nth-child(2) .films-list__container`);
 const filmListCommentedElement = document.querySelector(`.films-list--extra:nth-child(3) .films-list__container`);
 
-const statBoard = document.querySelector(`.statistic`);
-const filmBoard = document.querySelector(`.films`);
-
 // navigationElement.innerHTML = createFilterTemplate(generateFilters());
 
 filmListRatedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
@@ -26,33 +23,16 @@ filmListCommentedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT
 
 const filtersElements = document.querySelectorAll(`.main-navigation__item:not(.main-navigation__item--additional)`);
 
-// filtersElements.forEach((element) => {
-//   element.addEventListener(`click`, () => {
-//     filmListElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_DEFAULT), true);
-//   });
-// });
-
-// const data = generateCard();
-// const card = new CardComponent(data);
-// const popup = new PopupComponent(data);
-
-
 const filterCards = (cards, filterName) => {
   switch (filterName) {
     case `All`:
-      statBoard.classList.remove(`visually-hidden`);
-      filmBoard.classList.add(`visually-hidden`);
       return cards;
-
     case `Watchlist`:
       return cards.filter((it) => it.addedToWathed);
-
     case `History`:
       return cards.filter((it) => it.isWatched);
-
     case `Favorites`:
       return cards.filter((it) => it.isFavorite);
-
     default:
       return cards;
   }
@@ -60,25 +40,9 @@ const filterCards = (cards, filterName) => {
 
 
 const filtersData = generateFilters();
+const initialCards = generateCards(CARD_LIMIT_DEFAULT);
 
-filtersData.forEach((item) => {
-  const filter = new FilterComponent(item);
-  navigationElement.appendChild(filter.render());
-
-  filter.onFilter = (evt) => {
-    const filterName = evt.target.textContent;
-    const filteredCards = filterCards(initialCards, filterName);
-
-    filteredCards.forEach((card) => renderCards(card));
-  };
-});
-
-
-// card.render();
-// filmListElement.appendChild(card.render());
-
-const initialCards = generateCards(7);
-
+// TODO card - cardComponent
 const renderCards = (cards) => {
   for (const data of cards) {
     const card = new CardComponent(data);
@@ -107,16 +71,18 @@ const renderCards = (cards) => {
     };
 
     popup.onSubmit = (newData) => {
-      filmListElement.removeChild(card.element);
+      const editElement = card.element;
+
       card.unrender();
       card.update(newData);
       card.render();
-      filmListElement.appendChild(card.element);
 
+      filmListElement.replaceChild(card.render(), editElement);
       document.body.removeChild(popup.element);
       popup.unrender();
     };
 
+    // todo reRender
     popup.onClose = () => {
       card.update(data);
       document.body.removeChild(popup.element);
@@ -127,38 +93,14 @@ const renderCards = (cards) => {
 
 renderCards(initialCards);
 
-// card.onCommentsClick = () => {
-//   popup.render();
-//   document.body.appendChild(popup.element);
-// };
+filtersData.forEach((item) => {
+  const filter = new FilterComponent(item);
+  navigationElement.appendChild(filter.render());
 
-// card.onAddToWatchList = (boolean) => {
-//   data.addedToWathed = boolean;
-//   popup.update(data);
-// };
-
-// card.onMarkAsWatched = (boolean) => {
-//   data.isWatched = boolean;
-//   popup.update(data);
-// };
-
-// card.onMarkAsFavorite = (boolean) => {
-//   data.isFavorite = boolean;
-//   popup.update(data);
-// };
-
-// popup.onSubmit = (newData) => {
-//   filmListElement.removeChild(card.element);
-//   card.unrender();
-//   card.update(newData);
-//   card.render();
-//   filmListElement.appendChild(card.element);
-//   document.body.removeChild(popup.element);
-//   popup.unrender();
-// };
-
-// popup.onClose = () => {
-//   card.update(data);
-//   document.body.removeChild(popup.element);
-//   popup.unrender();
-// };
+  filter.onFilter = (evt) => {
+    const filterName = evt.target.textContent.replace(/\d+/g, ``).trim();
+    const filteredCards = filterCards(initialCards, filterName);
+    filmListElement.innerHTML = ``;
+    renderCards(filteredCards);
+  };
+});

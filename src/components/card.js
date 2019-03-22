@@ -1,12 +1,9 @@
 import {createTemplate} from '../templates/cards';
 import {Component} from './component';
 
-import cloneDeep from 'lodash.clonedeep';
-
 export default class Card extends Component {
   constructor(data) {
     super(data);
-    this._data = cloneDeep(data);
     this._onClick = this._onClick.bind(this);
     this._onControlFormClick = this._onControlFormClick.bind(this);
     this._onCommentsClick = null;
@@ -82,23 +79,5 @@ export default class Card extends Component {
     // this._element
     //   .querySelector(`.film-card__controls-item--add-to-watchlist`)
     //   .removeEventListener(`click`, this._onAddToWatchList);
-  }
-
-  update(data) {
-    if (data.rating) {
-      this._data.rating = data.rating;
-    }
-    if (data.comments) {
-      this._data.comments = data.comments;
-    }
-    if (data.addedToWathed) {
-      this._data.addedToWathed = data.addedToWathed;
-    }
-    if (data.isFavorite) {
-      this._data.isFavorite = data.isFavorite;
-    }
-    if (data.isWatched) {
-      this._data.isWatched = data.isWatched;
-    }
   }
 }

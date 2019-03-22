@@ -7,14 +7,11 @@ import {
 import {createElement} from '../util';
 import {Component} from './component';
 
-import cloneDeep from 'lodash.clonedeep';
-
 const KEYCODE_ENTER = 13;
 
 export default class CardPopup extends Component {
   constructor(data) {
     super(data);
-    this._data = cloneDeep(data);
     this._onCloseClick = this._onCloseClick.bind(this);
     this._onFormSubmit = this._onFormSubmit.bind(this);
     this._onChangeRating = this._onChangeRating.bind(this);
@@ -166,23 +163,5 @@ export default class CardPopup extends Component {
 
     prevScoreElement.parentNode.replaceChild(nextScoreElement, prevScoreElement);
     prevRatingElement.parentNode.replaceChild(nextRatingElement, prevRatingElement);
-  }
-
-  update(data) {
-    if (data.rating) {
-      this._data.rating = data.rating;
-    }
-    if (data.comments) {
-      this._data.comments = data.comments;
-    }
-    if (data.addedToWathed) {
-      this._data.addedToWathed = data.addedToWathed;
-    }
-    if (data.isFavorite) {
-      this._data.isFavorite = data.isFavorite;
-    }
-    if (data.isWatched) {
-      this._data.isWatched = data.isWatched;
-    }
   }
 }
