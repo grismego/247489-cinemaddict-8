@@ -1,18 +1,18 @@
 import moment from 'moment';
-const CONTROLS = [
-  {
-    name: `watchlist`,
-    label: `Add to watchlist`
-  },
-  {
-    name: `watched`,
-    label: `Already watched`
-  },
-  {
-    name: `favorite`,
-    label: `Add to favorites`
-  }
-];
+// const CONTROLS = [
+//   {
+//     name: `watchlist`,
+//     label: `Add to watchlist`
+//   },
+//   {
+//     name: `watched`,
+//     label: `Already watched`
+//   },
+//   {
+//     name: `favorite`,
+//     label: `Add to favorites`
+//   }
+// ];
 
 const EMOJI = [
   {
@@ -53,14 +53,14 @@ const createCommentsTemplate = (data) => (
     </li>`)
   ).join(``));
 
-const createControlsTemplate = () => (
-  `<section class="film-details__controls">
-    ${CONTROLS.map((control) => (
-    `<input type="checkbox" class="film-details__control-input visually-hidden" id="${control.name}" name="${control.name}">
-     <label for="${control.name}" class="film-details__control-label film-details__control-label--${control.name}">${control.label}</label>`
-  )).join(``)}
-  </section>`
-);
+// const createControlsTemplate = () => (
+//   `<section class="film-details__controls">
+//     ${CONTROLS.map((control) => (
+//     `<input type="checkbox" class="film-details__control-input visually-hidden" id="${control.name}" name="${control.name}">
+//      <label for="${control.name}" class="film-details__control-label film-details__control-label--${control.name}">${control.label}</label>`
+//   )).join(``)}
+//   </section>`
+// );
 
 export const createScoreTemplate = (data) => {
   const items = [];
@@ -175,14 +175,16 @@ export const createPopupTemplate = (data) => (
       </div>
 
       <section class="film-details__controls">
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${data.addedToWathed ? `checked` : ``}>
-      <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
+        <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${data.addedToWathed ? `checked` : ``}>
+        <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
-      <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+        <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${data.isWatched ? `checked` : ``}>
+        <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+        
+        <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${data.isFavorite ? `checked` : ``}>
+        <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
 
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
-      <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+        
       </section>
 
   

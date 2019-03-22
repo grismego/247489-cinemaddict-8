@@ -178,5 +178,11 @@ export default class CardPopup extends Component {
     if (data.addedToWathed) {
       this._data.addedToWathed = data.addedToWathed;
     }
+    if (data.isFavorite) {
+      this._data.isFavorite = data.isFavorite;
+    }
+    if (data.isWatched) {
+      this._data.isWatched = data.isWatched;
+    }
   }
 }

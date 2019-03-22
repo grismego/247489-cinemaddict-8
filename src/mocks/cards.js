@@ -134,7 +134,8 @@ export const generateCard = () => ({
     },
   ],
   isWatched: false,
-  addedToWathed: false
+  addedToWathed: false,
+  isFavorite: false
 });
 
 export const generateCards = (limit) => [...Array(limit).keys()].map(generateCard);

@@ -28,36 +28,98 @@ filtersElements.forEach((element) => {
   });
 });
 
-const data = generateCard();
-const card = new CardComponent(data);
-const popup = new PopupComponent(data);
+// const data = generateCard();
+// const card = new CardComponent(data);
+// const popup = new PopupComponent(data);
+
+const initialCards = generateCards(7);
 
 
-card.render();
-filmListElement.appendChild(card.render());
+// initialCards.forEach((item) => );
 
-card.onCommentsClick = () => {
-  popup.render();
-  document.body.appendChild(popup.element);
+// card.render();
+// filmListElement.appendChild(card.render());
+
+const renderCards = (cards) => {
+  for (const data of cards) {
+    const card = new CardComponent(data);
+    const popup = new PopupComponent(data);
+
+    filmListElement.appendChild(card.render());
+
+    card.onCommentsClick = () => {
+      popup.render();
+      document.body.appendChild(popup.element);
+    };
+
+    card.onAddToWatchList = (boolean) => {
+      data.addedToWathed = boolean;
+      popup.update(data);
+    };
+
+    card.onMarkAsWatched = (boolean) => {
+      data.isWatched = boolean;
+      popup.update(data);
+    };
+
+    card.onMarkAsFavorite = (boolean) => {
+      data.isFavorite = boolean;
+      popup.update(data);
+    };
+
+    popup.onSubmit = (newData) => {
+      filmListElement.removeChild(card.element);
+      card.unrender();
+      card.update(newData);
+      card.render();
+      filmListElement.appendChild(card.element);
+
+      document.body.removeChild(popup.element);
+      popup.unrender();
+    };
+
+    popup.onClose = () => {
+      card.update(data);
+      document.body.removeChild(popup.element);
+      popup.unrender();
+    };
+  }
 };
 
-card.onAddToWatchList = () => {
-  card.update(data);
-  console.log(data);
-};
+renderCards(initialCards);
 
-popup.onSubmit = (newData) => {
-  filmListElement.removeChild(card.element);
-  card.unrender();
-  card.update(newData);
-  card.render();
-  filmListElement.appendChild(card.element);
-  document.body.removeChild(popup.element);
-  popup.unrender();
-};
+// card.onCommentsClick = () => {
+//   popup.render();
+//   document.body.appendChild(popup.element);
+// };
 
-popup.onClose = () => {
-  card.update(data);
-  document.body.removeChild(popup.element);
-  popup.unrender();
-};
+// card.onAddToWatchList = (boolean) => {
+//   data.addedToWathed = boolean;
+//   popup.update(data);
+// };
+
+// card.onMarkAsWatched = (boolean) => {
+//   data.isWatched = boolean;
+//   popup.update(data);
+// };
+
+// card.onMarkAsFavorite = (boolean) => {
+//   data.isFavorite = boolean;
+//   popup.update(data);
+// };
+
+// popup.onSubmit = (newData) => {
+//   filmListElement.removeChild(card.element);
+//   card.unrender();
+//   card.update(newData);
+//   card.render();
+//   filmListElement.appendChild(card.element);
+//   document.body.removeChild(popup.element);
+//   popup.unrender();
+// };
+
+// popup.onClose = () => {
+//   card.update(data);
+//   document.body.removeChild(popup.element);
+//   popup.unrender();
+// };
