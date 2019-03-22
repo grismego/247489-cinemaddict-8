@@ -24,11 +24,11 @@ export default class Filter extends Component {
   }
 
   _bind() {
-    // if (!this._element.querySelector(`.main-navigation__item--additional`)) {
-    //   this._element
-    //     .querySelector(`.main-navigation__item`)
-    //     .addEventListener(`click`, this._onFilterClick);
-    // }
+    if (!this._element.querySelector(`.main-navigation__item--additional`)) {
+      this._element
+        .querySelector(`.main-navigation__item`)
+        .addEventListener(`click`, this._onFilterClick);
+    }
   }
 
   _unbind() {

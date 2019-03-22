@@ -45,13 +45,13 @@ const filterCards = (cards, filterName) => {
       return cards;
 
     case `Watchlist`:
-      return cards.filter((it) => it.isInWatchlist);
+      return cards.filter((it) => it.addedToWathed);
 
     case `History`:
       return cards.filter((it) => it.isWatched);
 
     case `Favorites`:
-      return cards.filter((it) => it.isFavourite);
+      return cards.filter((it) => it.isFavorite);
 
     default:
       return cards;
@@ -67,7 +67,9 @@ filtersData.forEach((item) => {
 
   filter.onFilter = (evt) => {
     const filterName = evt.target.textContent;
-    const filteredTasks = filterCards(initialCards, filterName);
+    const filteredCards = filterCards(initialCards, filterName);
+
+    filteredCards.forEach((card) => renderCards(card));
   };
 });
 
