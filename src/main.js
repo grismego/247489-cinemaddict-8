@@ -1,12 +1,12 @@
-import {createTemplate as createFilterTemplate} from './templates/filters';
 import {createTemplates as createCardTemplate} from './templates/cards';
 
 import {generateFilters} from './mocks/filters';
-import {generateCards, generateCard} from './mocks/cards';
+import {generateCards} from './mocks/cards';
 
 import CardComponent from './components/card';
 import PopupComponent from './components/popup';
 import FilterComponent from './components/filter';
+import {drawStat, watchedStatistics} from './stat';
 
 const CARD_LIMIT_DEFAULT = 10;
 const CARD_LIMIT_EXTRA = 2;
@@ -16,16 +16,28 @@ const filmListElement = document.querySelector(`.films-list .films-list__contain
 const filmListRatedElement = document.querySelector(`.films-list--extra:nth-child(2) .films-list__container`);
 const filmListCommentedElement = document.querySelector(`.films-list--extra:nth-child(3) .films-list__container`);
 
-// navigationElement.innerHTML = createFilterTemplate(generateFilters());
+const filmBoard = document.querySelector(`.films`);
+const statBoard = document.querySelector(`.statistic`);
+const textStatistic = document.querySelectorAll(`p.statistic__item-text`);
+const rankLabelElement = document.querySelector(`.statistic__rank-label`);
+const profileRankElement = document.querySelector(`.profile__rating`);
 
 filmListRatedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
 filmListCommentedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
 
-const filtersElements = document.querySelectorAll(`.main-navigation__item:not(.main-navigation__item--additional)`);
+
+const countDuration = (duration) => (
+  [
+    Math.floor(duration / 60),
+    duration % 60
+  ]
+);
 
 const filterCards = (cards, filterName) => {
   switch (filterName) {
-    case `All`:
+    case `All movies`:
+      statBoard.classList.add(`visually-hidden`);
+      filmBoard.classList.remove(`visually-hidden`);
       return cards;
     case `Watchlist`:
       return cards.filter((it) => it.addedToWathed);
@@ -42,65 +54,125 @@ const filterCards = (cards, filterName) => {
 const filtersData = generateFilters();
 const initialCards = generateCards(CARD_LIMIT_DEFAULT);
 
-// TODO card - cardComponent
 const renderCards = (cards) => {
   for (const data of cards) {
-    const card = new CardComponent(data);
-    const popup = new PopupComponent(data);
+    const cardComponent = new CardComponent(data);
+    const popupComponent = new PopupComponent(data);
 
-    filmListElement.appendChild(card.render());
+    filmListElement.appendChild(cardComponent.render());
 
-    card.onCommentsClick = () => {
-      popup.render();
-      document.body.appendChild(popup.element);
+    cardComponent.onCommentsClick = () => {
+      popupComponent.render();
+      document.body.appendChild(popupComponent.element);
     };
 
-    card.onAddToWatchList = (boolean) => {
+    cardComponent.onAddToWatchList = (boolean) => {
       data.addedToWathed = boolean;
-      popup.update(data);
+      popupComponent.update(data);
     };
 
-    card.onMarkAsWatched = (boolean) => {
+    cardComponent.onMarkAsWatched = (boolean) => {
       data.isWatched = boolean;
-      popup.update(data);
+      popupComponent.update(data);
     };
 
-    card.onMarkAsFavorite = (boolean) => {
+    cardComponent.onMarkAsFavorite = (boolean) => {
       data.isFavorite = boolean;
-      popup.update(data);
+      popupComponent.update(data);
     };
 
-    popup.onSubmit = (newData) => {
-      const editElement = card.element;
+    popupComponent.onSubmit = (newData) => {
+      const editElement = cardComponent.element;
 
-      card.unrender();
-      card.update(newData);
-      card.render();
+      cardComponent.unrender();
+      cardComponent.update(newData);
+      cardComponent.render();
 
-      filmListElement.replaceChild(card.render(), editElement);
-      document.body.removeChild(popup.element);
-      popup.unrender();
+      filmListElement.replaceChild(cardComponent.render(), editElement);
+      document.body.removeChild(popupComponent.element);
+      popupComponent.unrender();
     };
 
-    // todo reRender
-    popup.onClose = () => {
-      card.update(data);
-      document.body.removeChild(popup.element);
-      popup.unrender();
+
+    popupComponent.onClose = () => {
+      cardComponent.update(data);
+      document.body.removeChild(popupComponent.element);
+      popupComponent.unrender();
     };
+  }
+};
+
+const getRankLabel = (genre) => {
+  switch (genre) {
+    case `Comedy`:
+      return `ComedyMan`;
+
+    case `History`:
+      return `HistoryLover`;
+
+    case `Drama`:
+      return `DramaTic`;
+
+    case `Horror`:
+      return `HorrorAble`;
+
+    case `Series`:
+      return `SeriesLonger`;
+
+    case `Western`:
+      return `Gunner`;
+
+    case `Action`:
+      return `ActionEr`;
+
+    case `Adventure`:
+      return `Driver`;
+
+    default:
+      return `Uups`;
   }
 };
 
 renderCards(initialCards);
 
 filtersData.forEach((item) => {
-  const filter = new FilterComponent(item);
-  navigationElement.appendChild(filter.render());
+  const filterComponent = new FilterComponent(item);
+  navigationElement.appendChild(filterComponent.render());
 
-  filter.onFilter = (evt) => {
+  filterComponent.onFilter = (evt) => {
     const filterName = evt.target.textContent.replace(/\d+/g, ``).trim();
     const filteredCards = filterCards(initialCards, filterName);
     filmListElement.innerHTML = ``;
     renderCards(filteredCards);
   };
 });
+
+drawStat(initialCards);
+let rankLabel = getRankLabel(watchedStatistics.mostWatchedGenre);
+profileRankElement.innerHTML = rankLabel;
+
+
+const onStatClick = () => {
+
+  drawStat(initialCards);
+  rankLabel = getRankLabel(watchedStatistics.mostWatchedGenre);
+  profileRankElement.innerHTML = rankLabel;
+
+  statBoard.classList.remove(`visually-hidden`);
+  filmBoard.classList.add(`visually-hidden`);
+
+  textStatistic[0]
+    .innerHTML = `${watchedStatistics.watchedAmount} <span class="statistic__item-description">movies</span>`;
+
+  const [hours, mins] = countDuration(watchedStatistics.watchedDuration);
+
+  textStatistic[1]
+    .innerHTML = `${hours} <span class="statistic__item-description">h</span> ${mins} <span class="statistic__item-description">m</span>`;
+  textStatistic[2]
+    .innerHTML = watchedStatistics.mostWatchedGenre;
+
+  rankLabelElement.innerHTML = rankLabel;
+};
+
+document.querySelector(`.main-navigation__item--additional`)
+  .addEventListener(`click`, onStatClick);

@@ -64,9 +64,6 @@ export default class Card extends Component {
     this._element
       .querySelector(`.film-card__controls`)
       .addEventListener(`click`, this._onControlFormClick);
-    // this._element
-    //   .querySelector(`.film-card__controls-item--add-to-watchlist`)
-    //   .addEventListener(`click`, this._onAddToWatchList);
   }
 
   _unbind() {
@@ -76,8 +73,5 @@ export default class Card extends Component {
     this._element
       .querySelector(`.film-card__controls`)
       .removeEventListener(`click`, this._onControlFormClick);
-    // this._element
-    //   .querySelector(`.film-card__controls-item--add-to-watchlist`)
-    //   .removeEventListener(`click`, this._onAddToWatchList);
   }
 }
