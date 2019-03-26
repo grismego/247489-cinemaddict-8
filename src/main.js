@@ -1,4 +1,5 @@
 import {createTemplates as createCardTemplate} from './templates/cards';
+import {createStatisticTemplate, createStatisticListTemplate} from './templates/statistics';
 
 import {generateFilters} from './mocks/filters';
 import {generateCards} from './mocks/cards';
@@ -7,6 +8,7 @@ import CardComponent from './components/card';
 import PopupComponent from './components/popup';
 import FilterComponent from './components/filter';
 import {drawStat, watchedStatistics} from './stat';
+import {createElement} from './util';
 
 const CARD_LIMIT_DEFAULT = 10;
 const CARD_LIMIT_EXTRA = 2;
@@ -18,20 +20,12 @@ const filmListCommentedElement = document.querySelector(`.films-list--extra:nth-
 
 const filmBoard = document.querySelector(`.films`);
 const statBoard = document.querySelector(`.statistic`);
-const textStatistic = document.querySelectorAll(`p.statistic__item-text`);
 const rankLabelElement = document.querySelector(`.statistic__rank-label`);
 const profileRankElement = document.querySelector(`.profile__rating`);
 
 filmListRatedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
 filmListCommentedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
 
-
-const countDuration = (duration) => (
-  [
-    Math.floor(duration / 60),
-    duration % 60
-  ]
-);
 
 const filterCards = (cards, filterName) => {
   switch (filterName) {
@@ -128,26 +122,21 @@ filtersData.forEach((item) => {
 });
 
 drawStat(initialCards);
-profileRankElement.innerHTML = rankLabels[watchedStatistics.mostWatchedGenre];
+createElement(createStatisticTemplate(watchedStatistics));
 
+profileRankElement.innerHTML = rankLabels[watchedStatistics.mostWatchedGenre];
 
 const onStatClick = () => {
 
+  const prevStatisticList = statBoard.querySelector(`.statistic__text-list`);
+  const nextStatisticList = createElement(createStatisticListTemplate(watchedStatistics));
+
   drawStat(initialCards);
   profileRankElement.innerHTML = rankLabels[watchedStatistics.mostWatchedGenre];
+  statBoard.replaceChild(nextStatisticList, prevStatisticList);
 
   statBoard.classList.remove(`visually-hidden`);
   filmBoard.classList.add(`visually-hidden`);
-
-  textStatistic[0]
-    .innerHTML = `${watchedStatistics.watchedAmount} <span class="statistic__item-description">movies</span>`;
-
-  const [hours, mins] = countDuration(watchedStatistics.watchedDuration);
-
-  textStatistic[1]
-    .innerHTML = `${hours} <span class="statistic__item-description">h</span> ${mins} <span class="statistic__item-description">m</span>`;
-  textStatistic[2]
-    .innerHTML = watchedStatistics.mostWatchedGenre;
 
   rankLabelElement.innerHTML = rankLabels[watchedStatistics.mostWatchedGenre];
 };
