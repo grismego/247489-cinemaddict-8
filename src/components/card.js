@@ -36,23 +36,17 @@ export default class Card extends Component {
 
   _onControlFormClick(evt) {
     evt.preventDefault();
-    if (evt.target.classList.contains(`film-card__controls-item--mark-as-watched`)) {
-      if (typeof this._onMarkAsWatched === `function`) {
-        this._data.isWatched = !this._data.isWatched;
-        this._onMarkAsWatched(this._data.isWatched);
-      }
+    if (typeof typeof this._onMarkAsWatched === `function` && evt.target.classList.contains(`film-card__controls-item--mark-as-watched`)) {
+      this._data.isWatched = !this._data.isWatched;
+      this._onMarkAsWatched(this._data.isWatched);
     }
-    if (evt.target.classList.contains(`film-card__controls-item--favorite`)) {
-      if (typeof this._onMarkAsFavorite === `function`) {
-        this._data.isFavorite = !this._data.isFavorite;
-        this._onMarkAsFavorite(this._data.isFavorite);
-      }
+    if (typeof this._onMarkAsFavorite === `function` && evt.target.classList.contains(`film-card__controls-item--favorite`)) {
+      this._data.isFavorite = !this._data.isFavorite;
+      this._onMarkAsFavorite(this._data.isFavorite);
     }
-    if (evt.target.classList.contains(`film-card__controls-item--add-to-watchlist`)) {
-      if (typeof this._onAddToWatchList === `function`) {
-        this._data.addedToWathed = !this._data.addedToWathed;
-        this._onAddToWatchList(this._data.addedToWathed);
-      }
+    if (typeof this._onAddToWatchList === `function` && evt.target.classList.contains(`film-card__controls-item--add-to-watchlist`)) {
+      this._data.addedToWathed = !this._data.addedToWathed;
+      this._onAddToWatchList(this._data.addedToWathed);
     }
   }
 

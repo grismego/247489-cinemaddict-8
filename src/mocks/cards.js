@@ -29,12 +29,14 @@ const POSTERS = [
 ];
 
 const GENRES = [
-  `Action`,
-  `Adventure`,
   `Comedies`,
+  `History`,
+  `Drama`,
   `Horror`,
+  `Series`,
   `Westerns`,
-  `Comedy`
+  `Action`,
+  `Adventure`
 ];
 
 const DIRECTOR = [

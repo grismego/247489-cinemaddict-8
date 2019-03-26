@@ -102,35 +102,15 @@ const renderCards = (cards) => {
   }
 };
 
-const getRankLabel = (genre) => {
-  switch (genre) {
-    case `Comedy`:
-      return `ComedyMan`;
-
-    case `History`:
-      return `HistoryLover`;
-
-    case `Drama`:
-      return `DramaTic`;
-
-    case `Horror`:
-      return `HorrorAble`;
-
-    case `Series`:
-      return `SeriesLonger`;
-
-    case `Western`:
-      return `Gunner`;
-
-    case `Action`:
-      return `ActionEr`;
-
-    case `Adventure`:
-      return `Driver`;
-
-    default:
-      return `Uups`;
-  }
+const rankLabels = {
+  Comedies: `ComedyMan`,
+  History: `HistoryLover`,
+  Drama: `DramaTic`,
+  Horror: `HorrorAble`,
+  Series: `SeriesLonger`,
+  Westerns: `Gunner`,
+  Action: `ActionEr`,
+  Adventure: `Driver`
 };
 
 renderCards(initialCards);
@@ -148,15 +128,13 @@ filtersData.forEach((item) => {
 });
 
 drawStat(initialCards);
-let rankLabel = getRankLabel(watchedStatistics.mostWatchedGenre);
-profileRankElement.innerHTML = rankLabel;
+profileRankElement.innerHTML = rankLabels[watchedStatistics.mostWatchedGenre];
 
 
 const onStatClick = () => {
 
   drawStat(initialCards);
-  rankLabel = getRankLabel(watchedStatistics.mostWatchedGenre);
-  profileRankElement.innerHTML = rankLabel;
+  profileRankElement.innerHTML = rankLabels[watchedStatistics.mostWatchedGenre];
 
   statBoard.classList.remove(`visually-hidden`);
   filmBoard.classList.add(`visually-hidden`);
@@ -171,7 +149,7 @@ const onStatClick = () => {
   textStatistic[2]
     .innerHTML = watchedStatistics.mostWatchedGenre;
 
-  rankLabelElement.innerHTML = rankLabel;
+  rankLabelElement.innerHTML = rankLabels[watchedStatistics.mostWatchedGenre];
 };
 
 document.querySelector(`.main-navigation__item--additional`)
