@@ -44,14 +44,17 @@ export default class CardPopup extends Component {
     this._onClose = fn;
   }
 
-  _onCloseClick() {
-    return typeof this._onClose === `function` && this._onClose();
-  }
-
   set onSubmit(fn) {
     this._onSubmit = fn;
   }
 
+  set onChangeRating(fn) {
+    this._onChangeRating = fn;
+  }
+
+  _onCloseClick() {
+    return typeof this._onClose === `function` && this._onClose();
+  }
 
   _emojiMapper(key) {
     switch (key) {

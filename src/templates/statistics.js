@@ -24,7 +24,7 @@ export const createStatisticListTemplate = (data) => {
 };
 
 export const createStatisticTemplate = (data) => {
-  return (`<section class="statistic">
+  return (`<section class="statistic visually-hidden">
   <p class="statistic__rank">Your rank <span class="statistic__rank-label">${data.mostWatchedGenre}</span></p>
   <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
     <p class="statistic__filters-description">Show stats:</p>

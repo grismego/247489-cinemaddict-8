@@ -1,18 +1,13 @@
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-const BAR_HEIGHT = 50;
-
-const statisticCtx = document.querySelector(`.statistic__chart`);
-statisticCtx.height = BAR_HEIGHT * 5;
-
 let watchedStatistics = {};
 
-export const drawStat = (cards) => {
+export const drawStat = (ctx, cards) => {
   const genresStat = getStat(cards);
 
   // eslint-disable-next-line no-unused-vars
-  const myChart = new Chart(statisticCtx, {
+  const myChart = new Chart(ctx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
@@ -70,17 +65,11 @@ export const drawStat = (cards) => {
   });
 };
 
-const getTotalDuration = (cards) => {
-  return cards.reduce((accumulator, card) => accumulator + card.duration, 0);
-};
+const getTotalDuration = (cards) => cards.reduce((accumulator, card) => accumulator + card.duration, 0);
 
-const sortObject = (obj) => {
-  const sorted = Object.entries(obj).sort((a, b) => b[1] - a[1]);
-  return sorted;
-};
+const sortObject = (obj) => Object.entries(obj).sort((a, b) => b[1] - a[1]);
 
 const getStat = (cards) => {
-
   const genresStats = {};
   const filteredCards = cards.filter((card) => card.isWatched);
   watchedStatistics.watchedAmount = filteredCards.length;

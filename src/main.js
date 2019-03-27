@@ -7,21 +7,21 @@ import {generateCards} from './mocks/cards';
 import CardComponent from './components/card';
 import PopupComponent from './components/popup';
 import FilterComponent from './components/filter';
+
 import {drawStat, watchedStatistics} from './stat';
 import {createElement} from './util';
 
 const CARD_LIMIT_DEFAULT = 10;
 const CARD_LIMIT_EXTRA = 2;
+const BAR_HEIGHT = 50;
 
+const mainElement = document.querySelector(`.main`);
 const navigationElement = document.querySelector(`.main-navigation`);
 const filmListElement = document.querySelector(`.films-list .films-list__container`);
 const filmListRatedElement = document.querySelector(`.films-list--extra:nth-child(2) .films-list__container`);
 const filmListCommentedElement = document.querySelector(`.films-list--extra:nth-child(3) .films-list__container`);
 
 const filmBoard = document.querySelector(`.films`);
-const statBoard = document.querySelector(`.statistic`);
-const rankLabelElement = document.querySelector(`.statistic__rank-label`);
-const profileRankElement = document.querySelector(`.profile__rating`);
 
 filmListRatedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
 filmListCommentedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
@@ -87,7 +87,6 @@ const renderCards = (cards) => {
       popupComponent.unrender();
     };
 
-
     popupComponent.onClose = () => {
       cardComponent.update(data);
       document.body.removeChild(popupComponent.element);
@@ -121,17 +120,26 @@ filtersData.forEach((item) => {
   };
 });
 
-drawStat(initialCards);
-createElement(createStatisticTemplate(watchedStatistics));
+
+const statisticElement = createElement(createStatisticTemplate(watchedStatistics));
+mainElement.appendChild(statisticElement);
+
+const statBoard = document.querySelector(`.statistic`);
+const rankLabelElement = document.querySelector(`.statistic__rank-label`);
+const profileRankElement = document.querySelector(`.profile__rating`);
+
+const statisticCtx = document.querySelector(`.statistic__chart`);
+statisticCtx.height = BAR_HEIGHT * 5;
+
+drawStat(statisticCtx, initialCards);
 
 profileRankElement.innerHTML = rankLabels[watchedStatistics.mostWatchedGenre];
 
 const onStatClick = () => {
-
-  const prevStatisticList = statBoard.querySelector(`.statistic__text-list`);
+  const prevStatisticList = statisticElement.querySelector(`.statistic__text-list`);
   const nextStatisticList = createElement(createStatisticListTemplate(watchedStatistics));
 
-  drawStat(initialCards);
+  drawStat(statisticCtx, initialCards);
   profileRankElement.innerHTML = rankLabels[watchedStatistics.mostWatchedGenre];
   statBoard.replaceChild(nextStatisticList, prevStatisticList);
 
