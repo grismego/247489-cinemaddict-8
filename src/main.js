@@ -8,6 +8,8 @@ import {generateCards} from './mocks/cards';
 // import CardComponent from './components/card';
 // import PopupComponent from './components/popup';
 import FiltersComponent from './components/filters';
+import CardsComponent from './components/cards';
+
 
 // import {drawStat, watchedStatistics} from './stat';
 // import {createElement} from './util';
@@ -35,32 +37,36 @@ filmListCommentedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT
 const cards = generateCards(CARD_LIMIT_DEFAULT);
 const filters = generateFilters(cards);
 
-const filtersComponent = new FiltersComponent({ filters, cards });
-const cardsComponent = new CardsComponent({ cards });
+const cardsComponent = new CardsComponent(cards);
 
-filtersComponent.onChange = ({ filterId, filteredCards }) => {
+const filtersComponent = new FiltersComponent({ filters, cards });
+// const cardsComponent = new CardsComponent({ cards });
+
+filtersComponent.onChange = ({filterId, filteredCards}) => {
   if (filterId === `all`) {
     statBoardElement.classList.add(`visually-hidden`);
     filmBoard.classList.remove(`visually-hidden`);
   }
 
-  filmListElement.innerHTML = ``;
-  renderCards(filteredCards)
+  // filmListElement.innerHTML = ``;
+  // renderCards(filteredCards);
 };
 
 mainElement.insertAdjacentElement(`afterbegin`, filtersComponent.render());
 
-const renderCards = (cards) => {
-  cards.forEach((card) => {
-    const component = new ComposedCardComponent(card)
+filmBoardElement.insertAdjacentElement(`afterbegin`, cardsComponent.render());
 
-    component.onChange = (prevElement, nextElement) => {
-      filmListElement.replaceChild(nextElement, prevElement);
-    }
+// const renderCards = (cards) => {
+//   cards.forEach((card) => {
+//     const component = new ComposedCardComponent(card)
 
-    filmListElement.appendChild(component.render());
-  })
-}
+//     component.onChange = (prevElement, nextElement) => {
+//       filmListElement.replaceChild(nextElement, prevElement);
+//     }
+
+//     filmListElement.appendChild(component.render());
+//   })
+// }
 /*
 
 

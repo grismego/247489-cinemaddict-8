@@ -21,11 +21,10 @@ export default class FiltersComponent extends BaseComponent {
 
   render() {
     const element = super.render();
-
+    // console.log(this._data);
     this.components = this._data.filters.map((filterData) => {
       const component = new FilterComponent(filterData);
       
-
       element.appendChild(component.render());
 
       component.onSelect = (filterId) => {
@@ -56,11 +55,9 @@ export default class FiltersComponent extends BaseComponent {
   }
 
   _bind() {
-
   }
 
   _unbind() {
-  
   }
 
 }

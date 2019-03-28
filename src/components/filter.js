@@ -17,7 +17,7 @@ export default class Filter extends BaseComponent {
 
   _onFilterClick(evt) {
     evt.preventDefault();
-    if (typeof this._onSelect === `function`) {
+    if (typeof this._onSelect === `function` && evt.currentTarget.tagName === `A`) {
       this._onSelect(evt.target.getAttribute(`data-filter-id`));
     }
   }
