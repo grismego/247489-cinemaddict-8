@@ -1,52 +1,68 @@
-import {createTemplates as createCardTemplate} from './templates/cards';
-import {createStatisticTemplate, createStatisticListTemplate} from './templates/statistics';
+// import {createTemplates as createCardTemplate} from './templates/cards';
+
+// import {createStatisticTemplate, createStatisticListTemplate} from './templates/statistics';
 
 import {generateFilters} from './mocks/filters';
 import {generateCards} from './mocks/cards';
 
-import CardComponent from './components/card';
-import PopupComponent from './components/popup';
-import FilterComponent from './components/filter';
+// import CardComponent from './components/card';
+// import PopupComponent from './components/popup';
+import FiltersComponent from './components/filters';
 
-import {drawStat, watchedStatistics} from './stat';
-import {createElement} from './util';
+// import {drawStat, watchedStatistics} from './stat';
+// import {createElement} from './util';
 
 const CARD_LIMIT_DEFAULT = 10;
 const CARD_LIMIT_EXTRA = 2;
 const BAR_HEIGHT = 50;
 
 const mainElement = document.querySelector(`.main`);
-const navigationElement = document.querySelector(`.main-navigation`);
+const statBoardElement = document.querySelector(`.statistic`);
+const filmBoardElement = document.querySelector(`.films`);
+
+/*
 const filmListElement = document.querySelector(`.films-list .films-list__container`);
 const filmListRatedElement = document.querySelector(`.films-list--extra:nth-child(2) .films-list__container`);
 const filmListCommentedElement = document.querySelector(`.films-list--extra:nth-child(3) .films-list__container`);
 
-const filmBoard = document.querySelector(`.films`);
-
 filmListRatedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
 filmListCommentedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
+*/
+
+// / const cardsComponent = new CardsComponent(cards
 
 
-const filterCards = (cards, filterName) => {
-  switch (filterName) {
-    case `All movies`:
-      statBoard.classList.add(`visually-hidden`);
-      filmBoard.classList.remove(`visually-hidden`);
-      return cards;
-    case `Watchlist`:
-      return cards.filter((it) => it.addedToWathed);
-    case `History`:
-      return cards.filter((it) => it.isWatched);
-    case `Favorites`:
-      return cards.filter((it) => it.isFavorite);
-    default:
-      return cards;
+const cards = generateCards(CARD_LIMIT_DEFAULT);
+const filters = generateFilters(cards);
+
+const filtersComponent = new FiltersComponent({ filters, cards });
+const cardsComponent = new CardsComponent({ cards });
+
+filtersComponent.onChange = ({ filterId, filteredCards }) => {
+  if (filterId === `all`) {
+    statBoardElement.classList.add(`visually-hidden`);
+    filmBoard.classList.remove(`visually-hidden`);
   }
+
+  filmListElement.innerHTML = ``;
+  renderCards(filteredCards)
 };
 
+mainElement.insertAdjacentElement(`afterbegin`, filtersComponent.render());
 
-const filtersData = generateFilters();
-const initialCards = generateCards(CARD_LIMIT_DEFAULT);
+const renderCards = (cards) => {
+  cards.forEach((card) => {
+    const component = new ComposedCardComponent(card)
+
+    component.onChange = (prevElement, nextElement) => {
+      filmListElement.replaceChild(nextElement, prevElement);
+    }
+
+    filmListElement.appendChild(component.render());
+  })
+}
+/*
+
 
 const renderCards = (cards) => {
   for (const data of cards) {
@@ -95,7 +111,7 @@ const renderCards = (cards) => {
   }
 };
 
-const rankLabels = {
+const RankLabels = {
   Comedies: `ComedyMan`,
   History: `HistoryLover`,
   Drama: `DramaTic`,
@@ -108,23 +124,9 @@ const rankLabels = {
 
 renderCards(initialCards);
 
-filtersData.forEach((item) => {
-  const filterComponent = new FilterComponent(item);
-  navigationElement.appendChild(filterComponent.render());
-
-  filterComponent.onFilter = (evt) => {
-    const filterName = evt.target.textContent.replace(/\d+/g, ``).trim();
-    const filteredCards = filterCards(initialCards, filterName);
-    filmListElement.innerHTML = ``;
-    renderCards(filteredCards);
-  };
-});
-
-
 const statisticElement = createElement(createStatisticTemplate(watchedStatistics));
 mainElement.appendChild(statisticElement);
 
-const statBoard = document.querySelector(`.statistic`);
 const rankLabelElement = document.querySelector(`.statistic__rank-label`);
 const profileRankElement = document.querySelector(`.profile__rating`);
 
@@ -133,14 +135,14 @@ statisticCtx.height = BAR_HEIGHT * 5;
 
 drawStat(statisticCtx, initialCards);
 
-profileRankElement.innerHTML = rankLabels[watchedStatistics.mostWatchedGenre];
+profileRankElement.innerHTML = RankLabels[watchedStatistics.mostWatchedGenre];
 
 const onStatClick = () => {
   const prevStatisticList = statisticElement.querySelector(`.statistic__text-list`);
   const nextStatisticList = createElement(createStatisticListTemplate(watchedStatistics));
 
   drawStat(statisticCtx, initialCards);
-  profileRankElement.innerHTML = rankLabels[watchedStatistics.mostWatchedGenre];
+  profileRankElement.innerHTML = RankLabels[watchedStatistics.mostWatchedGenre];
   statBoard.replaceChild(nextStatisticList, prevStatisticList);
 
   statBoard.classList.remove(`visually-hidden`);
@@ -151,3 +153,4 @@ const onStatClick = () => {
 
 document.querySelector(`.main-navigation__item--additional`)
   .addEventListener(`click`, onStatClick);
+*/

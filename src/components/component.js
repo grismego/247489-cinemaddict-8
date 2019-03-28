@@ -1,9 +1,9 @@
 import {createElement} from '../util';
 import cloneDeep from 'lodash.clonedeep';
 
-export class Component {
+export default class BaseComponent {
   constructor(data) {
-    if (new.target === Component) {
+    if (new.target === BaseComponent) {
       throw new Error(`Can't instantiate Component, only concrete one.`);
     }
 

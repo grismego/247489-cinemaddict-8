@@ -1,7 +1,7 @@
 import {createTemplate} from '../templates/cards';
-import {Component} from './component';
+import BaseComponent from './component';
 
-export default class Card extends Component {
+export default class CardComponent extends BaseComponent {
   constructor(data) {
     super(data);
     this._onClick = this._onClick.bind(this);
