@@ -5,11 +5,11 @@ import {
 } from '../templates/popup';
 
 import {createElement} from '../util';
-import {Component} from './component';
+import BaseComponent from './component';
 
 const KEYCODE_ENTER = 13;
 
-export default class CardPopup extends Component {
+export default class CardPopupComponent extends BaseComponent {
   constructor(data) {
     super(data);
     this._onCloseClick = this._onCloseClick.bind(this);

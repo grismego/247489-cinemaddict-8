@@ -54,6 +54,7 @@ filtersComponent.onChange = ({filterId, filteredCards}) => {
 
 mainElement.insertAdjacentElement(`afterbegin`, filtersComponent.render());
 
+
 filmBoardElement.insertAdjacentElement(`afterbegin`, cardsComponent.render());
 
 // const renderCards = (cards) => {
