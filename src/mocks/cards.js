@@ -107,7 +107,8 @@ const generateRandomRating = () => (
 
 const generateReleaseDate = () => moment(Math.floor(Math.random() * new Date().getTime())).format(`DD MMMM YYYY`);
 
-export const generateCard = () => ({
+export const generateCard = (_, index) => ({
+  id: index,
   title: getRandomArrayElement(TITLES),
   poster: `../images/posters/${getRandomArrayElement(POSTERS)}.jpg`,
   rating: generateRandomRating(),
@@ -136,7 +137,7 @@ export const generateCard = () => ({
     },
   ],
   isWatched: Math.random() > 0.5,
-  addedToWathed: true,
+  isAddedToWatched: true,
   isFavorite: false
 });
 

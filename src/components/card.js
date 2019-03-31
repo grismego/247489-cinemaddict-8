@@ -6,6 +6,8 @@ export default class CardComponent extends BaseComponent {
     super(data);
     this._onClick = this._onClick.bind(this);
     this._onControlFormClick = this._onControlFormClick.bind(this);
+    
+    // @TODO: use callback naming
     this._onCommentsClick = null;
     this._onAddToWatchList = null;
     this._onMarkAsWatched = null;
@@ -45,8 +47,8 @@ export default class CardComponent extends BaseComponent {
       this._onMarkAsFavorite(this._data.isFavorite);
     }
     if (typeof this._onAddToWatchList === `function` && evt.target.classList.contains(`film-card__controls-item--add-to-watchlist`)) {
-      this._data.addedToWathed = !this._data.addedToWathed;
-      this._onAddToWatchList(this._data.addedToWathed);
+      this._data.isAddedToWatched = !this._data.isAddedToWatched;
+      this._onAddToWatchList(this._data.isAddedToWatched);
     }
   }
 

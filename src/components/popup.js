@@ -27,7 +27,7 @@ export default class CardPopupComponent extends BaseComponent {
       comment: ``,
     };
 
-    const taskEditMapper = CardPopup.createMapper(entry);
+    const taskEditMapper = CardPopupComponent.createMapper(entry);
 
     Array.from(formData.entries()).forEach(
         ([property, value]) => taskEditMapper[property] && taskEditMapper[property](value)

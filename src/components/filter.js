@@ -1,7 +1,7 @@
 import BaseComponent from './component';
 import {createFilterTemplate} from '../templates/filters';
 
-export default class Filter extends BaseComponent {
+export default class FilterComponent extends BaseComponent {
   constructor(data) {
     super(data);
     this._onFilterClick = this._onFilterClick.bind(this);
@@ -17,7 +17,7 @@ export default class Filter extends BaseComponent {
 
   _onFilterClick(evt) {
     evt.preventDefault();
-    if (typeof this._onSelect === `function` && evt.currentTarget.tagName === `A`) {
+    if (typeof this._onSelect === `function` && evt.target.tagName === `A`) {
       this._onSelect(evt.target.getAttribute(`data-filter-id`));
     }
   }

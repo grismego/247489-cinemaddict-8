@@ -4,6 +4,7 @@
 
 import {generateFilters} from './mocks/filters';
 import {generateCards} from './mocks/cards';
+import {filterFunctions} from './mocks/filters';
 
 // import CardComponent from './components/card';
 // import PopupComponent from './components/popup';
@@ -22,9 +23,9 @@ const mainElement = document.querySelector(`.main`);
 const statBoardElement = document.querySelector(`.statistic`);
 const filmBoardElement = document.querySelector(`.films`);
 
-/*
+
 const filmListElement = document.querySelector(`.films-list .films-list__container`);
-const filmListRatedElement = document.querySelector(`.films-list--extra:nth-child(2) .films-list__container`);
+/* const filmListRatedElement = document.querySelector(`.films-list--extra:nth-child(2) .films-list__container`);
 const filmListCommentedElement = document.querySelector(`.films-list--extra:nth-child(3) .films-list__container`);
 
 filmListRatedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
@@ -33,29 +34,93 @@ filmListCommentedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT
 
 // / const cardsComponent = new CardsComponent(cards
 
-
-const cards = generateCards(CARD_LIMIT_DEFAULT);
+let cards = generateCards(CARD_LIMIT_DEFAULT);
+let cardsComponent;
+// const cards = generateCards(CARD_LIMIT_DEFAULT);
 const filters = generateFilters(cards);
 
-const cardsComponent = new CardsComponent(cards);
+// class CardSectionsComponent extends BaseComponent {
+//   constructor(data) {
+//     super(data);
+//   }
 
-const filtersComponent = new FiltersComponent({ filters, cards });
-// const cardsComponent = new CardsComponent({ cards });
+//   get template() {
+//     return (
+//       `<div></div>`
+//     );
+//   }
+
+
+//   render() {
+//     const element = super.render();
+
+//     this._data;
+//     // filter data
+
+//     const cardsAllComponent = CardsComponent(data, { title: 'test' })
+//     const cardsTopCommentComponent = CardsComponent(data, { title: 'test2' })
+//     const cardsFavoritedComponent = CardsComponent(data, { title: 'test3' })
+
+//     cardsAllComponent.onChange = (updatedCard) => {
+
+//     }
+
+//     if (typeof this._changeCallback === "function") {
+//       this._changeCallback(this._data);
+//     }
+
+//     element.appendChild(cardsAllComponent.render())
+//     element.appendChild(cardsRatedComponent.render())
+
+
+//     return elemennt
+//   }
+
+// }
+
+
+// const cardsComponent = new CardsComponent(cards);
+// const cardSectionsComponent = new CardSectionsComponent(cards);
+
+
+//  const cardsRatedComponent = new CardsComponent(cards);
+// const cardsFavoritedComponent = new CardsComponent(cards);
+
+const filtersComponent = new FiltersComponent({filters, cards});
 
 filtersComponent.onChange = ({filterId, filteredCards}) => {
   if (filterId === `all`) {
-    statBoardElement.classList.add(`visually-hidden`);
-    filmBoard.classList.remove(`visually-hidden`);
+    // statBoardElement.classList.add(`visually-hidden`);
+    filmBoardElement.classList.remove(`visually-hidden`);
+    renderCards(filteredCards);
   }
-
-  // filmListElement.innerHTML = ``;
-  // renderCards(filteredCards);
+  filmBoardElement.innerHTML = ``;
+  renderCards(filteredCards);
 };
+
+// cardSectionsComponent.onChange = (cards) => { // 
+//   console.log(updatedCards);
+
+//   // filtersComponent.unrender();
+//   // filtersComponent.update({ cards });
+//   // filtersComponent.render();
+// }
 
 mainElement.insertAdjacentElement(`afterbegin`, filtersComponent.render());
 
+// filmBoardElement.insertAdjacentElement(`afterbegin`, cardsComponent.render());
+// filmBoardElement.insertAdjacentElement(`afterbegin`, cardsRatedComponent.render());
+// filmBoardElement.insertAdjacentElement(`afterbegin`, cardsFavoritedComponent.render());
 
-filmBoardElement.insertAdjacentElement(`afterbegin`, cardsComponent.render());
+const renderCards = (cardsList) => {
+  cardsComponent = new CardsComponent(cardsList);
+  cardsComponent.onChange = ((updatedCards) => {
+    cards = updatedCards;
+  });
+  filmBoardElement.insertAdjacentElement(`beforeend`, cardsComponent.render());
+};
+
+renderCards(cards);
 
 // const renderCards = (cards) => {
 //   cards.forEach((card) => {

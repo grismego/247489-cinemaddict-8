@@ -1,7 +1,7 @@
-const filterFunctions = {
+export const filterFunctions = {
   history: (it) => it.isWatched,
   favorites: (it) => it.isFavorite,
-  watchlist: (it) => it.addedToWathed
+  watchlist: (it) => it.isAddedToWatched
 };
 
 export const generateFilters = (cards = []) => [

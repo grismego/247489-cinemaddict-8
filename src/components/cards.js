@@ -1,42 +1,101 @@
 import BaseComponent from './component';
 import CardComponent from './card';
-import {createCardsTemplate} from '../templates/cards';
-import CardPopupComponent from './popup';
+import PopupComponent from './popup';
+import FiltersComponent from './filters';
+import {createCardSectionTemplate} from '../templates/cards';
+
 
 export default class CardsComponent extends BaseComponent {
   constructor(data) {
     super(data);
 
     this.components = null;
+    this._changeCallback = null;
   }
 
   get template() {
-    return createCardsTemplate();
+    return createCardSectionTemplate(`All movies`, false, true);
   }
 
+  set onChange(fn) { // onCardChange
+    this._changeCallback = fn; // @TODO: _changeCardCallback
+  }
+
+  _bind() { }
+
+  _unbind() { }
+
   render() {
-    const element = super.render();
-    
-    this.components = this._data.map((card) => {
-      const component = new CardComponent(card);
-      const popupComponent = new CardPopupComponent(card);
+    const sectionElement = super.render();
+    const containerElement = sectionElement.querySelector(`.films-list__container`);
 
-      element.querySelector(`.films-list__container`).appendChild(component.render());
+    this.components = this._data.map((data) => {
+      const cardComponent = new CardComponent(data);
+      const popupComponent = new PopupComponent(data);
+      const filterComponent = new FiltersComponent(data);
 
-      component.onCommentsClick = () => {
+      containerElement.appendChild(cardComponent.render());
+
+      cardComponent.onCommentsClick = () => {
         popupComponent.render();
+        if (typeof this._changeCallback === `function`) {
+          this._changeCallback(this._data);
+        }
         document.body.appendChild(popupComponent.element);
       };
 
-      popupComponent.onClose = () => {
-        component.update(card);
+      cardComponent.onAddToWatchList = (isAddedToWatched) => {
+        data.isAddedToWatched = isAddedToWatched;
+        if (typeof this._changeCallback === `function`) {
+          this._changeCallback(this._data);
+        }
+        popupComponent.update(data);
+        filterComponent.update(data);
+      };
+
+      cardComponent.onMarkAsWatched = (isWatched) => {
+        data.isWatched = isWatched;
+        if (typeof this._changeCallback === `function`) {
+          this._changeCallback(this._data);
+        }
+        popupComponent.update(data);
+        filterComponent.update(data);
+      };
+
+      cardComponent.onMarkAsFavorite = (isFavorite) => {
+        data.isFavorite = isFavorite;
+        if (typeof this._changeCallback === `function`) {
+          this._changeCallback(this._data);
+        }
+        popupComponent.update(data);
+        filterComponent.update(data);
+      };
+
+      popupComponent.onSubmit = (newData) => {
+        const editElement = cardComponent.element;
+
+        cardComponent.unrender();
+        cardComponent.update(newData);
+        cardComponent.render();
+
+        if (typeof this._changeCallback === `function`) {
+          this._changeCallback(this._data);
+        }
+
+        containerElement.replaceChild(cardComponent.render(), editElement);
         document.body.removeChild(popupComponent.element);
         popupComponent.unrender();
       };
 
-      return component;
+      popupComponent.onClose = () => {
+        document.body.removeChild(popupComponent.element);
+        popupComponent.unrender();
+      };
+
+      return cardComponent;
     });
-    return element;
+
+    return sectionElement;
   }
 
   unrender() {
@@ -48,11 +107,5 @@ export default class CardsComponent extends BaseComponent {
     this.components = null;
 
     super.unrender();
-  }
-
-  _bind() {
-  }
-
-  _unbind() {
   }
 }
