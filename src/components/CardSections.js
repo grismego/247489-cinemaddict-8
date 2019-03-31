@@ -27,10 +27,17 @@ export default class CardSectionsComponent extends BaseComponent {
 
     this.componentSectionAll = new CardSection(this._data.cards, {
       title: `All Movies`,
+      showMore: true
     });
 
-    this.componentSectionRated = new CardSection(this._data.cards, {
-      title: `test2`
+    this.componentSectionRated = new CardSection(this._data.cards.slice(0, 2), {
+      title: `Top rated`,
+      isExtra: true,
+    });
+
+    this.componentSectionTopComment = new CardSection(this._data.cards.slice(0, 2), {
+      title: `Top Comment`,
+      isExtra: true,
     });
 
     const onCardChange = (updatedCard) => {
@@ -52,6 +59,7 @@ export default class CardSectionsComponent extends BaseComponent {
 
     element.appendChild(this.componentSectionAll.render());
     element.appendChild(this.componentSectionRated.render());
+    element.appendChild(this.componentSectionTopComment.render());
 
     return element;
   }
