@@ -20,11 +20,11 @@ export default class BaseComponent {
   }
 
   _bind() {
-    throw new Error(`You have to define bind.`);
+
   }
 
   _unbind() {
-    throw new Error(`You have to define unbind.`);
+
   }
 
   render() {

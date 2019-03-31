@@ -1,6 +1,6 @@
-import BaseComponent from './component';
+import BaseComponent from './Base';
 import {createFiltersTemplate} from '../templates/filters';
-import FilterComponent from './filter';
+import FilterComponent from './Filter';
 
 export default class FiltersComponent extends BaseComponent {
 
@@ -21,9 +21,9 @@ export default class FiltersComponent extends BaseComponent {
 
   render() {
     const element = super.render();
+
     this.components = this._data.filters.map((filterData) => {
       const component = new FilterComponent(filterData);
-
 
       element.appendChild(component.render());
 

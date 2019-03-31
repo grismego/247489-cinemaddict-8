@@ -5,7 +5,7 @@ import {
 } from '../templates/popup';
 
 import {createElement} from '../util';
-import BaseComponent from './component';
+import BaseComponent from './Base';
 
 const KEYCODE_ENTER = 13;
 

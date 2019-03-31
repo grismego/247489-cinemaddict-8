@@ -284,6 +284,7 @@ a:hover {
   opacity: 1;
   text-indent: -900em;
   transition: opacity 0.1s ease-in;
+  filter: blur(1px);
 }
 
 .film-card__controls-item:last-of-type {
@@ -294,6 +295,9 @@ a:hover {
   opacity: 0.7;
 }
 
+.film-card__controls-item--actived {
+  filter: none;
+}
 .film-card__controls-item--add-to-watchlist {
   background-image: url('../images/icon-watchlist.png');
 }

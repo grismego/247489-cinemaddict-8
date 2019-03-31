@@ -1,17 +1,16 @@
 import {createTemplate} from '../templates/cards';
-import BaseComponent from './component';
+import BaseComponent from './Base';
 
 export default class CardComponent extends BaseComponent {
   constructor(data) {
     super(data);
     this._onClick = this._onClick.bind(this);
     this._onControlFormClick = this._onControlFormClick.bind(this);
-    
-    // @TODO: use callback naming
-    this._onCommentsClick = null;
-    this._onAddToWatchList = null;
-    this._onMarkAsWatched = null;
-    this._onMarkAsFavorite = null;
+
+    this._commentsClickCallback = null;
+    this._addToWatchListCallback = null;
+    this._markAsWatchedCallback = null;
+    this._markAsFavoriteCallback = null;
   }
 
   get template() {
@@ -19,39 +18,41 @@ export default class CardComponent extends BaseComponent {
   }
 
   set onCommentsClick(fn) {
-    this._onCommentsClick = fn;
+    this._commentsClickCallback = fn;
   }
 
   set onAddToWatchList(fn) {
-    this._onAddToWatchList = fn;
+    this._addToWatchListCallback = fn;
   }
   set onMarkAsWatched(fn) {
-    this._onMarkAsWatched = fn;
+    this._markAsWatchedCallback = fn;
   }
   set onMarkAsFavorite(fn) {
-    this._onMarkAsFavorite = fn;
+    this._markAsFavoriteCallback = fn;
   }
 
   _onClick() {
-    return typeof this._onCommentsClick === `function` && this._onCommentsClick();
+    return typeof this._commentsClickCallback === `function` && this._commentsClickCallback();
   }
 
   _onControlFormClick(evt) {
     evt.preventDefault();
-    if (typeof typeof this._onMarkAsWatched === `function` && evt.target.classList.contains(`film-card__controls-item--mark-as-watched`)) {
+
+    if (typeof typeof this._markAsWatchedCallback === `function` && evt.target.classList.contains(`film-card__controls-item--mark-as-watched`)) {
       this._data.isWatched = !this._data.isWatched;
-      this._onMarkAsWatched(this._data.isWatched);
+      this._markAsWatchedCallback(this._data.isWatched);
     }
-    if (typeof this._onMarkAsFavorite === `function` && evt.target.classList.contains(`film-card__controls-item--favorite`)) {
+
+    if (typeof this._markAsFavoriteCallback === `function` && evt.target.classList.contains(`film-card__controls-item--favorite`)) {
       this._data.isFavorite = !this._data.isFavorite;
-      this._onMarkAsFavorite(this._data.isFavorite);
+      this._markAsFavoriteCallback(this._data.isFavorite);
     }
-    if (typeof this._onAddToWatchList === `function` && evt.target.classList.contains(`film-card__controls-item--add-to-watchlist`)) {
+
+    if (typeof this._addToWatchListCallback === `function` && evt.target.classList.contains(`film-card__controls-item--add-to-watchlist`)) {
       this._data.isAddedToWatched = !this._data.isAddedToWatched;
-      this._onAddToWatchList(this._data.isAddedToWatched);
+      this._addToWatchListCallback(this._data.isAddedToWatched);
     }
   }
-
 
   _bind() {
     this._element

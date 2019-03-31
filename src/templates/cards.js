@@ -3,15 +3,18 @@ import moment from 'moment';
 const CONTROLS = [
   {
     name: `WL`,
-    modificator: `add-to-watchlist`
+    modificator: `add-to-watchlist`,
+    cardProperty: `isAddedToWatched`
   },
   {
     name: `WTCHD`,
-    modificator: `mark-as-watched`
+    modificator: `mark-as-watched`,
+    cardProperty: `isWatched`
   },
   {
     name: `FAV`,
-    modificator: `favorite`
+    modificator: `favorite`,
+    cardProperty: `isFavorite`
   }
 ];
 
@@ -36,10 +39,10 @@ export const createCardSectionsTemplate = () => (
   createCardSectionTemplate(`Most commented`, true)
 );
 
-const createControlsTemplate = () => (
+const createControlsTemplate = (card) => (
   `<form class="film-card__controls">
     ${CONTROLS.map((control) => (
-    `<button class="film-card__controls-item button film-card__controls-item--${control.modificator}">
+    `<button class="button film-card__controls-item film-card__controls-item--${control.modificator} ${card[control.cardProperty] ? `film-card__controls-item--actived` : ``}">
         ${control.name}
      </button>`
   )).join(``)}
@@ -83,7 +86,7 @@ export const createTemplate = (card, withOptions = false) => {
       <img src="${card.poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${card.description}</p>
       <button class="film-card__comments">${card.comments.length} comments</button>
-      ${withOptions ? createControlsTemplate() : ``}
+      ${withOptions ? createControlsTemplate(card) : ``}
     </article>`
   );
 };

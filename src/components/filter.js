@@ -1,4 +1,4 @@
-import BaseComponent from './component';
+import BaseComponent from './Base';
 import {createFilterTemplate} from '../templates/filters';
 
 export default class FilterComponent extends BaseComponent {

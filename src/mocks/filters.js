@@ -10,12 +10,15 @@ export const generateFilters = (cards = []) => [
     state: `active`,
     anchor: `all`,
   },
-  ...[`Watchlist`, `History`, `Favorites`].map((name) => ({
-    name,
-    count: cards.filter(filterFunctions[name.toLowerCase()]).length,
-    anchor: name.toLowerCase(),
-    filterBy: filterFunctions[name.toLowerCase()]
-  })),
+  ...[`Watchlist`, `History`, `Favorites`].map((name) => {
+    const filterBy = filterFunctions[name.toLowerCase()];
+    return {
+      name,
+      count: cards.filter(filterBy).length,
+      anchor: name.toLowerCase(),
+      filterBy
+    };
+  }),
   {
     name: `stats`,
     state: `additional`,
