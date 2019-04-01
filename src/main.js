@@ -44,6 +44,8 @@ cardSectionsComponent.onCardsChange = (updatedCards) => {
     cards: updatedCards,
     filters: generateFilters(updatedCards)
   });
+  // todo update/unrender TopComment TopRated
+  console.log(cardSectionsComponent);
   mainElement.replaceChild(filtersComponent.render(), prevElement);
 };
 

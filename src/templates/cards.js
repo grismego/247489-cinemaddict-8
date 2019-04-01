@@ -42,7 +42,7 @@ export const createCardSectionsTemplate = () => (
 const createControlsTemplate = (card) => (
   `<form class="film-card__controls">
     ${CONTROLS.map((control) => (
-    `<button class="button film-card__controls-item film-card__controls-item--${control.modificator} ${card[control.cardProperty] ? `film-card__controls-item--actived` : ``}">
+    `<button class="button film-card__controls-item film-card__controls-item--${control.modificator} ${card[control.cardProperty] ? `` : `film-card__controls-item--actived`}">
         ${control.name}
      </button>`
   )).join(``)}

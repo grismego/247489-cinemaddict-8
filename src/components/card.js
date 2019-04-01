@@ -2,7 +2,7 @@ import {createTemplate} from '../templates/cards';
 import BaseComponent from './Base';
 
 export default class CardComponent extends BaseComponent {
-  constructor(data) {
+  constructor(data, options = {}) {
     super(data);
     this._onClick = this._onClick.bind(this);
     this._onControlFormClick = this._onControlFormClick.bind(this);
@@ -11,10 +11,11 @@ export default class CardComponent extends BaseComponent {
     this._addToWatchListCallback = null;
     this._markAsWatchedCallback = null;
     this._markAsFavoriteCallback = null;
+    this._options = options;
   }
 
   get template() {
-    return createTemplate(this._data, true);
+    return createTemplate(this._data, this._options);
   }
 
   set onCommentsClick(fn) {
@@ -58,17 +59,21 @@ export default class CardComponent extends BaseComponent {
     this._element
       .querySelector(`.film-card__comments`)
       .addEventListener(`click`, this._onClick);
-    this._element
+    if (this._options === true) {
+      this._element
       .querySelector(`.film-card__controls`)
       .addEventListener(`click`, this._onControlFormClick);
+    }
   }
 
   _unbind() {
     this._element
       .querySelector(`.film-card__comments`)
       .removeEventListener(`click`, this._onClick);
-    this._element
-      .querySelector(`.film-card__controls`)
-      .removeEventListener(`click`, this._onControlFormClick);
+    if (this._options === true) {
+      this._element
+        .querySelector(`.film-card__controls`)
+        .removeEventListener(`click`, this._onControlFormClick);
+    }
   }
 }

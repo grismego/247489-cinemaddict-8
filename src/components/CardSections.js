@@ -1,5 +1,6 @@
 import BaseComponent from './Base';
 import CardSection from './CardSection';
+import {filterCardsByRating, filterCardsByComments} from '../util';
 
 export default class CardSectionsComponent extends BaseComponent {
   constructor(data) { // {cards, filterId}
@@ -10,6 +11,7 @@ export default class CardSectionsComponent extends BaseComponent {
 
     this._cardsChangeCallback = null;
 
+    this._extraCards = Object.assign({}, data);
   }
 
   get template() {
@@ -30,18 +32,28 @@ export default class CardSectionsComponent extends BaseComponent {
       showMore: true
     });
 
-    this.componentSectionRated = new CardSection(this._data.cards.slice(0, 2), {
+    // this.componentSectionRated = new CardSection(filterCardsByComments(this._data.cards).slice(0, 2), {
+    //   title: `Top rated`,
+    //   isExtra: true,
+    // });
+
+    // this.componentSectionTopComment = new CardSection(filterCardsByComments(this._data.cards).slice(0, 2), {
+    //   title: `Top Comment`,
+    //   isExtra: true,
+    // });
+
+    this.componentSectionRated = new CardSection(filterCardsByRating(this._extraCards.cards).slice(0, 2), {
       title: `Top rated`,
       isExtra: true,
     });
 
-    this.componentSectionTopComment = new CardSection(this._data.cards.slice(0, 2), {
+    this.componentSectionTopComment = new CardSection(filterCardsByComments(this._extraCards.cards).slice(0, 2), {
       title: `Top Comment`,
       isExtra: true,
     });
 
     const onCardChange = (updatedCard) => {
-      this._data = this._data.cards.map((card) => {
+      this._data.cards = this._data.cards.map((card) => {
         if (card.id === updatedCard.id) {
           return updatedCard;
         }
