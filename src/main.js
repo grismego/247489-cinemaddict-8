@@ -5,6 +5,7 @@
 
 import FiltersComponent from './components/Filters';
 import CardSectionsComponent from './components/CardSections';
+import StatisticComponent from './components/Statistic';
 
 import {generateFilters} from './mocks/filters';
 import {generateCards} from './mocks/cards';
@@ -39,19 +40,31 @@ filtersComponent.onChange = ({filterId, filteredCards}) => {
 
 cardSectionsComponent.onCardsChange = (updatedCards) => {
   const prevElement = filtersComponent.element;
+  // const prevRatedElem = cardSectionsComponent.componentSectionRated.element;
+
   filtersComponent.unrender();
   filtersComponent.update({
     cards: updatedCards,
     filters: generateFilters(updatedCards)
   });
+  // cardSectionsComponent.componentSectionRated.unrender();
+  // cardSectionsComponent.componentSectionRated.update(updatedCards);
+  // cardSectionsComponent.element.replaceChild(cardSectionsComponent.componentSectionRated.render(),
+  //     prevRatedElem);
+  // cardSectionsComponent.componentSectionTopComment.update(updatedCards);
+  // cardSectionsComponent.componentSectionRated.render();
+
+  // console.log(cardSectionsComponent);
   // todo update/unrender TopComment TopRated
-  console.log(cardSectionsComponent);
   mainElement.replaceChild(filtersComponent.render(), prevElement);
 };
 
 mainElement.appendChild(cardSectionsComponent.render());
 mainElement.insertAdjacentElement(`afterbegin`, filtersComponent.render());
 
+const a = new StatisticComponent(cards);
+
+document.body.appendChild(a.render());
 /*
 
 const RankLabels = {

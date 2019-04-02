@@ -7,7 +7,8 @@ export const drawStat = (ctx, cards) => {
   const genresStat = getStat(cards);
 
   // eslint-disable-next-line no-unused-vars
-  const myChart = new Chart(ctx, {
+  const myChart = new Chart(ctx, 
+    {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
