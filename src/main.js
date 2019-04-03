@@ -25,6 +25,7 @@ const filtersComponent = new FiltersComponent({filters, cards});
 const cardSectionsComponent = new CardSectionsComponent({cards});
 
 filtersComponent.onChange = ({filterId, filteredCards}) => {
+
   if (filterId === `all`) {
     statisticComponent.hide();
     cardSectionsComponent.show();
