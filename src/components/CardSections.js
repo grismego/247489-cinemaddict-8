@@ -24,6 +24,14 @@ export default class CardSectionsComponent extends BaseComponent {
     this._cardsChangeCallback = fn;
   }
 
+  show() {
+    this.element.classList.remove(`visually-hidden`);
+  }
+
+  hide() {
+    this.element.classList.add(`visually-hidden`);
+  }
+
   render() {
     const element = super.render();
 

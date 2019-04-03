@@ -26,8 +26,8 @@ const cardSectionsComponent = new CardSectionsComponent({cards});
 
 filtersComponent.onChange = ({filterId, filteredCards}) => {
   if (filterId === `all`) {
-    // statBoardElement.classList.add(`visually-hidden`);
-    cardSectionsComponent.element.classList.remove(`visually-hidden`);
+    statisticComponent.hide();
+    cardSectionsComponent.show();
   }
 
   const prevElement = cardSectionsComponent.element;
@@ -36,35 +36,31 @@ filtersComponent.onChange = ({filterId, filteredCards}) => {
 
   const nextElement = cardSectionsComponent.render();
   mainElement.replaceChild(nextElement, prevElement);
+
+  if (filterId === `stats`) {
+    statisticComponent.show();
+    cardSectionsComponent.hide();
+  }
 };
 
 cardSectionsComponent.onCardsChange = (updatedCards) => {
   const prevElement = filtersComponent.element;
-  // const prevRatedElem = cardSectionsComponent.componentSectionRated.element;
 
   filtersComponent.unrender();
   filtersComponent.update({
     cards: updatedCards,
     filters: generateFilters(updatedCards)
   });
-  // cardSectionsComponent.componentSectionRated.unrender();
-  // cardSectionsComponent.componentSectionRated.update(updatedCards);
-  // cardSectionsComponent.element.replaceChild(cardSectionsComponent.componentSectionRated.render(),
-  //     prevRatedElem);
-  // cardSectionsComponent.componentSectionTopComment.update(updatedCards);
-  // cardSectionsComponent.componentSectionRated.render();
-
-  // console.log(cardSectionsComponent);
-  // todo update/unrender TopComment TopRated
   mainElement.replaceChild(filtersComponent.render(), prevElement);
 };
 
 mainElement.appendChild(cardSectionsComponent.render());
 mainElement.insertAdjacentElement(`afterbegin`, filtersComponent.render());
 
-const a = new StatisticComponent(cards);
+const statisticComponent = new StatisticComponent(cards);
 
-document.body.appendChild(a.render());
+mainElement.appendChild(statisticComponent.render());
+
 /*
 
 const RankLabels = {

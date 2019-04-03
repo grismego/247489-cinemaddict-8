@@ -23,14 +23,10 @@ export default class FilterComponent extends BaseComponent {
   }
 
   _bind() {
-    if (this._data.state !== `additional`) {
-      this._element.addEventListener(`click`, this._onFilterClick);
-    }
+    this._element.addEventListener(`click`, this._onFilterClick);
   }
 
   _unbind() {
-    if (this._data.state !== `additional`) {
-      this._element.removeEventListener(`click`, this._onFilterClick);
-    }
+    this._element.removeEventListener(`click`, this._onFilterClick);
   }
 }
