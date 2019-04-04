@@ -46,7 +46,6 @@ filtersComponent.onChange = ({filterId, filteredCards}) => {
 
 cardSectionsComponent.onCardsChange = (updatedCards) => {
   const prevElement = filtersComponent.element;
-
   filtersComponent.unrender();
   filtersComponent.update({
     cards: updatedCards,

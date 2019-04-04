@@ -38,9 +38,9 @@ export default class CardSectionsComponent extends BaseComponent {
 
   render() {
     const element = super.render();
-    // const cards = this._filter ? this._filter(this._data.cards) : this._data.cards;
+    const cards = this._filter ? this._filter(this._data.cards) : this._data.cards;
 
-    this.componentSectionAll = new CardSection(this._data.cards, {
+    this.componentSectionAll = new CardSection(cards, {
       title: `All Movies`,
       showMore: true
     });
@@ -66,12 +66,12 @@ export default class CardSectionsComponent extends BaseComponent {
     //   isExtra: true,
     // });
 
-    this.componentSectionRated = new CardSection(filterCardsByRating(this._extraCards.cards).slice(0, 2), {
+    this.componentSectionRated = new CardSection(filterCardsByRating(cards).slice(0, 2), {
       title: `Top rated`,
       isExtra: true,
     });
 
-    this.componentSectionTopComment = new CardSection(filterCardsByComments(this._extraCards.cards).slice(0, 2), {
+    this.componentSectionTopComment = new CardSection(filterCardsByComments(cards).slice(0, 2), {
       title: `Top Comment`,
       isExtra: true,
     });
