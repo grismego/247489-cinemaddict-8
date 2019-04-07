@@ -80,8 +80,7 @@ export default class CardSectionComponent extends BaseComponent {
         // popupComponent.unrender();
       };
 
-      popupComponent.onClose = (newData) => {
-        updateCardComponent(newData);
+      popupComponent.onClose = () => {
         document.body.removeChild(popupComponent.element);
         popupComponent.unrender();
       };

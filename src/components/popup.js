@@ -23,15 +23,16 @@ export default class CardPopupComponent extends BaseComponent {
     this._onEscClick = this._onEscClick.bind(this);
     this._onCommentRemove = this._onCommentRemove.bind(this);
 
+    this._onMarkAsWatchedButtonClick = this._onMarkAsWatchedButtonClick.bind(this);
+    this._onAddToWatchListButtonClick = this._onAddToWatchListButtonClick.bind(this);
+    this._onAddToFavoriteButtonClick = this._onAddToFavoriteButtonClick.bind(this);
+
     this._onClose = null;
     this._onSubmit = null;
   }
 
   _processForm(formData) {
-    const entry = {
-      rating: ``,
-      comment: ``,
-    };
+    const entry = {};
 
     const taskEditMapper = CardPopupComponent.createMapper(entry);
 
@@ -58,7 +59,18 @@ export default class CardPopupComponent extends BaseComponent {
     this._onChangeRating = fn;
   }
 
+  _onMarkAsWatchedButtonClick() {
+    this._data.isWatched = !this._data.isWatched;
+  }
+  _onAddToWatchListButtonClick() {
+    this._data.isAddedToWatched = !this._data.isAddedToWatched;
+  }
+  _onAddToFavoriteButtonClick() {
+    this._data.isFavorite = !this._data.isFavorite;
+  }
+
   _onCloseClick() {
+    this._onFormSubmit();
     return typeof this._onClose === `function` && this._onClose();
   }
 
@@ -78,14 +90,18 @@ export default class CardPopupComponent extends BaseComponent {
   _onFormSubmit() {
     const formData = new FormData(this._element.querySelector(`.film-details__inner`));
     const data = this._processForm(formData);
+
+
     const comments = this._data.comments.slice();
 
-    comments.push({
-      author: CURRENT_USER,
-      time: new Date(),
-      comment: data.comment,
-      emoji: this._emojiMapper(data.emoji)
-    });
+    if (data.comment.length) {
+      comments.push({
+        author: CURRENT_USER,
+        time: new Date(),
+        comment: data.comment,
+        emoji: this._emojiMapper(data.emoji)
+      });
+    }
 
     this._data.rating = data.rating;
 
@@ -170,9 +186,19 @@ export default class CardPopupComponent extends BaseComponent {
       .querySelector(`.film-details__comment-input`)
       .addEventListener(`keydown`, this._onCommentInputKeydown);
 
-    this
-      ._element.querySelector(`.film-details__watched-reset`)
+    this._element
+      .querySelector(`.film-details__watched-reset`)
       .addEventListener(`click`, this._onCommentRemove);
+
+    this
+      ._element.querySelector(`#watchlist`)
+      .addEventListener(`change`, this._onAddToWatchListButtonClick);
+    this
+      ._element.querySelector(`#watched`)
+      .addEventListener(`change`, this._onMarkAsWatchedButtonClick);
+    this
+      ._element.querySelector(`#favorite`)
+      .addEventListener(`change`, this._onAddToFavoriteButtonClick);
   }
 
   _unbind() {
@@ -193,9 +219,20 @@ export default class CardPopupComponent extends BaseComponent {
       .removeEventListener(`keydown`, this._onCommentInputKeydown);
 
     document.removeEventListener(`keydown`, this._onEscClick);
+
     this
       ._element.querySelector(`.film-details__watched-reset`)
       .addEventListener(`click`, this._onCommentRemove);
+
+    this
+      ._element.querySelector(`#watchlist`)
+      .removeEventListener(`change`, this._onAddToWatchListButtonClick);
+    this
+      ._element.querySelector(`#watched`)
+      .removeEventListener(`change`, this._onMarkAsWatchedButtonClick);
+    this
+      ._element.querySelector(`#favorite`)
+      .removeEventListener(`change`, this._onAddToFavoriteButtonClick);
   }
 
   _partialUpdate() {

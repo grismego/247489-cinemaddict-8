@@ -58,7 +58,7 @@ export default class CardComponent extends BaseComponent {
     this._element
       .querySelector(`.film-card__comments`)
       .addEventListener(`click`, this._onClick);
-    if (this._options === true) {
+    if (this._options) {
       this._element
       .querySelector(`.film-card__controls`)
       .addEventListener(`click`, this._onControlFormClick);
@@ -69,7 +69,7 @@ export default class CardComponent extends BaseComponent {
     this._element
       .querySelector(`.film-card__comments`)
       .removeEventListener(`click`, this._onClick);
-    if (this._options === true) {
+    if (this._options) {
       this._element
         .querySelector(`.film-card__controls`)
         .removeEventListener(`click`, this._onControlFormClick);
