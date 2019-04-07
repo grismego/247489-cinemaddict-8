@@ -1,13 +1,17 @@
 import {
   createPopupTemplate,
   createScoreTemplate,
-  createRatingTemplate
+  createRatingTemplate,
+  createCommentsSectionTemplate
 } from '../templates/popup';
 
 import {createElement} from '../util';
 import BaseComponent from './Base';
 
 const KEYCODE_ENTER = 13;
+const KEYCODE_ESC = 27;
+
+const CURRENT_USER = `Yo`;
 
 export default class CardPopupComponent extends BaseComponent {
   constructor(data) {
@@ -16,6 +20,8 @@ export default class CardPopupComponent extends BaseComponent {
     this._onFormSubmit = this._onFormSubmit.bind(this);
     this._onChangeRating = this._onChangeRating.bind(this);
     this._onCommentInputKeydown = this._onCommentInputKeydown.bind(this);
+    this._onEscClick = this._onEscClick.bind(this);
+    this._onCommentRemove = this._onCommentRemove.bind(this);
 
     this._onClose = null;
     this._onSubmit = null;
@@ -75,11 +81,13 @@ export default class CardPopupComponent extends BaseComponent {
     const comments = this._data.comments.slice();
 
     comments.push({
-      author: `User`,
+      author: CURRENT_USER,
       time: new Date(),
       comment: data.comment,
       emoji: this._emojiMapper(data.emoji)
     });
+
+    this._data.rating = data.rating;
 
     this._unbind();
     this.update({comments});
@@ -89,8 +97,22 @@ export default class CardPopupComponent extends BaseComponent {
   }
 
   _onCommentInputKeydown(evt) {
-    if (evt.keyCode === KEYCODE_ENTER && evt.ctrlKey) {
+    const inputElement = this._element
+    .querySelector(`.film-details__comment-input`);
+    if ((evt.keyCode === KEYCODE_ENTER && evt.ctrlKey) && inputElement.value) {
       this._onFormSubmit();
+    }
+  }
+
+  _isYourComment() {
+    return this._data.comments.some((comment) => comment.author === CURRENT_USER);
+  }
+
+  _onCommentRemove() {
+    if (this._isYourComment()) {
+      this._data.comments.pop();
+      this.update(this._data);
+      this._partialUpdate();
     }
   }
 
@@ -121,6 +143,14 @@ export default class CardPopupComponent extends BaseComponent {
     }
   }
 
+  _onEscClick(evt) {
+    if (evt.keyCode === KEYCODE_ESC) {
+      if (typeof this._onClose === `function`) {
+        this._onClose(this._data);
+      }
+    }
+  }
+
   _bind() {
     this._element
       .querySelector(`.film-details__inner`)
@@ -134,9 +164,15 @@ export default class CardPopupComponent extends BaseComponent {
       .querySelector(`.film-details__user-rating-score`)
       .addEventListener(`click`, this._onChangeRating);
 
+    document.addEventListener(`keydown`, this._onEscClick);
+
     this._element
       .querySelector(`.film-details__comment-input`)
       .addEventListener(`keydown`, this._onCommentInputKeydown);
+
+    this
+      ._element.querySelector(`.film-details__watched-reset`)
+      .addEventListener(`click`, this._onCommentRemove);
   }
 
   _unbind() {
@@ -155,6 +191,11 @@ export default class CardPopupComponent extends BaseComponent {
     this._element
       .querySelector(`.film-details__comment-input`)
       .removeEventListener(`keydown`, this._onCommentInputKeydown);
+
+    document.removeEventListener(`keydown`, this._onEscClick);
+    this
+      ._element.querySelector(`.film-details__watched-reset`)
+      .addEventListener(`click`, this._onCommentRemove);
   }
 
   _partialUpdate() {
@@ -164,7 +205,11 @@ export default class CardPopupComponent extends BaseComponent {
     const nextRatingElement = createElement(createRatingTemplate(this._data));
     const prevRatingElement = this._element.querySelector(`.film-details__rating`);
 
+    const nextCommentsElement = createElement(createCommentsSectionTemplate(this._data));
+    const prevCommentsElement = this._element.querySelector(`.film-details__comments-wrap`);
+
     prevScoreElement.parentNode.replaceChild(nextScoreElement, prevScoreElement);
     prevRatingElement.parentNode.replaceChild(nextRatingElement, prevRatingElement);
+    prevCommentsElement.parentNode.replaceChild(nextCommentsElement, prevCommentsElement);
   }
 }

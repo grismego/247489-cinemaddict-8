@@ -55,7 +55,7 @@ export default class CardSectionsComponent extends BaseComponent {
     //   isExtra: true,
     // });
 
-    
+
     // this.componentSectionRated = new CardSection(filterCardsByRating(cards).slice(0, 2), {
     //   title: `Top rated`,
     //   isExtra: true,

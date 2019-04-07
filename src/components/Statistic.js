@@ -1,10 +1,12 @@
 import BaseComponent from './Base';
 import {createStatisticTemplate} from '../templates/statistics';
 import ChartComponent from './Chart';
+import moment from 'moment';
 
 export default class StatisticComponent extends BaseComponent {
   constructor(data) {
     super(data);
+    this._filteredData = this._data.filter((item) => item.isWatched);
   }
 
 
@@ -33,8 +35,8 @@ export default class StatisticComponent extends BaseComponent {
   }
 
   show() {
-    this.element.classList.remove(`visually-hidden`);
     this._renderChart(this._data);
+    this.element.classList.remove(`visually-hidden`);
   }
   hide() {
     this._chart.unrender();

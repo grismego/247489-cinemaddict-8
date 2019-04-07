@@ -23,6 +23,7 @@ let filters = generateFilters(cards);
 
 const filtersComponent = new FiltersComponent({filters, cards});
 const cardSectionsComponent = new CardSectionsComponent({cards});
+const statisticComponent = new StatisticComponent(cards);
 
 filtersComponent.onChange = ({filterId, filteredCards}) => {
 
@@ -56,9 +57,6 @@ cardSectionsComponent.onCardsChange = (updatedCards) => {
 
 mainElement.appendChild(cardSectionsComponent.render());
 mainElement.insertAdjacentElement(`afterbegin`, filtersComponent.render());
-
-const statisticComponent = new StatisticComponent(cards);
-
 mainElement.appendChild(statisticComponent.render());
 
 /*

@@ -38,8 +38,7 @@ export default class CardComponent extends BaseComponent {
 
   _onControlFormClick(evt) {
     evt.preventDefault();
-
-    if (typeof typeof this._markAsWatchedCallback === `function` && evt.target.classList.contains(`film-card__controls-item--mark-as-watched`)) {
+    if (typeof this._markAsWatchedCallback === `function` && evt.target.classList.contains(`film-card__controls-item--mark-as-watched`)) {
       this._data.isWatched = !this._data.isWatched;
       this._markAsWatchedCallback(this._data.isWatched);
     }

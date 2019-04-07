@@ -25,7 +25,7 @@ const createEmojiTemplate = () => (
   </div>`
 );
 
-const createCommentsTemplate = (data) => (
+export const createCommentsTemplate = (data) => (
   data.comments.map((comment) => (
     `<li class="film-details__comment">
       <span class="film-details__comment-emoji">${comment.emoji}</span>
@@ -38,6 +38,19 @@ const createCommentsTemplate = (data) => (
       </div>
     </li>`)
   ).join(``));
+
+export const createCommentTemplate = (data) => (`
+<li class="film-details__comment">
+      <span class="film-details__comment-emoji">${data.comments.emoji}</span>
+      <div>
+        <p class="film-details__comment-text">${data.comments.comment}</p>
+        <p class="film-details__comment-info">
+          <span class="film-details__comment-author">${data.comments.author}</span>
+          <span class="film-details__comment-day">${moment(data.comments.time).fromNow()}</span>
+        </p>
+      </div>
+    </li>
+`);
 
 export const createScoreTemplate = (data) => {
   const items = [];
