@@ -21,19 +21,18 @@ export default class FiltersComponent extends BaseComponent {
 
   render() {
     const element = super.render();
-
     this.components = this._data.filters.map((filterData) => {
       const component = new FilterComponent(filterData);
-
       element.appendChild(component.render());
 
-      component.onSelect = (filterId) => {
+      component.onSelect = (filterName) => {
         if (typeof this._onChange === `function`) {
-          const filteredCards = filterData.filterBy
-            ? this._data.cards.filter(filterData.filterBy)
-            : this._data.cards;
+          // console.log(filterData);
+          // const filteredCards = filterData.filterBy
+          //   ? this._data.cards.filter(filterData.filterBy)
+          //   : this._data.cards;
 
-          this._onChange({filterId, filteredCards});
+          this._onChange({filterName, filterBy: filterData.filterBy});
         }
       };
 

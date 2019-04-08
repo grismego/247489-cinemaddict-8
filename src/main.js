@@ -21,28 +21,24 @@ let cards = generateCards(CARD_LIMIT_DEFAULT);
 let filters = generateFilters(cards);
 
 const filtersComponent = new FiltersComponent({filters, cards});
-const cardSectionsComponent = new CardSectionsComponent({
-  allCards: cards,
-  filteredCards: cards,
-});
+const cardSectionsComponent = new CardSectionsComponent({cards});
 
 const statisticComponent = new StatisticComponent(cards);
 
-filtersComponent.onChange = ({filterId, filteredCards}) => {
+filtersComponent.onChange = ({filterName, filterBy}) => {
   const prevElement = cardSectionsComponent.element;
-
   cardSectionsComponent.unrender();
-  cardSectionsComponent.update({filteredCards});
+  cardSectionsComponent.update({filterBy});
 
   const nextElement = cardSectionsComponent.render();
   mainElement.replaceChild(nextElement, prevElement);
 
-  if (filterId === `all`) {
+  if (filterName === `all`) {
     statisticComponent.hide();
     cardSectionsComponent.show();
   }
 
-  if (filterId === `stats`) {
+  if (filterName === `stats`) {
     statisticComponent.show();
     cardSectionsComponent.hide();
   }
@@ -56,22 +52,14 @@ cardSectionsComponent.onCardsChange = (updatedCards) => {
     cards: updatedCards,
     filters: generateFilters(updatedCards)
   });
+
   mainElement.replaceChild(filtersComponent.render(), prevFiltersElement);
 
   const prevStatisticElement = statisticComponent.element;
   statisticComponent.unrender();
   statisticComponent.update(updatedCards);
- 
+
   cardSectionsComponent.updatePartial();
-
-
-  // debugger;
-  // const prevRatedSectionComponent = cardSectionsComponent.componentSectionRated.element;
-  // cardSectionsComponent.componentSectionRated.unrender();
-  // console.log(cardSectionsComponent.componentSectionRated)
-  // cardSectionsComponent.componentSectionRated.update({allCards: updatedCards});
-
-  // mainElement.querySelector(`.films`).replaceChild(cardSectionsComponent.componentSectionRated.render(), prevRatedSectionComponent);
 
   mainElement.replaceChild(statisticComponent.render(), prevStatisticElement);
 };

@@ -59,6 +59,10 @@ export default class CardPopupComponent extends BaseComponent {
     this._onChangeRating = fn;
   }
 
+  _close() {
+
+  }
+
   _onMarkAsWatchedButtonClick() {
     this._data.isWatched = !this._data.isWatched;
   }
@@ -70,8 +74,8 @@ export default class CardPopupComponent extends BaseComponent {
   }
 
   _onCloseClick() {
-    this._onFormSubmit();
-    return typeof this._onClose === `function` && this._onClose();
+    this._syncForm();
+    return typeof this._onClose === `function` && this._onClose(this._data);
   }
 
   _emojiMapper(key) {
@@ -87,10 +91,9 @@ export default class CardPopupComponent extends BaseComponent {
     }
   }
 
-  _onFormSubmit() {
+  _syncForm() {
     const formData = new FormData(this._element.querySelector(`.film-details__inner`));
     const data = this._processForm(formData);
-
 
     const comments = this._data.comments.slice();
 
@@ -109,6 +112,10 @@ export default class CardPopupComponent extends BaseComponent {
     this.update({comments});
     this._partialUpdate();
     this._bind();
+  }
+
+  _onFormSubmit() {
+    this._syncForm();
     return typeof this._onSubmit === `function` && this._onSubmit(this._data);
   }
 
@@ -155,12 +162,13 @@ export default class CardPopupComponent extends BaseComponent {
       this.update(newData);
       this._partialUpdate();
       this._bind();
-
     }
   }
 
   _onEscClick(evt) {
     if (evt.keyCode === KEYCODE_ESC) {
+      this._syncForm();
+
       if (typeof this._onClose === `function`) {
         this._onClose(this._data);
       }
