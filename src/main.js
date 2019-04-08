@@ -29,7 +29,6 @@ filtersComponent.onChange = ({filterName, filterBy}) => {
   const prevElement = cardSectionsComponent.element;
   cardSectionsComponent.unrender();
   cardSectionsComponent.update({filterBy});
-
   const nextElement = cardSectionsComponent.render();
   mainElement.replaceChild(nextElement, prevElement);
 
