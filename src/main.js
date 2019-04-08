@@ -61,12 +61,17 @@ cardSectionsComponent.onCardsChange = (updatedCards) => {
   const prevStatisticElement = statisticComponent.element;
   statisticComponent.unrender();
   statisticComponent.update(updatedCards);
+ 
+  cardSectionsComponent.updatePartial();
 
-  const prevRatedSectionComponent = cardSectionsComponent.componentSectionRated.element;
 
-  cardSectionsComponent.componentSectionRated.unrender();
-  cardSectionsComponent.componentSectionRated.update(updatedCards);
-  mainElement.replaceChild(cardSectionsComponent.componentSectionRated.render(), prevRatedSectionComponent);
+  // debugger;
+  // const prevRatedSectionComponent = cardSectionsComponent.componentSectionRated.element;
+  // cardSectionsComponent.componentSectionRated.unrender();
+  // console.log(cardSectionsComponent.componentSectionRated)
+  // cardSectionsComponent.componentSectionRated.update({allCards: updatedCards});
+
+  // mainElement.querySelector(`.films`).replaceChild(cardSectionsComponent.componentSectionRated.render(), prevRatedSectionComponent);
 
   mainElement.replaceChild(statisticComponent.render(), prevStatisticElement);
 };

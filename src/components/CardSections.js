@@ -34,6 +34,20 @@ export default class CardSectionsComponent extends BaseComponent {
     this.element.classList.add(`visually-hidden`);
   }
 
+  updatePartial() {
+    const prevElementRated = this.componentSectionRated.element;
+    const prevElementComment = this.componentSectionTopComment.element;
+
+    this.componentSectionRated.unrender();
+    this.componentSectionTopComment.unrender();
+
+    this.componentSectionRated.update(filterCardsByRating(this._data.allCards).slice(0, 2));
+    this.componentSectionTopComment.update(filterCardsByComments(this._data.allCards).slice(0, 2));
+
+    this.element.replaceChild(this.componentSectionRated.render(), prevElementRated);
+    this.element.replaceChild(this.componentSectionTopComment.render(), prevElementComment);
+  }
+
 
   render() {
     const element = super.render();
