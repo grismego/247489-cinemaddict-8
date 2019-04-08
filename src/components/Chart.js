@@ -67,6 +67,7 @@ export default class ChartComponent extends BaseComponent {
     this._element = new Chart(this._data.ctx, this.chartSetting);
     return this._element;
   }
+
   unrender() {
     this._element.destroy();
   }

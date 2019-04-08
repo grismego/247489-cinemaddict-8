@@ -3,15 +3,17 @@ import CardSection from './CardSection';
 import {filterCardsByRating, filterCardsByComments} from '../util';
 
 export default class CardSectionsComponent extends BaseComponent {
-  constructor(data) { // {cards, filterId}
+  constructor(data) {
     super(data);
+
+    this._data.allCards = data.allCards;
 
     this.componentSectionAll = null;
     this.componentSectionRated = null;
+    this.componentSectionTopComment = null;
 
     this._cardsChangeCallback = null;
 
-    this._extraCards = Object.assign({}, data);
   }
 
   get template() {
@@ -32,53 +34,27 @@ export default class CardSectionsComponent extends BaseComponent {
     this.element.classList.add(`visually-hidden`);
   }
 
-  _filter(cards) {
-    return cards.slice();
-  }
 
   render() {
     const element = super.render();
-    const cards = this._filter ? this._filter(this._data.cards) : this._data.cards;
 
-    this.componentSectionAll = new CardSection(cards, {
+    this.componentSectionAll = new CardSection(this._data.filteredCards, {
       title: `All Movies`,
       showMore: true
     });
 
-    // this.componentSectionRated = new CardSection(filterCardsByComments(this._data.cards).slice(0, 2), {
-    //   title: `Top rated`,
-    //   isExtra: true,
-    // });
-
-    // this.componentSectionTopComment = new CardSection(filterCardsByComments(this._data.cards).slice(0, 2), {
-    //   title: `Top Comment`,
-    //   isExtra: true,
-    // });
-
-
-    // this.componentSectionRated = new CardSection(filterCardsByRating(cards).slice(0, 2), {
-    //   title: `Top rated`,
-    //   isExtra: true,
-    // });
-
-    // this.componentSectionTopComment = new CardSection(filterCardsByComments(cards).slice(0, 2), {
-    //   title: `Top Comment`,
-    //   isExtra: true,
-    // });
-
-    this.componentSectionRated = new CardSection(filterCardsByRating(cards).slice(0, 2), {
+    this.componentSectionRated = new CardSection(filterCardsByRating(this._data.allCards).slice(0, 2), {
       title: `Top rated`,
       isExtra: true,
     });
 
-    this.componentSectionTopComment = new CardSection(filterCardsByComments(cards).slice(0, 2), {
+    this.componentSectionTopComment = new CardSection(filterCardsByComments(this._data.allCards).slice(0, 2), {
       title: `Top Comment`,
       isExtra: true,
     });
 
-
     const onCardChange = (updatedCard) => {
-      this._data.cards = this._data.cards.map((card) => {
+      this._data.allCards = this._data.allCards.map((card) => {
         if (card.id === updatedCard.id) {
           return updatedCard;
         }
@@ -87,7 +63,7 @@ export default class CardSectionsComponent extends BaseComponent {
       });
 
       if (typeof this._cardsChangeCallback === `function`) {
-        this._cardsChangeCallback(this._data.cards);
+        this._cardsChangeCallback(this._data.allCards);
       }
     };
 

@@ -35,11 +35,12 @@ export default class StatisticComponent extends BaseComponent {
   }
 
   show() {
-    this._renderChart(this._data);
+    this._renderChart();
     this.element.classList.remove(`visually-hidden`);
   }
+
   hide() {
-    this._chart.unrender();
+    this._unrenderChart();
     this.element.classList.add(`visually-hidden`);
   }
 
@@ -86,20 +87,26 @@ export default class StatisticComponent extends BaseComponent {
     return obj;
   }
 
-  _renderChart(data) {
-    this._chart = new ChartComponent(this._getStat(data));
+  _unrenderChart() {
+    if (this._chart) {
+      this._chart.unrender();
+      this._chart = null;
+    }
+  }
+
+  _renderChart() {
+    this._chart = new ChartComponent(this._getStat(this._data));
     this._chart.render();
   }
 
-
   render() {
     const element = super.render();
-    this._renderChart(this._data);
+    this._renderChart();
     return element;
   }
 
   unrender() {
-    this._chart.unrender();
+    this._unrenderChart();
     super.unrender();
   }
 }

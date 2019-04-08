@@ -40,7 +40,7 @@ export default class BaseComponent {
   }
 
   update(data) {
-    Object.keys(data).forEach((key) => {
+    Object.keys(data).filter((property) => this._data.hasOwnProperty(property)).forEach((key) => {
       this._data[key] = data[key];
     });
   }

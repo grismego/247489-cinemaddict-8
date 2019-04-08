@@ -10,7 +10,6 @@ import StatisticComponent from './components/Statistic';
 import {generateFilters} from './mocks/filters';
 import {generateCards} from './mocks/cards';
 
-
 const CARD_LIMIT_DEFAULT = 10;
 const CARD_LIMIT_EXTRA = 2;
 const BAR_HEIGHT = 50;
@@ -22,22 +21,26 @@ let cards = generateCards(CARD_LIMIT_DEFAULT);
 let filters = generateFilters(cards);
 
 const filtersComponent = new FiltersComponent({filters, cards});
-const cardSectionsComponent = new CardSectionsComponent({cards});
+const cardSectionsComponent = new CardSectionsComponent({
+  allCards: cards,
+  filteredCards: cards,
+});
+
 const statisticComponent = new StatisticComponent(cards);
 
 filtersComponent.onChange = ({filterId, filteredCards}) => {
+  const prevElement = cardSectionsComponent.element;
+
+  cardSectionsComponent.unrender();
+  cardSectionsComponent.update({filteredCards});
+
+  const nextElement = cardSectionsComponent.render();
+  mainElement.replaceChild(nextElement, prevElement);
 
   if (filterId === `all`) {
     statisticComponent.hide();
     cardSectionsComponent.show();
   }
-
-  const prevElement = cardSectionsComponent.element;
-  cardSectionsComponent.unrender();
-  cardSectionsComponent.update({cards: filteredCards});
-
-  const nextElement = cardSectionsComponent.render();
-  mainElement.replaceChild(nextElement, prevElement);
 
   if (filterId === `stats`) {
     statisticComponent.show();
@@ -46,13 +49,26 @@ filtersComponent.onChange = ({filterId, filteredCards}) => {
 };
 
 cardSectionsComponent.onCardsChange = (updatedCards) => {
-  const prevElement = filtersComponent.element;
+
+  const prevFiltersElement = filtersComponent.element;
   filtersComponent.unrender();
   filtersComponent.update({
     cards: updatedCards,
     filters: generateFilters(updatedCards)
   });
-  mainElement.replaceChild(filtersComponent.render(), prevElement);
+  mainElement.replaceChild(filtersComponent.render(), prevFiltersElement);
+
+  const prevStatisticElement = statisticComponent.element;
+  statisticComponent.unrender();
+  statisticComponent.update(updatedCards);
+
+  const prevRatedSectionComponent = cardSectionsComponent.componentSectionRated.element;
+
+  cardSectionsComponent.componentSectionRated.unrender();
+  cardSectionsComponent.componentSectionRated.update(updatedCards);
+  mainElement.replaceChild(cardSectionsComponent.componentSectionRated.render(), prevRatedSectionComponent);
+
+  mainElement.replaceChild(statisticComponent.render(), prevStatisticElement);
 };
 
 mainElement.appendChild(cardSectionsComponent.render());
