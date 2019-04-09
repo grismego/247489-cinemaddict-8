@@ -2,7 +2,7 @@ import {
   generateRandomNumber,
   getRandomArrayElement,
   getRandomArrayElements
-} from '../random';
+} from '../lib/random';
 
 import moment from 'moment';
 
@@ -29,12 +29,14 @@ const POSTERS = [
 ];
 
 const GENRES = [
-  `Action`,
-  `Adventure`,
   `Comedies`,
+  `History`,
+  `Drama`,
   `Horror`,
+  `Series`,
   `Westerns`,
-  `Comedy`
+  `Action`,
+  `Adventure`
 ];
 
 const DIRECTOR = [
@@ -105,7 +107,8 @@ const generateRandomRating = () => (
 
 const generateReleaseDate = () => moment(Math.floor(Math.random() * new Date().getTime())).format(`DD MMMM YYYY`);
 
-export const generateCard = () => ({
+export const generateCard = (_, index) => ({
+  id: index,
   title: getRandomArrayElement(TITLES),
   poster: `../images/posters/${getRandomArrayElement(POSTERS)}.jpg`,
   rating: generateRandomRating(),
@@ -133,6 +136,9 @@ export const generateCard = () => ({
       emoji: `😀`,
     },
   ],
+  isWatched: Math.random() > 0.5,
+  isAddedToWatched: true,
+  isFavorite: false
 });
 
 export const generateCards = (limit) => [...Array(limit).keys()].map(generateCard);

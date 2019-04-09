@@ -1,36 +1,40 @@
 import {
   createPopupTemplate,
   createScoreTemplate,
-  createRatingTemplate
+  createRatingTemplate,
+  createCommentsSectionTemplate
 } from '../templates/popup';
 
-import {createElement} from '../util';
-import {Component} from './component';
-
-import cloneDeep from 'lodash.clonedeep';
+import {createElement} from '../lib/create-element';
+import BaseComponent from './Base';
 
 const KEYCODE_ENTER = 13;
+const KEYCODE_ESC = 27;
 
-export default class CardPopup extends Component {
+const CURRENT_USER = `Yo`;
+
+export default class CardPopupComponent extends BaseComponent {
   constructor(data) {
     super(data);
-    this._data = cloneDeep(data);
     this._onCloseClick = this._onCloseClick.bind(this);
     this._onFormSubmit = this._onFormSubmit.bind(this);
     this._onChangeRating = this._onChangeRating.bind(this);
     this._onCommentInputKeydown = this._onCommentInputKeydown.bind(this);
+    this._onEscClick = this._onEscClick.bind(this);
+    this._onCommentRemove = this._onCommentRemove.bind(this);
+
+    this._onMarkAsWatchedButtonClick = this._onMarkAsWatchedButtonClick.bind(this);
+    this._onAddToWatchListButtonClick = this._onAddToWatchListButtonClick.bind(this);
+    this._onAddToFavoriteButtonClick = this._onAddToFavoriteButtonClick.bind(this);
 
     this._onClose = null;
     this._onSubmit = null;
   }
 
   _processForm(formData) {
-    const entry = {
-      rating: ``,
-      comment: ``,
-    };
+    const entry = {};
 
-    const taskEditMapper = CardPopup.createMapper(entry); //
+    const taskEditMapper = CardPopupComponent.createMapper(entry);
 
     Array.from(formData.entries()).forEach(
         ([property, value]) => taskEditMapper[property] && taskEditMapper[property](value)
@@ -47,14 +51,32 @@ export default class CardPopup extends Component {
     this._onClose = fn;
   }
 
-  _onCloseClick() {
-    return typeof this._onClose === `function` && this._onClose();
-  }
-
   set onSubmit(fn) {
     this._onSubmit = fn;
   }
 
+  set onChangeRating(fn) {
+    this._onChangeRating = fn;
+  }
+
+  _close() {
+
+  }
+
+  _onMarkAsWatchedButtonClick() {
+    this._data.isWatched = !this._data.isWatched;
+  }
+  _onAddToWatchListButtonClick() {
+    this._data.isAddedToWatched = !this._data.isAddedToWatched;
+  }
+  _onAddToFavoriteButtonClick() {
+    this._data.isFavorite = !this._data.isFavorite;
+  }
+
+  _onCloseClick() {
+    this._syncForm();
+    return typeof this._onClose === `function` && this._onClose(this._data);
+  }
 
   _emojiMapper(key) {
     switch (key) {
@@ -69,28 +91,51 @@ export default class CardPopup extends Component {
     }
   }
 
-  _onFormSubmit() {
+  _syncForm() {
     const formData = new FormData(this._element.querySelector(`.film-details__inner`));
     const data = this._processForm(formData);
+
     const comments = this._data.comments.slice();
 
-    comments.push({
-      author: `User`,
-      time: new Date(),
-      comment: data.comment,
-      emoji: this._emojiMapper(data.emoji)
-    });
+    if (data.comment.length) {
+      comments.push({
+        author: CURRENT_USER,
+        time: new Date(),
+        comment: data.comment,
+        emoji: this._emojiMapper(data.emoji)
+      });
+    }
+
+    this._data.rating = data.rating;
 
     this._unbind();
     this.update({comments});
     this._partialUpdate();
     this._bind();
+  }
+
+  _onFormSubmit() {
+    this._syncForm();
     return typeof this._onSubmit === `function` && this._onSubmit(this._data);
   }
 
   _onCommentInputKeydown(evt) {
-    if (evt.keyCode === KEYCODE_ENTER && evt.ctrlKey) {
+    const inputElement = this._element
+    .querySelector(`.film-details__comment-input`);
+    if ((evt.keyCode === KEYCODE_ENTER && evt.ctrlKey) && inputElement.value) {
       this._onFormSubmit();
+    }
+  }
+
+  _isYourComment() {
+    return this._data.comments.some((comment) => comment.author === CURRENT_USER);
+  }
+
+  _onCommentRemove() {
+    if (this._isYourComment()) {
+      this._data.comments.pop();
+      this.update(this._data);
+      this._partialUpdate();
     }
   }
 
@@ -117,7 +162,16 @@ export default class CardPopup extends Component {
       this.update(newData);
       this._partialUpdate();
       this._bind();
+    }
+  }
 
+  _onEscClick(evt) {
+    if (evt.keyCode === KEYCODE_ESC) {
+      this._syncForm();
+
+      if (typeof this._onClose === `function`) {
+        this._onClose(this._data);
+      }
     }
   }
 
@@ -134,9 +188,25 @@ export default class CardPopup extends Component {
       .querySelector(`.film-details__user-rating-score`)
       .addEventListener(`click`, this._onChangeRating);
 
+    document.addEventListener(`keydown`, this._onEscClick);
+
     this._element
       .querySelector(`.film-details__comment-input`)
       .addEventListener(`keydown`, this._onCommentInputKeydown);
+
+    this._element
+      .querySelector(`.film-details__watched-reset`)
+      .addEventListener(`click`, this._onCommentRemove);
+
+    this
+      ._element.querySelector(`#watchlist`)
+      .addEventListener(`change`, this._onAddToWatchListButtonClick);
+    this
+      ._element.querySelector(`#watched`)
+      .addEventListener(`change`, this._onMarkAsWatchedButtonClick);
+    this
+      ._element.querySelector(`#favorite`)
+      .addEventListener(`change`, this._onAddToFavoriteButtonClick);
   }
 
   _unbind() {
@@ -155,6 +225,22 @@ export default class CardPopup extends Component {
     this._element
       .querySelector(`.film-details__comment-input`)
       .removeEventListener(`keydown`, this._onCommentInputKeydown);
+
+    document.removeEventListener(`keydown`, this._onEscClick);
+
+    this
+      ._element.querySelector(`.film-details__watched-reset`)
+      .addEventListener(`click`, this._onCommentRemove);
+
+    this
+      ._element.querySelector(`#watchlist`)
+      .removeEventListener(`change`, this._onAddToWatchListButtonClick);
+    this
+      ._element.querySelector(`#watched`)
+      .removeEventListener(`change`, this._onMarkAsWatchedButtonClick);
+    this
+      ._element.querySelector(`#favorite`)
+      .removeEventListener(`change`, this._onAddToFavoriteButtonClick);
   }
 
   _partialUpdate() {
@@ -164,17 +250,11 @@ export default class CardPopup extends Component {
     const nextRatingElement = createElement(createRatingTemplate(this._data));
     const prevRatingElement = this._element.querySelector(`.film-details__rating`);
 
+    const nextCommentsElement = createElement(createCommentsSectionTemplate(this._data));
+    const prevCommentsElement = this._element.querySelector(`.film-details__comments-wrap`);
+
     prevScoreElement.parentNode.replaceChild(nextScoreElement, prevScoreElement);
     prevRatingElement.parentNode.replaceChild(nextRatingElement, prevRatingElement);
-  }
-
-  update(data) {
-    if (data.rating) {
-      this._data.rating = data.rating;
-    }
-
-    if (data.comments) {
-      this._data.comments = data.comments;
-    }
+    prevCommentsElement.parentNode.replaceChild(nextCommentsElement, prevCommentsElement);
   }
 }

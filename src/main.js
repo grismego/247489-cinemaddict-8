@@ -1,58 +1,60 @@
-import {createTemplate as createFilterTemplate} from './templates/filters';
-import {createTemplates as createCardTemplate} from './templates/cards';
+import FiltersComponent from './components/Filters';
+import CardSectionsComponent from './components/CardSections';
+import StatisticComponent from './components/Statistic';
 
 import {generateFilters} from './mocks/filters';
-import {generateCards, generateCard} from './mocks/cards';
-
-import CardComponent from './components/card';
-import PopupComponent from './components/popup';
+import {generateCards} from './mocks/cards';
 
 const CARD_LIMIT_DEFAULT = 10;
-const CARD_LIMIT_EXTRA = 2;
 
-const navigationElement = document.querySelector(`.main-navigation`);
-const filmListElement = document.querySelector(`.films-list .films-list__container`);
-const filmListRatedElement = document.querySelector(`.films-list--extra:nth-child(2) .films-list__container`);
-const filmListCommentedElement = document.querySelector(`.films-list--extra:nth-child(3) .films-list__container`);
+const mainElement = document.querySelector(`.main`);
 
-navigationElement.innerHTML = createFilterTemplate(generateFilters());
+let cards = generateCards(CARD_LIMIT_DEFAULT);
+let filters = generateFilters(cards);
 
-filmListRatedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
-filmListCommentedElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_EXTRA), false);
+const filtersComponent = new FiltersComponent({filters, cards});
+const cardSectionsComponent = new CardSectionsComponent({cards});
 
-const filtersElements = document.querySelectorAll(`.main-navigation__item:not(.main-navigation__item--additional)`);
+const statisticComponent = new StatisticComponent(cards);
 
-filtersElements.forEach((element) => {
-  element.addEventListener(`click`, () => {
-    filmListElement.innerHTML = createCardTemplate(generateCards(CARD_LIMIT_DEFAULT), true);
+filtersComponent.onChange = ({filterName, filterBy}) => {
+  const prevElement = cardSectionsComponent.element;
+
+  cardSectionsComponent.unrender();
+  cardSectionsComponent.update({filterBy});
+
+  mainElement.replaceChild(cardSectionsComponent.render(), prevElement);
+
+  if (filterName === `all`) {
+    statisticComponent.hide();
+    cardSectionsComponent.show();
+  }
+
+  if (filterName === `stats`) {
+    statisticComponent.show();
+    cardSectionsComponent.hide();
+  }
+};
+
+cardSectionsComponent.onCardsChange = (updatedCards) => {
+  const prevFiltersElement = filtersComponent.element;
+  filtersComponent.unrender();
+  filtersComponent.update({
+    cards: updatedCards,
+    filters: generateFilters(updatedCards)
   });
-});
 
-const data = generateCard();
-const card = new CardComponent(data);
-const popup = new PopupComponent(data);
+  mainElement.replaceChild(filtersComponent.render(), prevFiltersElement);
 
+  const prevStatisticElement = statisticComponent.element;
+  statisticComponent.unrender();
+  statisticComponent.update(updatedCards);
 
-card.render();
-filmListElement.appendChild(card.render());
+  cardSectionsComponent.updatePartial();
 
-card.onCommentsClick = () => {
-  popup.render();
-  document.body.appendChild(popup.element);
+  mainElement.replaceChild(statisticComponent.render(), prevStatisticElement);
 };
 
-popup.onSubmit = (newData) => {
-  filmListElement.removeChild(card.element);
-  card.unrender();
-  card.update(newData);
-  card.render();
-  filmListElement.appendChild(card.element);
-  document.body.removeChild(popup.element);
-  popup.unrender();
-};
-
-popup.onClose = () => {
-  card.update(data);
-  document.body.removeChild(popup.element);
-  popup.unrender();
-};
+mainElement.appendChild(cardSectionsComponent.render());
+mainElement.insertAdjacentElement(`afterbegin`, filtersComponent.render());
+mainElement.appendChild(statisticComponent.render());

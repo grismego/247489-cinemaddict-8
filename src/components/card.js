@@ -1,47 +1,78 @@
 import {createTemplate} from '../templates/cards';
-import {Component} from './component';
+import BaseComponent from './Base';
 
-import cloneDeep from 'lodash.clonedeep';
-
-export default class Card extends Component {
-  constructor(data) {
+export default class CardComponent extends BaseComponent {
+  constructor(data, options = {}) {
     super(data);
-    this._data = cloneDeep(data);
     this._onClick = this._onClick.bind(this);
-    this._onCommentsClick = null;
+    this._onControlFormClick = this._onControlFormClick.bind(this);
+
+    this._commentsClickCallback = null;
+    this._addToWatchListCallback = null;
+    this._markAsWatchedCallback = null;
+    this._markAsFavoriteCallback = null;
+    this._options = options;
   }
 
   get template() {
-    return createTemplate(this._data, true);
+    return createTemplate(this._data, this._options);
   }
 
   set onCommentsClick(fn) {
-    this._onCommentsClick = fn;
+    this._commentsClickCallback = fn;
+  }
+
+  set onAddToWatchList(fn) {
+    this._addToWatchListCallback = fn;
+  }
+  set onMarkAsWatched(fn) {
+    this._markAsWatchedCallback = fn;
+  }
+  set onMarkAsFavorite(fn) {
+    this._markAsFavoriteCallback = fn;
   }
 
   _onClick() {
-    return typeof this._onCommentsClick === `function` && this._onCommentsClick();
+    return typeof this._commentsClickCallback === `function` && this._commentsClickCallback();
+  }
+
+  _onControlFormClick(evt) {
+    evt.preventDefault();
+    if (typeof this._markAsWatchedCallback === `function` && evt.target.classList.contains(`film-card__controls-item--mark-as-watched`)) {
+      this._data.isWatched = !this._data.isWatched;
+      this._markAsWatchedCallback(this._data.isWatched);
+    }
+
+    if (typeof this._markAsFavoriteCallback === `function` && evt.target.classList.contains(`film-card__controls-item--favorite`)) {
+      this._data.isFavorite = !this._data.isFavorite;
+      this._markAsFavoriteCallback(this._data.isFavorite);
+    }
+
+    if (typeof this._addToWatchListCallback === `function` && evt.target.classList.contains(`film-card__controls-item--add-to-watchlist`)) {
+      this._data.isAddedToWatched = !this._data.isAddedToWatched;
+      this._addToWatchListCallback(this._data.isAddedToWatched);
+    }
   }
 
   _bind() {
     this._element
       .querySelector(`.film-card__comments`)
       .addEventListener(`click`, this._onClick);
+    if (this._options) {
+      this._element
+      .querySelector(`.film-card__controls`)
+      .addEventListener(`click`, this._onControlFormClick);
+    }
   }
 
   _unbind() {
     this._element
       .querySelector(`.film-card__comments`)
       .removeEventListener(`click`, this._onClick);
-  }
-
-  update(data) {
-    if (data.rating) {
-      this._data.rating = data.rating;
-    }
-
-    if (data.comments) {
-      this._data.comments = data.comments;
+    if (this._options) {
+      this._element
+        .querySelector(`.film-card__controls`)
+        .removeEventListener(`click`, this._onControlFormClick);
     }
   }
 }

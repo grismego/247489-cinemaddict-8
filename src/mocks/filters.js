@@ -1,18 +1,24 @@
-import {generateRandomNumber} from '../random';
+export const filterFunctions = {
+  history: (it) => it.isWatched,
+  favorites: (it) => it.isFavorite,
+  watchlist: (it) => it.isAddedToWatched
+};
 
-const FILMS_MAX_COUNT = 20;
-
-export const generateFilters = () => [
+export const generateFilters = (cards = []) => [
   {
     name: `All movies`,
     state: `active`,
-    anchor: `all`
+    anchor: `all`,
   },
-  ...[`Watchlist`, `History`, `Favorites`].map((name) => ({
-    name,
-    count: generateRandomNumber(0, FILMS_MAX_COUNT),
-    anchor: name.toLowerCase()
-  })),
+  ...[`Watchlist`, `History`, `Favorites`].map((name) => {
+    const filterBy = filterFunctions[name.toLowerCase()];
+    return {
+      name,
+      count: cards.filter(filterBy).length,
+      anchor: name.toLowerCase(),
+      filterBy
+    };
+  }),
   {
     name: `stats`,
     state: `additional`,

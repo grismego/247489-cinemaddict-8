@@ -1,18 +1,4 @@
 import moment from 'moment';
-const CONTROLS = [
-  {
-    name: `watchlist`,
-    label: `Add to watchlist`
-  },
-  {
-    name: `watched`,
-    label: `Already watched`
-  },
-  {
-    name: `favorite`,
-    label: `Add to favorites`
-  }
-];
 
 const EMOJI = [
   {
@@ -39,7 +25,7 @@ const createEmojiTemplate = () => (
   </div>`
 );
 
-const createCommentsTemplate = (data) => (
+export const createCommentsTemplate = (data) => (
   data.comments.map((comment) => (
     `<li class="film-details__comment">
       <span class="film-details__comment-emoji">${comment.emoji}</span>
@@ -53,14 +39,18 @@ const createCommentsTemplate = (data) => (
     </li>`)
   ).join(``));
 
-const createControlsTemplate = () => (
-  `<section class="film-details__controls">
-    ${CONTROLS.map((control) => (
-    `<input type="checkbox" class="film-details__control-input visually-hidden" id="${control.name}" name="${control.name}">
-     <label for="${control.name}" class="film-details__control-label film-details__control-label--${control.name}">${control.label}</label>`
-  )).join(``)}
-  </section>`
-);
+export const createCommentTemplate = (data) => (`
+<li class="film-details__comment">
+      <span class="film-details__comment-emoji">${data.comments.emoji}</span>
+      <div>
+        <p class="film-details__comment-text">${data.comments.comment}</p>
+        <p class="film-details__comment-info">
+          <span class="film-details__comment-author">${data.comments.author}</span>
+          <span class="film-details__comment-day">${moment(data.comments.time).fromNow()}</span>
+        </p>
+      </div>
+    </li>
+`);
 
 export const createScoreTemplate = (data) => {
   const items = [];
@@ -174,7 +164,20 @@ export const createPopupTemplate = (data) => (
         </div>
       </div>
 
-    ${createControlsTemplate()}
+      <section class="film-details__controls">
+        <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${data.isAddedToWatched ? `checked` : ``}>
+        <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
+
+        <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${data.isWatched ? `checked` : ``}>
+        <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+        
+        <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${data.isFavorite ? `checked` : ``}>
+        <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+
+        
+      </section>
+
+  
     ${createCommentsSectionTemplate(data)}
 
     <section class="film-details__user-rating-wrap">
