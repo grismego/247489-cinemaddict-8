@@ -1,4 +1,4 @@
-import {createElement} from '../util';
+import {createElement} from '../lib/create-element';
 import cloneDeep from 'lodash.clonedeep';
 
 export default class BaseComponent {

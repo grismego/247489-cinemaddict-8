@@ -28,7 +28,7 @@ export default class FiltersComponent extends BaseComponent {
 
       component.onSelect = (filterName) => {
         if (typeof this._onChange === `function`) {
-          this._onChange({filterName, filteredCards: filterData.filteredCards});
+          this._onChange({filterName, filterBy: filterData.filterBy});
         }
       };
 

@@ -1,7 +1,6 @@
 import BaseComponent from './Base';
 import {createStatisticTemplate} from '../templates/statistics';
 import ChartComponent from './Chart';
-import moment from 'moment';
 
 export default class StatisticComponent extends BaseComponent {
   constructor(data) {
@@ -9,9 +8,8 @@ export default class StatisticComponent extends BaseComponent {
     this._filteredData = this._data.filter((item) => item.isWatched);
   }
 
-
   get template() {
-    return createStatisticTemplate(this._getAllStat(this._data));
+    return createStatisticTemplate(this._getCardsStatistics(this._data));
   }
 
   _setChartSettings(canvas, labels, values) {
@@ -30,10 +28,6 @@ export default class StatisticComponent extends BaseComponent {
     return Object.entries(obj).sort((a, b) => b[1] - a[1]);
   }
 
-  _drawStat(cards) {
-    return this._getStat(cards);
-  }
-
   show() {
     this._renderChart();
     this.element.classList.remove(`visually-hidden`);
@@ -42,6 +36,13 @@ export default class StatisticComponent extends BaseComponent {
   hide() {
     this._unrenderChart();
     this.element.classList.add(`visually-hidden`);
+  }
+
+  _createLabels(data) {
+    return this._sortObject(data).map((item) => item[0]);
+  }
+  _createValues(data) {
+    return this._sortObject(data).map((item) => item[1]);
   }
 
   _getStat(cards) {
@@ -56,19 +57,21 @@ export default class StatisticComponent extends BaseComponent {
       }
     });
     const BAR_HEIGHT = 50;
-    const labels = this._sortObject(genresStats).map((item) => item[0]);
-    const values = this._sortObject(genresStats).map((item) => item[1]);
+
+    const labels = this._createLabels(genresStats);
+    const values = this._createValues(genresStats);
+
     const statChartElement = this._element.querySelector(`.statistic__chart`);
+
     statChartElement.getContext(`2d`);
     statChartElement.height = BAR_HEIGHT * labels.length;
-    const statisticParams = this._setChartSettings(statChartElement, labels,
-        values);
-    return statisticParams;
+
+    return this._setChartSettings(statChartElement, labels, values);
   }
 
-  _getAllStat(cards) {
+  _getCardsStatistics(cards) {
     const filteredCards = cards.filter((card) => card.isWatched);
-    const obj = {};
+    const statistics = {};
     const genresStats = {};
 
     filteredCards.forEach((card) => {
@@ -81,11 +84,11 @@ export default class StatisticComponent extends BaseComponent {
 
     const labels = this._sortObject(genresStats).map((item) => item[0]);
 
-    obj.watchedAmount = filteredCards.length;
-    obj.watchedDuration = this._getTotalDuration(filteredCards);
-    obj.mostWatchedGenre = labels[0];
+    statistics.watchedAmount = filteredCards.length;
+    statistics.watchedDuration = this._getTotalDuration(filteredCards);
+    statistics.mostWatchedGenre = labels[0];
 
-    return obj;
+    return statistics;
   }
 
   _unrenderChart() {
@@ -103,6 +106,7 @@ export default class StatisticComponent extends BaseComponent {
   render() {
     const element = super.render();
     this._renderChart();
+
     return element;
   }
 

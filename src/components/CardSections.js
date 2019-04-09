@@ -1,6 +1,6 @@
 import BaseComponent from './Base';
 import CardSection from './CardSection';
-import {filterCardsByRating, filterCardsByComments} from '../util';
+// import {filterCardsByRating, filterCardsByComments} from '../util';
 
 export default class CardSectionsComponent extends BaseComponent {
   constructor(data) {
@@ -11,7 +11,7 @@ export default class CardSectionsComponent extends BaseComponent {
     this.componentSectionTopComment = null;
 
     this._cardsChangeCallback = null;
-    this._data.filteredCards = null;
+    this._data.filterBy = null;
   }
 
   get template() {
@@ -22,6 +22,14 @@ export default class CardSectionsComponent extends BaseComponent {
 
   set onCardsChange(fn) {
     this._cardsChangeCallback = fn;
+  }
+
+  _filterCardsByComments(cards) {
+    return cards.slice().sort((a, b) => b.comments.length - a.comments.length);
+  }
+
+  _filterCardsByRating(cards) {
+    return cards.slice().sort((a, b) => b.rating - a.rating);
   }
 
   show() {
@@ -39,17 +47,16 @@ export default class CardSectionsComponent extends BaseComponent {
     this.componentSectionRated.unrender();
     this.componentSectionTopComment.unrender();
 
-    this.componentSectionRated.update(filterCardsByRating(this._data.cards).slice(0, 2));
-    this.componentSectionTopComment.update(filterCardsByComments(this._data.cards).slice(0, 2));
+    this.componentSectionRated.update(this.filterCardsByRating(this._data.cards).slice(0, 2));
+    this.componentSectionTopComment.update(this.filterCardsByComments(this._data.cards).slice(0, 2));
 
     this.element.replaceChild(this.componentSectionRated.render(), prevElementRated);
     this.element.replaceChild(this.componentSectionTopComment.render(), prevElementComment);
   }
 
   _getFilteredCards() {
-    debugger;
-    const {cards, filteredCards} = this._data;
-    return filteredCards ? filteredCards : cards;
+    const {cards, filterBy} = this._data;
+    return filterBy ? cards.filter(filterBy) : cards;
   }
 
   render() {
@@ -61,14 +68,14 @@ export default class CardSectionsComponent extends BaseComponent {
       showMore: true
     });
 
-    this.componentSectionRated = new CardSection(filterCardsByRating(cards).slice(0, 2), {
+    this.componentSectionRated = new CardSection(this._filterCardsByRating(cards).slice(0, 2), {
       title: `Top rated`,
-      isExtra: true,
+      isExtra: true
     });
 
-    this.componentSectionTopComment = new CardSection(filterCardsByComments(cards).slice(0, 2), {
+    this.componentSectionTopComment = new CardSection(this._filterCardsByComments(cards).slice(0, 2), {
       title: `Top Comment`,
-      isExtra: true,
+      isExtra: true
     });
 
     const onCardChange = (updatedCard) => {
@@ -83,6 +90,7 @@ export default class CardSectionsComponent extends BaseComponent {
       if (typeof this._cardsChangeCallback === `function`) {
         this._cardsChangeCallback(this._data.cards);
       }
+
       this.componentSectionAll.update(this._getFilteredCards());
     };
 
@@ -98,18 +106,17 @@ export default class CardSectionsComponent extends BaseComponent {
   }
 
   unrender() {
-
     const prevElementAll = this.componentSectionAll.element;
     const prevElementRated = this.componentSectionRated.element;
     const prevElementTopComment = this.componentSectionTopComment.element;
 
-    this.element.removeChild(prevElementAll);
-    this.element.removeChild(prevElementRated);
-    this.element.removeChild(prevElementTopComment);
-
     this.componentSectionAll.unrender();
     this.componentSectionRated.unrender();
     this.componentSectionTopComment.unrender();
+
+    this.element.removeChild(prevElementAll);
+    this.element.removeChild(prevElementRated);
+    this.element.removeChild(prevElementTopComment);
 
     super.unrender();
   }

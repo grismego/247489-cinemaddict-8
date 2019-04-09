@@ -5,7 +5,7 @@ import {
   createCommentsSectionTemplate
 } from '../templates/popup';
 
-import {createElement} from '../util';
+import {createElement} from '../lib/create-element';
 import BaseComponent from './Base';
 
 const KEYCODE_ENTER = 13;
