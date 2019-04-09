@@ -1,6 +1,5 @@
 import BaseComponent from './Base';
 import CardSection from './CardSection';
-// import {filterCardsByRating, filterCardsByComments} from '../util';
 
 export default class CardSectionsComponent extends BaseComponent {
   constructor(data) {
