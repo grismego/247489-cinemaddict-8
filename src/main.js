@@ -26,10 +26,15 @@ const cardSectionsComponent = new CardSectionsComponent({cards});
 const statisticComponent = new StatisticComponent(cards);
 
 filtersComponent.onChange = ({filterName, filterBy}) => {
+
   const prevElement = cardSectionsComponent.element;
+
   cardSectionsComponent.unrender();
+
   cardSectionsComponent.update({filterBy});
+
   const nextElement = cardSectionsComponent.render();
+
   mainElement.replaceChild(nextElement, prevElement);
 
   if (filterName === `all`) {
@@ -44,7 +49,6 @@ filtersComponent.onChange = ({filterName, filterBy}) => {
 };
 
 cardSectionsComponent.onCardsChange = (updatedCards) => {
-
   const prevFiltersElement = filtersComponent.element;
   filtersComponent.unrender();
   filtersComponent.update({

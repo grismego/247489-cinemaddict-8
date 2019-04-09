@@ -16,7 +16,7 @@ export const generateFilters = (cards = []) => [
       name,
       count: cards.filter(filterBy).length,
       anchor: name.toLowerCase(),
-      filterBy
+      filterBy: cards.filter(filterBy)
     };
   }),
   {
