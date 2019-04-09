@@ -11,7 +11,7 @@ export default class CardSectionsComponent extends BaseComponent {
     this.componentSectionTopComment = null;
 
     this._cardsChangeCallback = null;
-    this._data.filterBy = null;
+    this._data.filteredCards = null;
   }
 
   get template() {
@@ -47,8 +47,9 @@ export default class CardSectionsComponent extends BaseComponent {
   }
 
   _getFilteredCards() {
-    const {cards, filterBy} = this._data;
-    return filterBy ? filterBy : cards;
+    debugger;
+    const {cards, filteredCards} = this._data;
+    return filteredCards ? filteredCards : cards;
   }
 
   render() {

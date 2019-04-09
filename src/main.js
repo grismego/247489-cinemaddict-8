@@ -17,13 +17,12 @@ const cardSectionsComponent = new CardSectionsComponent({cards});
 
 const statisticComponent = new StatisticComponent(cards);
 
-filtersComponent.onChange = ({filterName, filterBy}) => {
-
+filtersComponent.onChange = ({filterName, filteredCards}) => {
   const prevElement = cardSectionsComponent.element;
 
   cardSectionsComponent.unrender();
 
-  cardSectionsComponent.update({filterBy});
+  cardSectionsComponent.update({filteredCards});
 
   const nextElement = cardSectionsComponent.render();
 
