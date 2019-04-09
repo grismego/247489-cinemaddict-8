@@ -59,6 +59,7 @@ export default class StatisticComponent extends BaseComponent {
     const labels = this._sortObject(genresStats).map((item) => item[0]);
     const values = this._sortObject(genresStats).map((item) => item[1]);
     const statChartElement = this._element.querySelector(`.statistic__chart`);
+    statChartElement.getContext(`2d`);
     statChartElement.height = BAR_HEIGHT * labels.length;
     const statisticParams = this._setChartSettings(statChartElement, labels,
         values);

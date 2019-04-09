@@ -18,6 +18,8 @@ export default class ChartComponent extends BaseComponent {
         }]
       },
       options: {
+        responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           datalabels: {
             font: {

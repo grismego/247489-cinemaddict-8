@@ -98,24 +98,17 @@ export default class CardSectionsComponent extends BaseComponent {
 
   unrender() {
 
-    this.element.removeChild(this.componentSectionAll.element);
-    this.element.removeChild(this.componentSectionRated.element);
-    this.element.removeChild(this.componentSectionTopComment.element);
+    const prevElementAll = this.componentSectionAll.element;
+    const prevElementRated = this.componentSectionRated.element;
+    const prevElementTopComment = this.componentSectionTopComment.element;
+
+    this.element.removeChild(prevElementAll);
+    this.element.removeChild(prevElementRated);
+    this.element.removeChild(prevElementTopComment);
 
     this.componentSectionAll.unrender();
     this.componentSectionRated.unrender();
     this.componentSectionTopComment.unrender();
-
-    /*
-    const prevElementAll = this.componentSectionAll.element;
-    const prevElementRated = this.componentSectionRated.element;
-
-    this.componentSectionAll.unrender();
-    this.componentSectionRated.unrender();
-
-    this.element.removeChild(prevElementAll);
-    this.element.removeChild(prevElementRated);
-    */
 
     super.unrender();
   }
