@@ -33,7 +33,6 @@ export default class CardSectionComponent extends BaseComponent {
       this._options
           .withOption = sectionElement.classList
                                 .contains(`films-list--extra`) ? false : true;
-
       const cardComponent = new CardComponent(data, this._options.withOption);
       const popupComponent = new PopupComponent(data);
 

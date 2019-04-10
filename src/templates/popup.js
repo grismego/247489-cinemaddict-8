@@ -16,6 +16,12 @@ const EMOJI = [
   }
 ];
 
+const EMOJIES = {
+  'sleeping': `😴`,
+  'neutral-face': `😐`,
+  'grinning': `😀`
+};
+
 const createEmojiTemplate = () => (
   `<div class="film-details__emoji-list">
     ${EMOJI.map((emoji) => (
@@ -28,7 +34,7 @@ const createEmojiTemplate = () => (
 export const createCommentsTemplate = (data) => (
   data.comments.map((comment) => (
     `<li class="film-details__comment">
-      <span class="film-details__comment-emoji">${comment.emoji}</span>
+      <span class="film-details__comment-emoji">${EMOJIES[comment.emotion]}</span>
       <div>
         <p class="film-details__comment-text">${comment.comment}</p>
         <p class="film-details__comment-info">

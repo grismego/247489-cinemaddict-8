@@ -46,8 +46,8 @@ export default class CardSectionsComponent extends BaseComponent {
     this.componentSectionRated.unrender();
     this.componentSectionTopComment.unrender();
 
-    this.componentSectionRated.update(this.filterCardsByRating(this._data.cards).slice(0, 2));
-    this.componentSectionTopComment.update(this.filterCardsByComments(this._data.cards).slice(0, 2));
+    this.componentSectionRated.update(this._filterCardsByRating(this._data.cards).slice(0, 2));
+    this.componentSectionTopComment.update(this._filterCardsByComments(this._data.cards).slice(0, 2));
 
     this.element.replaceChild(this.componentSectionRated.render(), prevElementRated);
     this.element.replaceChild(this.componentSectionTopComment.render(), prevElementComment);
