@@ -39,7 +39,8 @@ export const createCommentsTemplate = (data) => (
         <p class="film-details__comment-text">${comment.comment}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comment.author}</span>
-          <span class="film-details__comment-day">${moment(comment.time).fromNow()}</span>
+          
+          <span class="film-details__comment-day">${moment(comment.date).fromNow()}</span>
         </p>
       </div>
     </li>`)
@@ -52,7 +53,8 @@ export const createCommentTemplate = (data) => (`
         <p class="film-details__comment-text">${data.comments.comment}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${data.comments.author}</span>
-          <span class="film-details__comment-day">${moment(data.comments.time).fromNow()}</span>
+          
+          <span class="film-details__comment-day">${moment(data.comments.date).fromNow()}</span>
         </p>
       </div>
     </li>
@@ -63,7 +65,7 @@ export const createScoreTemplate = (data) => {
 
   for (let i = 1; i < 10; i++) {
     items.push(`
-      <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${i}" id="rating-${i}" ${i === Math.floor(data.rating) ? `checked` : ``}>
+      <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${i}" id="rating-${i}" ${i === Math.floor(data.personalRating) ? `checked` : ``}>
       <label class="film-details__user-rating-label" for="rating-${i}">${i}</label>
     `);
   }
@@ -115,7 +117,7 @@ export const createCommentsSectionTemplate = (data) => (
 export const createRatingTemplate = (data) => (
   `<div class="film-details__rating">
   <p class="film-details__total-rating">${data.rating}</p>
-  <p class="film-details__user-rating">Your rate ${Math.floor(data.rating)}</p>
+  <p class="film-details__user-rating">Your rate ${data.personalRating}</p>
 </div>`
 );
 
@@ -135,7 +137,7 @@ export const createPopupTemplate = (data) => (
           <div class="film-details__info-head">
             <div class="film-details__title-wrap">
               <h3 class="film-details__title">${data.title}</h3>
-              <p class="film-details__title-original">Original: ${data.title}</p>
+              <p class="film-details__title-original">Original: ${data.alternativeTitle}</p>
             </div>
             ${createRatingTemplate(data)}
           </div>
@@ -154,7 +156,7 @@ export const createPopupTemplate = (data) => (
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${data.year} (${data.country})</td>
+              <td class="film-details__cell">${moment(data.year).format(`D MMMM YYYY`)} (${data.country})</td>
             </tr>
             ${createRuntimeTemplate(data)}
             <tr class="film-details__row">

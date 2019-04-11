@@ -33,7 +33,7 @@ export default class CardPopupComponent extends BaseComponent {
 
   _processForm(formData) {
     const entry = {};
-
+    
     const taskEditMapper = CardPopupComponent.createMapper(entry);
 
     Array.from(formData.entries()).forEach(
@@ -102,11 +102,10 @@ export default class CardPopupComponent extends BaseComponent {
         author: CURRENT_USER,
         time: new Date(),
         comment: data.comment,
-        emoji: this._emojiMapper(data.emoji)
+        emotion: data.emotion
       });
     }
-
-    this._data.rating = data.rating;
+    this._data.personalRating = data.personalRating;
 
     this._unbind();
     this.update({comments});
@@ -142,13 +141,13 @@ export default class CardPopupComponent extends BaseComponent {
   static createMapper(target) {
     return {
       score: (value) => {
-        target.rating = value;
+        target.personalRating = value;
       },
       comment: (value) => {
         target.comment = value;
       },
       [`comment-emoji`]: (value) => {
-        target.emoji = value;
+        target.emotion = value;
       }
     };
   }

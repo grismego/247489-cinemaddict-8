@@ -6,14 +6,6 @@ const Method = {
   PUT: `PUT`
 };
 
-const checkStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
-    return response;
-  } else {
-    throw new Error(`${response.status}: ${response.statusText}`);
-  }
-};
-
 const toJSON = (response) => {
   return response.json();
 };
@@ -24,20 +16,38 @@ export const API = class {
     this._authorization = authorization;
   }
 
-  getData() {
-    return this._load({url: `movies`})
-    .then(toJSON)
-    .then(ModelCards.parseDatas);
+  _checkStatus(response) {
+    if (response.status >= 200 && response.status < 300) {
+      return response;
+    } else {
+      throw new Error(`${response.status}: ${response.statusText}`);
+    }
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
 
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-      .then(checkStatus)
+      .then(this._checkStatus)
       .catch((err) => {
-        console.error(`fetch error: ${err}`);
         throw err;
       });
+  }
+
+  getData() {
+    return this._load({url: `movies`})
+    .then(toJSON)
+    .then(ModelCards.parseDatas);
+  }
+
+  updateData({id, newData}) {
+    return this._load({
+      url: `movies/${id}`,
+      method: `PUT`,
+      body: JSON.stringify(newData),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+    .then(toJSON)
+    .then(ModelCards.parseData);
   }
 };

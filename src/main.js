@@ -5,6 +5,7 @@ import StatisticComponent from './components/Statistic';
 import {generateFilters} from './mocks/filters';
 import {generateCards} from './mocks/cards';
 import {API} from './services/Api';
+import ModelCards from './services/model-cards';
 
 const CARD_LIMIT_DEFAULT = 10;
 
@@ -33,6 +34,8 @@ api.getData()
   }).catch(() => {
     console.log('asdasdasd');
   });
+
+// api.updateData({id})
 
 const addCards = () => {
   cardSectionsComponent = new CardSectionsComponent({cards});

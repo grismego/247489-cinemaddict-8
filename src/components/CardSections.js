@@ -1,5 +1,10 @@
 import BaseComponent from './Base';
 import CardSection from './CardSection';
+import {API} from '../services/Api';
+import ModelCards from '../services/model-cards';
+
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAosdasdada=`;
+const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 
 export default class CardSectionsComponent extends BaseComponent {
   constructor(data) {
@@ -59,6 +64,9 @@ export default class CardSectionsComponent extends BaseComponent {
   }
 
   render() {
+
+    const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
+
     const element = super.render();
     const {cards} = this._data;
 
@@ -79,10 +87,16 @@ export default class CardSectionsComponent extends BaseComponent {
 
     const onCardChange = (updatedCard) => {
       this._data.cards = this._data.cards.map((card) => {
-        if (card.id === updatedCard.id) {
-          return updatedCard;
-        }
 
+        if (card.id === updatedCard.id) {
+          api.updateData({id: card.id, updatedCard: ModelCards.toRAW(updatedCard)})
+            .then(() => {
+              return updatedCard;
+            });
+        }
+        // if (card.id === updatedCard.id) {
+        //   return updatedCard;
+        // }
         return card;
       });
 
