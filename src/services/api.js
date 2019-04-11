@@ -1,4 +1,4 @@
-import ModelCards from './model-cards';
+import ModelCard from '../models/card';
 
 const Method = {
   GET: `GET`,
@@ -34,13 +34,13 @@ export const API = class {
       });
   }
 
-  getData() {
+  getCards() {
     return this._load({url: `movies`})
     .then(toJSON)
-    .then(ModelCards.parseDatas);
+    .then(ModelCard.parseDatas);
   }
 
-  updateData({id, newData}) {
+  updateCard({id, newData}) {
     return this._load({
       url: `movies/${id}`,
       method: `PUT`,
@@ -48,6 +48,6 @@ export const API = class {
       headers: new Headers({'Content-Type': `application/json`})
     })
     .then(toJSON)
-    .then(ModelCards.parseData);
+    .then(ModelCard.parseData);
   }
 };

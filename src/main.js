@@ -3,57 +3,61 @@ import CardSectionsComponent from './components/CardSections';
 import StatisticComponent from './components/Statistic';
 
 import {generateFilters} from './mocks/filters';
-import {generateCards} from './mocks/cards';
 import {API} from './services/Api';
-import ModelCards from './services/model-cards';
-
-const CARD_LIMIT_DEFAULT = 10;
-
+import ModelCard from './models/card';
 
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAosdasdada=`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 
-
 const mainElement = document.querySelector(`.main`);
 
-let cards = generateCards(CARD_LIMIT_DEFAULT);
-let filters = generateFilters(cards);
+let cards;
+let filters;
 let cardSectionsComponent;
 let filtersComponent;
-// const filtersComponent = new FiltersComponent({filters, cards});
-// const cardSectionsComponent = new CardSectionsComponent({cards});
-const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 
-api.getData()
+const api = new API({
+  endPoint: END_POINT,
+  authorization: AUTHORIZATION
+});
+
+api.getCards()
   .then((data) => {
     cards = data;
     filters = generateFilters(data);
     addCards();
     addFilters();
-    console.log(cards);
-  }).catch(() => {
-    console.log('asdasdasd');
+  }).catch((err) => {
+    console.error(err);
+  // @TODO
   });
 
-// api.updateData({id})
+const updateCardsList = (updatedData, id) => {
+  api.updateCard({id: updatedData.id, newData: ModelCard.toRAW(updatedData)})
+      .then((cardModel) => {
+        const index = cards.findIndex((item) => item.id === id);
+        cards[index] = Object.assign({}, cardModel);
+      });
+};
 
 const addCards = () => {
   cardSectionsComponent = new CardSectionsComponent({cards});
   mainElement.appendChild(cardSectionsComponent.render());
 
-  cardSectionsComponent.onCardsChange = (updatedCards) => {
+  cardSectionsComponent.onCardsChange = (updatedCards, updatedCard) => {
     const prevFiltersElement = filtersComponent.element;
     filtersComponent.unrender();
     filtersComponent.update({
       cards: updatedCards,
       filters: generateFilters(updatedCards)
     });
-
     mainElement.replaceChild(filtersComponent.render(), prevFiltersElement);
 
     const prevStatisticElement = statisticComponent.element;
     statisticComponent.unrender();
     statisticComponent.update(updatedCards);
+
+    updateCardsList(updatedCard, updatedCard.id);
 
     cardSectionsComponent.updatePartial();
 
@@ -85,29 +89,7 @@ const addFilters = () => {
   };
 };
 
-
 const statisticComponent = new StatisticComponent(cards);
 
-// cardSectionsComponent.onCardsChange = (updatedCards) => {
-//   const prevFiltersElement = filtersComponent.element;
-//   filtersComponent.unrender();
-//   filtersComponent.update({
-//     cards: updatedCards,
-//     filters: generateFilters(updatedCards)
-//   });
-
-//   mainElement.replaceChild(filtersComponent.render(), prevFiltersElement);
-
-//   const prevStatisticElement = statisticComponent.element;
-//   statisticComponent.unrender();
-//   statisticComponent.update(updatedCards);
-
-//   cardSectionsComponent.updatePartial();
-
-//   mainElement.replaceChild(statisticComponent.render(), prevStatisticElement);
-// };
-
-
-// mainElement.insertAdjacentElement(`afterbegin`, filtersComponent.render());
 mainElement.appendChild(statisticComponent.render());
 
