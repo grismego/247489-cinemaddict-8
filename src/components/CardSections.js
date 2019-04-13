@@ -22,6 +22,14 @@ export default class CardSectionsComponent extends BaseComponent {
     this._cardsChangeCallback = fn;
   }
 
+  set onCommentSubmit(fn) {
+    this._onCommentSubmit = fn;
+  }
+
+  set onRatingSubmit(fn) {
+    this._onRatingSubmit = fn;
+  }
+
   _filterCardsByComments(cards) {
     return cards.slice().sort((a, b) => b.comments.length - a.comments.length);
   }
@@ -81,7 +89,6 @@ export default class CardSectionsComponent extends BaseComponent {
         if (card.id === updatedCard.id) {
           return updatedCard;
         }
-
         return card;
       });
 
@@ -92,9 +99,28 @@ export default class CardSectionsComponent extends BaseComponent {
       this.componentSectionAll.update(this._getFilteredCards());
     };
 
+    const submitComment = (newData, popup) => {
+      const index = this._data.cards.findIndex((item) => item.id === newData.id);
+      this._data[index] = Object.assign({}, newData);
+      if (typeof this._onCommentSubmit === `function`) {
+        this._onCommentSubmit(this._data[index], popup);
+      }
+    };
+
+    const submitRating = (newData, popup) => {
+      const index = this._data.cards.findIndex((item) => item.id === newData.id);
+      this._data.cards[index] = Object.assign({}, newData);
+      if (typeof this._onRatingSubmit === `function`) {
+        this._onRatingSubmit(this._data.cards[index], popup);
+      }
+    };
+
     this.componentSectionAll.onCardChange = onCardChange;
     this.componentSectionRated.onCardChange = onCardChange;
     this.componentSectionTopComment.onCardChange = onCardChange;
+
+    this.componentSectionAll.onCommentSubmit = submitComment;
+    this.componentSectionAll.onRatingSubmit = submitRating;
 
     element.appendChild(this.componentSectionAll.render());
     element.appendChild(this.componentSectionRated.render());

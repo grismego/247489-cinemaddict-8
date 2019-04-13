@@ -27,13 +27,18 @@ export default class CardPopupComponent extends BaseComponent {
     this._onAddToWatchListButtonClick = this._onAddToWatchListButtonClick.bind(this);
     this._onAddToFavoriteButtonClick = this._onAddToFavoriteButtonClick.bind(this);
 
+    this.showCommentSubmitError = this.showCommentSubmitError.bind(this);
+    this.enableCommentForm = this.enableCommentForm.bind(this);
+    this.showRatingSubmitError = this.showRatingSubmitError.bind(this);
+
+
     this._onClose = null;
     this._onSubmit = null;
   }
 
   _processForm(formData) {
     const entry = {};
-    
+
     const taskEditMapper = CardPopupComponent.createMapper(entry);
 
     Array.from(formData.entries()).forEach(
@@ -55,22 +60,41 @@ export default class CardPopupComponent extends BaseComponent {
     this._onSubmit = fn;
   }
 
-  set onChangeRating(fn) {
-    this._onChangeRating = fn;
-  }
-
-  _close() {
-
+  set onRatingSubmit(fn) {
+    this._onRatingSubmit = fn;
   }
 
   _onMarkAsWatchedButtonClick() {
     this._data.isWatched = !this._data.isWatched;
+    this._element.querySelector(`.film-details__watched-status`)
+    .innerHTML = this._data.isWatched ? `Already watched` : `Will watch`;
   }
   _onAddToWatchListButtonClick() {
     this._data.isAddedToWatched = !this._data.isAddedToWatched;
   }
   _onAddToFavoriteButtonClick() {
     this._data.isFavorite = !this._data.isFavorite;
+  }
+
+  showCommentSubmitError() {
+    const inputElement = this._element.querySelector(`.film-details__comment-input`);
+    inputElement.style.border = `3px solid  red`;
+    inputElement.disabled = false;
+  }
+
+  enableCommentForm() {
+    const inputElement = this._element.querySelector(`.film-details__comment-input`);
+    inputElement.disabled = false;
+    inputElement.style.border = `solid 1px #979797`;
+  }
+
+  showRatingSubmitError() {
+    const labelElement = this._element
+    .querySelector(`[for="rating-${this._data.personalRating}"]`);
+    this._element
+      .querySelector(`[value="${this._prevRating}"]`).checked = true;
+    this._data.personalRating = this._prevRating;
+    labelElement.classList.add(`shake`);
   }
 
   _onCloseClick() {
@@ -100,7 +124,7 @@ export default class CardPopupComponent extends BaseComponent {
     if (data.comment.length) {
       comments.push({
         author: CURRENT_USER,
-        time: new Date(),
+        date: Date.now(),
         comment: data.comment,
         emotion: data.emotion
       });
@@ -111,18 +135,20 @@ export default class CardPopupComponent extends BaseComponent {
     this.update({comments});
     this._partialUpdate();
     this._bind();
+
+    return typeof this._onSubmit === `function` && this._onSubmit(this._data, this);
   }
 
   _onFormSubmit() {
     this._syncForm();
-    return typeof this._onSubmit === `function` && this._onSubmit(this._data);
+    return typeof this._onSubmit === `function` && this._onSubmit(this._data, this);
   }
 
   _onCommentInputKeydown(evt) {
     const inputElement = this._element
     .querySelector(`.film-details__comment-input`);
     if ((evt.keyCode === KEYCODE_ENTER && evt.ctrlKey) && inputElement.value) {
-      this._onFormSubmit();
+      this._syncForm();
     }
   }
 
@@ -133,8 +159,11 @@ export default class CardPopupComponent extends BaseComponent {
   _onCommentRemove() {
     if (this._isYourComment()) {
       this._data.comments.pop();
+      // this._syncForm();
+      this._unbind();
       this.update(this._data);
       this._partialUpdate();
+      this._bind();
     }
   }
 
@@ -153,6 +182,7 @@ export default class CardPopupComponent extends BaseComponent {
   }
 
   _onChangeRating(evt) {
+    this._prevRating = this._data.personalRating;
     if (evt.target.tagName === `INPUT`) {
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
       const newData = this._processForm(formData);
@@ -161,7 +191,12 @@ export default class CardPopupComponent extends BaseComponent {
       this.update(newData);
       this._partialUpdate();
       this._bind();
+
+      if (typeof this._onRatingSubmit === `function`) {
+        this._onRatingSubmit(this._data, this);
+      }
     }
+
   }
 
   _onEscClick(evt) {

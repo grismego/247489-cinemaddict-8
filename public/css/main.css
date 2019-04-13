@@ -365,6 +365,30 @@ a:hover {
   padding: var(--vertical-gap) 40px;
 }
 
+.loading {
+  width: 400px;
+  display: flex;
+  margin: auto;
+  justify-content: center;
+}
+.loading__text {
+  font-size: 40px;
+  display: flex;
+  align-self: center;
+}
+
+.error {
+  display: flex;
+  text-align: center;  
+  margin: auto;
+  justify-content: center;
+}
+.error__text {
+  font-size: 40px;
+  display: flex;
+  align-self: center;
+  color: red;
+}
 
 .footer {
   align-items: center;

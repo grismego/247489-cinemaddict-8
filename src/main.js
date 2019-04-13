@@ -1,12 +1,15 @@
 import FiltersComponent from './components/Filters';
 import CardSectionsComponent from './components/CardSections';
-import StatisticComponent from './components/Statistic';
+import LoadingComponent from './components/Loading';
+import ErrorComponent from './components/Error';
+// import StatisticComponent from './components/Statistic';
 
 import {generateFilters} from './mocks/filters';
 import {API} from './services/Api';
 import ModelCard from './models/card';
 
-const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAosdasdada=`;
+
+const AUTHORIZATION = `Basic dXNlck1asd29yZAad4a=`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 
 const mainElement = document.querySelector(`.main`);
@@ -16,20 +19,26 @@ let filters;
 let cardSectionsComponent;
 let filtersComponent;
 
+const loadingComponent = new LoadingComponent();
+const errorComponent = new ErrorComponent();
+
 const api = new API({
   endPoint: END_POINT,
   authorization: AUTHORIZATION
 });
 
+mainElement.appendChild(loadingComponent.render());
 api.getCards()
   .then((data) => {
     cards = data;
     filters = generateFilters(data);
+    mainElement.removeChild(loadingComponent.element);
+    loadingComponent.unrender();
     addCards();
     addFilters();
-  }).catch((err) => {
-    console.error(err);
-  // @TODO
+  }).catch(() => {
+    mainElement.innerHTML = ``;
+    mainElement.appendChild(errorComponent.render());
   });
 
 const updateCardsList = (updatedData, id) => {
@@ -44,7 +53,7 @@ const addCards = () => {
   cardSectionsComponent = new CardSectionsComponent({cards});
   mainElement.appendChild(cardSectionsComponent.render());
 
-  cardSectionsComponent.onCardsChange = (updatedCards, updatedCard) => {
+  cardSectionsComponent.onCardsChange = (updatedCards) => {
     const prevFiltersElement = filtersComponent.element;
     filtersComponent.unrender();
     filtersComponent.update({
@@ -53,16 +62,31 @@ const addCards = () => {
     });
     mainElement.replaceChild(filtersComponent.render(), prevFiltersElement);
 
-    const prevStatisticElement = statisticComponent.element;
-    statisticComponent.unrender();
-    statisticComponent.update(updatedCards);
+    // const prevStatisticElement = statisticComponent.element;
+    // statisticComponent.unrender();
+    // statisticComponent.update(updatedCards);
 
-    updateCardsList(updatedCard, updatedCard.id);
+    // updateCardsList(updatedCard, updatedCard.id);
 
     cardSectionsComponent.updatePartial();
 
-    mainElement.replaceChild(statisticComponent.render(), prevStatisticElement);
+    // mainElement.replaceChild(statisticComponent.render(), prevStatisticElement);
+
+
   };
+
+  cardSectionsComponent.onCommentSubmit = (updatedCard, cardPopup) => {
+    api.updateCard({id: updatedCard.id, newData: ModelCard.toRAW(updatedCard)})
+    .then(updatedCard, updatedCard.id)
+    .catch(cardPopup.showCommentSubmitError);
+  };
+
+  cardSectionsComponent.onRatingSubmit = (updatedCard, cardPopup) => {
+    api.updateCard({id: updatedCard.id, newData: ModelCard.toRAW(updatedCard)})
+    .then(updateCardsList(updatedCard, updatedCard.id))
+    .catch(cardPopup.showRatingSubmitError);
+  };
+
 };
 
 const addFilters = () => {
@@ -78,18 +102,18 @@ const addFilters = () => {
     mainElement.replaceChild(cardSectionsComponent.render(), prevElement);
 
     if (filterName === `all`) {
-      statisticComponent.hide();
+      // statisticComponent.hide();
       cardSectionsComponent.show();
     }
 
     if (filterName === `stats`) {
-      statisticComponent.show();
+      // statisticComponent.show();
       cardSectionsComponent.hide();
     }
   };
 };
 
-const statisticComponent = new StatisticComponent(cards);
+// const statisticComponent = new StatisticComponent(cards);
 
-mainElement.appendChild(statisticComponent.render());
+// mainElement.appendChild(statisticComponent.render());
 

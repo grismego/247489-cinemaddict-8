@@ -25,6 +25,14 @@ export default class CardSectionComponent extends BaseComponent {
     this._changeCardCallback = fn;
   }
 
+  set onCommentSubmit(fn) {
+    this._onCommentSubmit = fn;
+  }
+
+  set onRatingSubmit(fn) {
+    this._onRatingSubmit = fn;
+  }
+
   render() {
     const sectionElement = super.render();
     const containerElement = sectionElement.querySelector(`.films-list__container`);
@@ -72,14 +80,23 @@ export default class CardSectionComponent extends BaseComponent {
         popupComponent.update(data);
       };
 
-      popupComponent.onSubmit = (popupData) => {
+      popupComponent.onSubmit = (popupData, popup) => {
         updateCardComponent(popupData);
+        if (typeof this._onCommentSubmit === `function`) {
+          this._onCommentSubmit(cardComponent._data, popup);
+        }
       };
 
       popupComponent.onClose = (popupData) => {
         updateCardComponent(popupData);
         document.body.removeChild(popupComponent.element);
         popupComponent.unrender();
+      };
+
+      popupComponent.onRatingSubmit = (popupData, popup) => {
+        if (typeof this._onRatingSubmit === `function`) {
+          this._onRatingSubmit(popupData, popup);
+        }
       };
 
       return cardComponent;

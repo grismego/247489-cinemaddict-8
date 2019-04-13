@@ -23,6 +23,7 @@ export default class ModelCards {
   }
 
   static toRAW(data) {
+    // debugger
     return {
       'id': data.id,
       'comments': data.comments,
@@ -43,9 +44,10 @@ export default class ModelCards {
         'writers': data.writers
       },
       'user_details': {
+        'personal_rating': data.personalRating,
         'already_watched': data.isWatched,
         'favorite': data.isFavorite,
-        'watching_date': data.comments.date,
+        'watching_date': data.watchingDate,
         'watchlist': data.isAddedToWatched
       }
     };
