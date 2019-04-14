@@ -1,9 +1,9 @@
 import BaseComponent from 'app/components/base';
 import CardSection from 'app/components/card-section';
 
-const DEFAULT_COUNT_ALL_CARDS = 5;
+// const DEFAULT_COUNT_ALL_CARDS = 5;
 const COUNT_EXTRA_CARDS = 2;
-const SHOW_MORE_STEP = 5;
+// const SHOW_MORE_STEP = 5;
 
 export default class CardSectionsComponent extends BaseComponent {
   constructor(data) {
