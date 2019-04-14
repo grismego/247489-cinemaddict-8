@@ -1,7 +1,7 @@
-import BaseComponent from './Base';
-import CardComponent from './Card';
-import PopupComponent from './Popup';
-import {createCardSectionTemplate} from '../templates/cards';
+import BaseComponent from 'app/components/base';
+import CardComponent from 'app/components/card';
+import PopupComponent from 'app/components/popup';
+import {createCardSectionTemplate} from 'app/templates/cards';
 
 export default class CardSectionComponent extends BaseComponent {
   constructor(data, options = {}) {
@@ -36,12 +36,13 @@ export default class CardSectionComponent extends BaseComponent {
   render() {
     const sectionElement = super.render();
     const containerElement = sectionElement.querySelector(`.films-list__container`);
+    
 
     this.components = this._data.map((data) => {
-      this._options
-          .withOption = sectionElement.classList
-                                .contains(`films-list--extra`) ? false : true;
-      const cardComponent = new CardComponent(data, this._options.withOption);
+      this._options.withOption = sectionElement.classList.contains(`films-list--extra`);
+
+      const cardComponent = new CardComponent(data, !this._options.withOption);
+
       const popupComponent = new PopupComponent(data);
 
       const updateCardComponent = (props) => {
@@ -80,10 +81,12 @@ export default class CardSectionComponent extends BaseComponent {
         popupComponent.update(data);
       };
 
-      popupComponent.onSubmit = (popupData, popup) => {
+      popupComponent.onSubmit = (popupData, showCommentSubmitError, enablePopup) => {
         updateCardComponent(popupData);
         if (typeof this._onCommentSubmit === `function`) {
-          this._onCommentSubmit(cardComponent._data, popup);
+          this._onCommentSubmit(popupData, showCommentSubmitError, enablePopup);
+        } else {
+          enablePopup();
         }
       };
 
@@ -93,9 +96,9 @@ export default class CardSectionComponent extends BaseComponent {
         popupComponent.unrender();
       };
 
-      popupComponent.onRatingSubmit = (popupData, popup) => {
+      popupComponent.onRatingSubmit = (popupData, showRatingSubmitError, showNewRating) => {
         if (typeof this._onRatingSubmit === `function`) {
-          this._onRatingSubmit(popupData, popup);
+          this._onRatingSubmit(popupData, showRatingSubmitError, showNewRating);
         }
       };
 
@@ -107,6 +110,7 @@ export default class CardSectionComponent extends BaseComponent {
 
   unrender() {
     const containerElement = this.element.querySelector(`.films-list__container`);
+
     this.components.forEach((component) => {
       containerElement.removeChild(component.element);
       component.unrender();

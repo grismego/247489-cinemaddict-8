@@ -60,7 +60,7 @@ export const createTemplates = (cards, withOptions = false) => (
           <p class="film-card__info">
             <span class="film-card__year">${moment(card.year).format(`YYYY`)}</span>
             <span class="film-card__duration">${hour}h ${min}m</span>
-            <span class="film-card__genre">${card.genre}</span>
+            <span class="film-card__genre">${card.genre.join(` `)}</span>
           </p>
           <img src="${card.poster}" alt="" class="film-card__poster">
           <p class="film-card__description">${card.description}</p>
@@ -81,7 +81,7 @@ export const createTemplate = (card, withOptions = false) => {
       <p class="film-card__info">
         <span class="film-card__year">${moment(card.year).format(`YYYY`)}</span>
         <span class="film-card__duration">${hour}h ${min}m</span>
-        <span class="film-card__genre">${card.genre}</span>
+        <span class="film-card__genre">${card.genre.join(`, `)}</span>
       </p>
       <img src="${card.poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${card.description}</p>

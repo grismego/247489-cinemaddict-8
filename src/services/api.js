@@ -1,4 +1,4 @@
-import ModelCard from '../models/card';
+import ModelCard from 'app/models/card';
 
 const Method = {
   GET: `GET`,
@@ -10,7 +10,7 @@ const toJSON = (response) => {
   return response.json();
 };
 
-export const API = class {
+export default class ApiService {
   constructor({endPoint, authorization}) {
     this._endPoint = endPoint;
     this._authorization = authorization;
@@ -50,4 +50,5 @@ export const API = class {
     .then(toJSON)
     .then(ModelCard.parseData);
   }
-};
+}
+

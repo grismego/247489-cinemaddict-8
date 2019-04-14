@@ -1,4 +1,4 @@
-import BaseComponent from './Base';
+import BaseComponent from 'app/components/base';
 import {createFilterTemplate} from '../templates/filters';
 
 export default class FilterComponent extends BaseComponent {
@@ -22,11 +22,11 @@ export default class FilterComponent extends BaseComponent {
     }
   }
 
-  _bind() {
+  _createListeners() {
     this._element.addEventListener(`click`, this._onFilterClick);
   }
 
-  _unbind() {
+  _removeListeners() {
     this._element.removeEventListener(`click`, this._onFilterClick);
   }
 }

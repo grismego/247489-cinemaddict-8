@@ -1,15 +1,15 @@
-import FiltersComponent from './components/Filters';
-import CardSectionsComponent from './components/CardSections';
-import LoadingComponent from './components/Loading';
-import ErrorComponent from './components/Error';
+import FiltersComponent from 'app/components/filters';
+import CardSectionsComponent from 'app/components/card-sections';
+import LoadingComponent from 'app/components/loading';
+import ErrorComponent from 'app/components/error';
 // import StatisticComponent from './components/Statistic';
 
-import {generateFilters} from './mocks/filters';
-import {API} from './services/Api';
-import ModelCard from './models/card';
+import {generateFilters} from 'app/mocks/filters';
 
+import ModelCard from 'app/models/card';
+import ApiService from 'app/services/api';
 
-const AUTHORIZATION = `Basic dXNlck1asd29yZAad4a=`;
+const AUTHORIZATION = `Basic dXNlck1asd2aaa9aayZAad4a=`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 
 const mainElement = document.querySelector(`.main`);
@@ -19,40 +19,36 @@ let filters;
 let cardSectionsComponent;
 let filtersComponent;
 
-const loadingComponent = new LoadingComponent();
-const errorComponent = new ErrorComponent();
-
-const api = new API({
+const api = new ApiService({
   endPoint: END_POINT,
   authorization: AUTHORIZATION
 });
 
-mainElement.appendChild(loadingComponent.render());
-api.getCards()
-  .then((data) => {
-    cards = data;
-    filters = generateFilters(data);
-    mainElement.removeChild(loadingComponent.element);
-    loadingComponent.unrender();
-    addCards();
-    addFilters();
-  }).catch(() => {
-    mainElement.innerHTML = ``;
-    mainElement.appendChild(errorComponent.render());
-  });
+const loadingComponent = new LoadingComponent();
+const errorComponent = new ErrorComponent();
 
-const updateCardsList = (updatedData, id) => {
-  api.updateCard({id: updatedData.id, newData: ModelCard.toRAW(updatedData)})
-      .then((cardModel) => {
-        const index = cards.findIndex((item) => item.id === id);
-        cards[index] = Object.assign({}, cardModel);
-      });
+api.getCards().then((data) => {
+  cards = data;
+  filters = generateFilters(data);
+  mainElement.removeChild(loadingComponent.element);
+  loadingComponent.unrender();
+  addCards();
+  addFilters();
+}).catch(() => {
+  mainElement.innerHTML = ``;
+  mainElement.appendChild(errorComponent.render());
+});
+
+
+const syncCards = (cardModel) => {
+  const index = cards.findIndex((item) => item.id === cardModel.id);
+  if (index > -1) {
+    cards[index] = Object.assign({}, cardModel);
+  }
 };
 
 const addCards = () => {
   cardSectionsComponent = new CardSectionsComponent({cards});
-  mainElement.appendChild(cardSectionsComponent.render());
-
   cardSectionsComponent.onCardsChange = (updatedCards) => {
     const prevFiltersElement = filtersComponent.element;
     filtersComponent.unrender();
@@ -71,22 +67,33 @@ const addCards = () => {
     cardSectionsComponent.updatePartial();
 
     // mainElement.replaceChild(statisticComponent.render(), prevStatisticElement);
+  };
 
+  cardSectionsComponent.onCommentSubmit = (updatedCard, showPopupError, enablePopup) => {
+
+    api
+      .updateCard({
+        id: updatedCard.id,
+        newData: ModelCard.toRAW(updatedCard)
+      })
+      .then(syncCards)
+      .then(enablePopup)
+      .catch(showPopupError);
 
   };
 
-  cardSectionsComponent.onCommentSubmit = (updatedCard, cardPopup) => {
-    api.updateCard({id: updatedCard.id, newData: ModelCard.toRAW(updatedCard)})
-    .then(updatedCard, updatedCard.id)
-    .catch(cardPopup.showCommentSubmitError);
+  cardSectionsComponent.onRatingSubmit = (updatedCard, showPopupError, enableRating) => {
+    api
+      .updateCard({
+        id: updatedCard.id,
+        newData: ModelCard.toRAW(updatedCard)
+      })
+      .then(syncCards)
+      .then(enableRating)
+      .catch(showPopupError);
   };
 
-  cardSectionsComponent.onRatingSubmit = (updatedCard, cardPopup) => {
-    api.updateCard({id: updatedCard.id, newData: ModelCard.toRAW(updatedCard)})
-    .then(updateCardsList(updatedCard, updatedCard.id))
-    .catch(cardPopup.showRatingSubmitError);
-  };
-
+  mainElement.appendChild(cardSectionsComponent.render());
 };
 
 const addFilters = () => {
@@ -117,3 +124,4 @@ const addFilters = () => {
 
 // mainElement.appendChild(statisticComponent.render());
 
+mainElement.appendChild(loadingComponent.render());

@@ -1,6 +1,6 @@
-import BaseComponent from './Base';
+import BaseComponent from 'app/components/base';
 import {createFiltersTemplate} from '../templates/filters';
-import FilterComponent from './Filter';
+import FilterComponent from 'app/components/filter';
 
 export default class FiltersComponent extends BaseComponent {
 
@@ -49,11 +49,11 @@ export default class FiltersComponent extends BaseComponent {
     super.unrender();
   }
 
-  _bind() {
+  _createListeners() {
 
   }
 
-  _unbind() {
+  _removeListeners() {
 
   }
 

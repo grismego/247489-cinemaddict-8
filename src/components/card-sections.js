@@ -1,5 +1,5 @@
-import BaseComponent from './Base';
-import CardSection from './CardSection';
+import BaseComponent from 'app/components/base';
+import CardSection from 'app/components/card-section';
 
 export default class CardSectionsComponent extends BaseComponent {
   constructor(data) {
@@ -86,10 +86,7 @@ export default class CardSectionsComponent extends BaseComponent {
 
     const onCardChange = (updatedCard) => {
       this._data.cards = this._data.cards.map((card) => {
-        if (card.id === updatedCard.id) {
-          return updatedCard;
-        }
-        return card;
+        return card.id === updatedCard.id ? updatedCard : card;
       });
 
       if (typeof this._cardsChangeCallback === `function`) {
@@ -99,19 +96,23 @@ export default class CardSectionsComponent extends BaseComponent {
       this.componentSectionAll.update(this._getFilteredCards());
     };
 
-    const submitComment = (newData, popup) => {
+    const submitComment = (newData, showCommentSubmitError, enableCommentForm) => {
       const index = this._data.cards.findIndex((item) => item.id === newData.id);
-      this._data[index] = Object.assign({}, newData);
-      if (typeof this._onCommentSubmit === `function`) {
-        this._onCommentSubmit(this._data[index], popup);
+      if (index !== -1) {
+        this._data[index] = Object.assign({}, newData);
+        if (typeof this._onCommentSubmit === `function`) {
+          this._onCommentSubmit(this._data[index], showCommentSubmitError, enableCommentForm);
+        }
       }
     };
 
-    const submitRating = (newData, popup) => {
+    const submitRating = (newData, showRatingSubmitError, showNewRating) => {
       const index = this._data.cards.findIndex((item) => item.id === newData.id);
-      this._data.cards[index] = Object.assign({}, newData);
-      if (typeof this._onRatingSubmit === `function`) {
-        this._onRatingSubmit(this._data.cards[index], popup);
+      if (index !== -1) {
+        this._data.cards[index] = Object.assign({}, newData);
+        if (typeof this._onRatingSubmit === `function`) {
+          this._onRatingSubmit(this._data.cards[index], showRatingSubmitError, showNewRating);
+        }
       }
     };
 

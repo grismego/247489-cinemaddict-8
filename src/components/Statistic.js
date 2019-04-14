@@ -1,6 +1,6 @@
-import BaseComponent from './Base';
+import BaseComponent from 'app/components/base';
 import {createStatisticTemplate} from '../templates/statistics';
-import ChartComponent from './Chart';
+import ChartComponent from 'app/components/chart';
 
 export default class StatisticComponent extends BaseComponent {
   constructor(data) {
@@ -12,15 +12,7 @@ export default class StatisticComponent extends BaseComponent {
     return createStatisticTemplate(this._getCardsStatistics(this._data));
   }
 
-  _setChartSettings(canvas, labels, values) {
-    return {
-      ctx: canvas,
-      labels,
-      values
-    };
-  }
-
-  _getTotalDuration(cards) {
+  _getTotalDuration(cards) { // @TODO: static - читай критерии
     return cards.reduce((accumulator, card) => accumulator + card.duration, 0);
   }
 
@@ -66,7 +58,11 @@ export default class StatisticComponent extends BaseComponent {
     statChartElement.getContext(`2d`);
     statChartElement.height = BAR_HEIGHT * labels.length;
 
-    return this._setChartSettings(statChartElement, labels, values);
+    return {
+      ctx: statChartElement,
+      labels,
+      values
+    };
   }
 
   _getCardsStatistics(cards) {

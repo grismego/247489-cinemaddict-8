@@ -1,5 +1,5 @@
-import {createTemplate} from '../templates/cards';
-import BaseComponent from './Base';
+import {createTemplate} from 'app/templates/cards';
+import BaseComponent from 'app/components/base';
 
 export default class CardComponent extends BaseComponent {
   constructor(data, options = {}) {
@@ -11,7 +11,10 @@ export default class CardComponent extends BaseComponent {
     this._addToWatchListCallback = null;
     this._markAsWatchedCallback = null;
     this._markAsFavoriteCallback = null;
+
     this._options = options;
+
+    this._commentsElement = null;
   }
 
   get template() {
@@ -54,10 +57,10 @@ export default class CardComponent extends BaseComponent {
     }
   }
 
-  _bind() {
-    this._element
-      .querySelector(`.film-card__comments`)
-      .addEventListener(`click`, this._onClick);
+  _createListeners() {
+    this._commentsElement = this._element.querySelector(`.film-card__comments`);
+    this._commentsElement.addEventListener(`click`, this._onClick);
+
     if (this._options) {
       this._element
       .querySelector(`.film-card__controls`)
@@ -65,10 +68,10 @@ export default class CardComponent extends BaseComponent {
     }
   }
 
-  _unbind() {
-    this._element
-      .querySelector(`.film-card__comments`)
-      .removeEventListener(`click`, this._onClick);
+  _removeListeners() {
+    this._commentsElement.removeEventListener(`click`, this._onClick);
+    this._commentsElement = null;
+    
     if (this._options) {
       this._element
         .querySelector(`.film-card__controls`)

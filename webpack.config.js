@@ -7,6 +7,11 @@ module.exports = {
     filename: `bundle.js`,
     path: path.join(__dirname, `public`),
   },
+  resolve: {
+    alias: {
+      app: path.join(__dirname, `src`),
+    }
+  },
   devtool: `source-map`,
   devServer: {
     contentBase: path.join(__dirname, `public`),

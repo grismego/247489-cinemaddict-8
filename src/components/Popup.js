@@ -3,15 +3,26 @@ import {
   createScoreTemplate,
   createRatingTemplate,
   createCommentsSectionTemplate
-} from '../templates/popup';
+} from 'app/templates/popup';
 
-import {createElement} from '../lib/create-element';
-import BaseComponent from './Base';
+import {createElement} from 'app/lib/create-element';
+import BaseComponent from 'app/components/base';
 
 const KEYCODE_ENTER = 13;
 const KEYCODE_ESC = 27;
 
 const CURRENT_USER = `Yo`;
+const TEXT_RATE = `Your Rate`;
+
+const CommentBorder = {
+  ERROR: `3px solid #8B0000`,
+  DEFAULT: `1px solid #979797`
+};
+const RatingElementColor = {
+  DEFAULT: `#d8d8d8`,
+  ERROR: `#8B0000`,
+  CHECKED: `#ffe800`
+};
 
 export default class CardPopupComponent extends BaseComponent {
   constructor(data) {
@@ -30,7 +41,9 @@ export default class CardPopupComponent extends BaseComponent {
     this.showCommentSubmitError = this.showCommentSubmitError.bind(this);
     this.enableCommentForm = this.enableCommentForm.bind(this);
     this.showRatingSubmitError = this.showRatingSubmitError.bind(this);
+    this.showNewRating = this.showNewRating.bind(this);
 
+    this._toggleStateInput = this._toggleStateInput.bind(this);
 
     this._onClose = null;
     this._onSubmit = null;
@@ -66,8 +79,9 @@ export default class CardPopupComponent extends BaseComponent {
 
   _onMarkAsWatchedButtonClick() {
     this._data.isWatched = !this._data.isWatched;
-    this._element.querySelector(`.film-details__watched-status`)
-    .innerHTML = this._data.isWatched ? `Already watched` : `Will watch`;
+    this._element.querySelector(`.film-details__watched-status`).innerHTML = (
+      this._data.isWatched ? `Already watched` : `Will watch`
+    );
   }
   _onAddToWatchListButtonClick() {
     this._data.isAddedToWatched = !this._data.isAddedToWatched;
@@ -78,23 +92,51 @@ export default class CardPopupComponent extends BaseComponent {
 
   showCommentSubmitError() {
     const inputElement = this._element.querySelector(`.film-details__comment-input`);
-    inputElement.style.border = `3px solid  red`;
+
+    inputElement.classList.add(`shake`);
+    inputElement.style.border = CommentBorder.ERROR;
     inputElement.disabled = false;
+
+    this._data.comments.pop();
+    this._syncForm();
   }
 
   enableCommentForm() {
     const inputElement = this._element.querySelector(`.film-details__comment-input`);
-    inputElement.disabled = false;
-    inputElement.style.border = `solid 1px #979797`;
+
+    inputElement.style.border = CommentBorder.DEFAULT;
+    inputElement.value = ``;
+    inputElement.classList.remove(`shake`);
+
+    this._toggleStateInput(true);
   }
 
   showRatingSubmitError() {
     const labelElement = this._element
     .querySelector(`[for="rating-${this._data.personalRating}"]`);
+
     this._element
       .querySelector(`[value="${this._prevRating}"]`).checked = true;
+
     this._data.personalRating = this._prevRating;
+    this._disableRatingInput(false);
     labelElement.classList.add(`shake`);
+  }
+
+  _disableRatingInput(value) {
+    this._element.querySelectorAll(`.film-details__user-rating-input`)
+      .forEach((item) => {
+        item.disabled = value;
+      });
+  }
+
+  showNewRating() {
+    this._element.querySelector(`.film-details__user-rating`).textContent = `${TEXT_RATE} ${this._data.personalRating}`;
+
+    this._disableRatingInput(false);
+
+    this._element.querySelector(`[for="rating-${this._data.personalRating}"]`)
+      .style.backgroundColor = RatingElementColor.CHECKED;
   }
 
   _onCloseClick() {
@@ -131,24 +173,35 @@ export default class CardPopupComponent extends BaseComponent {
     }
     this._data.personalRating = data.personalRating;
 
-    this._unbind();
+    this._removeListeners();
     this.update({comments});
     this._partialUpdate();
-    this._bind();
-
-    return typeof this._onSubmit === `function` && this._onSubmit(this._data, this);
+    this._createListeners();
   }
 
   _onFormSubmit() {
     this._syncForm();
-    return typeof this._onSubmit === `function` && this._onSubmit(this._data, this);
+    if (typeof this._onSubmit === `function`) {
+      this._onSubmit(
+          this._data,
+          this.showCommentSubmitError,
+          this.enableCommentForm
+      );
+    }
+  }
+
+  _toggleStateInput(value) {
+    const inputElement = this._element.querySelector(`.film-details__comment-input`);
+
+    inputElement.disabled = value;
   }
 
   _onCommentInputKeydown(evt) {
-    const inputElement = this._element
-    .querySelector(`.film-details__comment-input`);
+    const inputElement = this._element.querySelector(`.film-details__comment-input`);
+
     if ((evt.keyCode === KEYCODE_ENTER && evt.ctrlKey) && inputElement.value) {
-      this._syncForm();
+      this._onFormSubmit();
+      this._toggleStateInput(true);
     }
   }
 
@@ -159,11 +212,11 @@ export default class CardPopupComponent extends BaseComponent {
   _onCommentRemove() {
     if (this._isYourComment()) {
       this._data.comments.pop();
-      // this._syncForm();
-      this._unbind();
-      this.update(this._data);
+      this._syncForm();
+      this._removeListeners();
+      // TODO - this.update(this._data);
       this._partialUpdate();
-      this._bind();
+      this._createListeners();
     }
   }
 
@@ -187,13 +240,14 @@ export default class CardPopupComponent extends BaseComponent {
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
       const newData = this._processForm(formData);
 
-      this._unbind();
+      this._removeListeners();
       this.update(newData);
       this._partialUpdate();
-      this._bind();
-
+      this._createListeners();
+      this._disableRatingInput(true);
       if (typeof this._onRatingSubmit === `function`) {
-        this._onRatingSubmit(this._data, this);
+        this._onRatingSubmit(
+            this._data, this.showRatingSubmitError, this.showNewRating);
       }
     }
 
@@ -209,10 +263,10 @@ export default class CardPopupComponent extends BaseComponent {
     }
   }
 
-  _bind() {
+  _createListeners() {
     this._element
       .querySelector(`.film-details__inner`)
-      .removeEventListener(`submit`, this._onFormSubmit);
+      .addEventListener(`submit`, this._onFormSubmit);
 
     this._element
       .querySelector(`.film-details__close-btn`)
@@ -243,11 +297,7 @@ export default class CardPopupComponent extends BaseComponent {
       .addEventListener(`change`, this._onAddToFavoriteButtonClick);
   }
 
-  _unbind() {
-    this._element
-      .querySelector(`.film-details__inner`)
-      .removeEventListener(`submit`, this._onFormSubmit);
-
+  _removeListeners() {
     this._element
       .querySelector(`.film-details__close-btn`)
       .removeEventListener(`click`, this._onCloseClick);
@@ -264,7 +314,7 @@ export default class CardPopupComponent extends BaseComponent {
 
     this
       ._element.querySelector(`.film-details__watched-reset`)
-      .addEventListener(`click`, this._onCommentRemove);
+      .removeEventListener(`click`, this._onCommentRemove);
 
     this
       ._element.querySelector(`#watchlist`)

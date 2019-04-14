@@ -23,12 +23,12 @@ export default class ModelCards {
   }
 
   static toRAW(data) {
-    // debugger
     return {
       'id': data.id,
       'comments': data.comments,
       'film_info': {
         'actors': data.actors,
+        'alternative_title': data.alternativeTitle,
         'age_rating': data.ageRating,
         'description': data.description,
         'director': data.director,

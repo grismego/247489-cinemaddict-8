@@ -1,6 +1,6 @@
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import BaseComponent from './Base';
+import BaseComponent from 'app/components/base';
 
 export default class ChartComponent extends BaseComponent {
 

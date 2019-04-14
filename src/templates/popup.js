@@ -80,7 +80,7 @@ export const createScoreTemplate = (data) => {
 const createGenresTemplate = (card) => {
   const block = [...(card.genre)].map((genre) => (
     `<span class="film-details__genre">${genre}</span>`
-  )).join(``).split(` `);
+  )).join(``);
 
   return (
     `<tr class="film-details__row">
@@ -152,7 +152,7 @@ export const createPopupTemplate = (data) => (
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Actors</td>
-              <td class="film-details__cell">${data.actors}</td>
+              <td class="film-details__cell">${data.actors.join(`, `)}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
