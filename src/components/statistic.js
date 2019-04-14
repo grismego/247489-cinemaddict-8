@@ -1,15 +1,35 @@
 import BaseComponent from 'app/components/base';
-import {createStatisticTemplate} from '../templates/statistics';
+import {createStatisticTemplate, createStatisticListTemplate} from '../templates/statistics';
+import {createElement} from 'app/lib/create-element';
 import ChartComponent from 'app/components/chart';
+import moment from 'moment';
+
+const BAR_HEIGHT = 50;
 
 export default class StatisticComponent extends BaseComponent {
   constructor(data) {
     super(data);
     this._filteredData = this._data.filter((item) => item.isWatched);
+
+    this._onPeriodChange = this._onPeriodChange.bind(this);
   }
 
   get template() {
     return createStatisticTemplate(this._getCardsStatistics(this._data));
+  }
+
+  _getDataByPeriod() {
+    return {
+      'statistic-all-time': () => this._filteredData,
+      'statistic-today': () => this._filteredData
+        .filter((item) => moment(item.watchingDate) === moment()),
+      'statistic-week': () => this._filteredData
+        .filter((item) => moment(item.watchingDate).isAfter(moment().subtract(7, `days`))),
+      'statistic-month': () => this._filteredData
+        .filter((item) => moment(item.watchingDate).isAfter(moment().subtract(1, `month`))),
+      'statistic-year': () => this._filteredData
+        .filter((item) => moment(item.watchingDate).isAfter(moment().subtract(1, `year`)))
+    };
   }
 
   _getTotalDuration(cards) { // @TODO: static - читай критерии
@@ -21,12 +41,12 @@ export default class StatisticComponent extends BaseComponent {
   }
 
   show() {
-    this._renderChart();
+    // this._renderChart();
     this.element.classList.remove(`visually-hidden`);
   }
 
   hide() {
-    this._unrenderChart();
+    // this._unrenderChart();
     this.element.classList.add(`visually-hidden`);
   }
 
@@ -37,32 +57,40 @@ export default class StatisticComponent extends BaseComponent {
     return this._sortObject(data).map((item) => item[1]);
   }
 
-  _getStat(cards) {
-    const genresStats = {};
-    const filteredCards = cards.filter((card) => card.isWatched);
-
-    filteredCards.forEach((card) => {
-      if (genresStats.hasOwnProperty([card.genre])) {
-        genresStats[[card.genre]]++;
-      } else {
-        genresStats[[card.genre]] = 1;
-      }
+  static getGenres(data) {
+    const genres = new Set();
+    data.forEach((item) => {
+      item.genre.forEach((genre) => {
+        genres.add(genre);
+      });
     });
-    const BAR_HEIGHT = 50;
+    return Array.from(genres);
+  }
 
-    const labels = this._createLabels(genresStats);
-    const values = this._createValues(genresStats);
+  static getGenresCounts(data) {
+    const counts = [];
+    StatisticComponent.getGenres(data).forEach((genre, index) => {
+      counts[index] = data.filter((item) => {
+        return item.genre.some((it) => it === genre);
+      }).length;
+    });
+    return counts;
+  }
 
-    const statChartElement = this._element.querySelector(`.statistic__chart`);
+  _updateChart(filter) {
+    const prevElem = this._element.querySelector(`.statistic__text-list`);
+    const ctx = this._element.querySelector(`canvas`);
+    const data = this._getDataByPeriod()[filter]();
+    const labels = StatisticComponent.getGenres(data);
+    const values = StatisticComponent.getGenresCounts(data);
 
-    statChartElement.getContext(`2d`);
-    statChartElement.height = BAR_HEIGHT * labels.length;
+    ctx.getContext(`2d`);
+    ctx.height = BAR_HEIGHT * labels.length;
 
-    return {
-      ctx: statChartElement,
-      labels,
-      values
-    };
+    this._element.replaceChild(createElement(createStatisticListTemplate(this._getCardsStatistics(data))), prevElem);
+
+    this._chart = new ChartComponent({ctx, labels, values});
+    this._chart.render();
   }
 
   _getCardsStatistics(cards) {
@@ -87,6 +115,30 @@ export default class StatisticComponent extends BaseComponent {
     return statistics;
   }
 
+  _createListeners() {
+    if (this._element) {
+      this._element
+        .querySelectorAll(`input`).forEach((item) => {
+          item.addEventListener(`change`, this._onPeriodChange);
+        });
+    }
+  }
+
+  _removeListeners() {
+    if (this._element) {
+      this._element
+        .querySelectorAll(`input`).forEach((item) => {
+          item.removeEventListener(`change`, this._onPeriodChange);
+        });
+    }
+  }
+
+  _onPeriodChange(evt) {
+    evt.preventDefault();
+    this._chart.unrender();
+    this._updateChart(evt.target.id);
+  }
+
   _unrenderChart() {
     if (this._chart) {
       this._chart.unrender();
@@ -94,15 +146,9 @@ export default class StatisticComponent extends BaseComponent {
     }
   }
 
-  _renderChart() {
-    this._chart = new ChartComponent(this._getStat(this._data));
-    this._chart.render();
-  }
-
   render() {
     const element = super.render();
-    this._renderChart();
-
+    this._updateChart(`statistic-all-time`);
     return element;
   }
 

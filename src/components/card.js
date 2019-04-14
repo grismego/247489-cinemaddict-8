@@ -71,7 +71,7 @@ export default class CardComponent extends BaseComponent {
   _removeListeners() {
     this._commentsElement.removeEventListener(`click`, this._onClick);
     this._commentsElement = null;
-    
+
     if (this._options) {
       this._element
         .querySelector(`.film-card__controls`)

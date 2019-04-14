@@ -1,6 +1,10 @@
 import BaseComponent from 'app/components/base';
 import CardSection from 'app/components/card-section';
 
+const DEFAULT_COUNT_ALL_CARDS = 5;
+const COUNT_EXTRA_CARDS = 2;
+const SHOW_MORE_STEP = 5;
+
 export default class CardSectionsComponent extends BaseComponent {
   constructor(data) {
     super(data);
@@ -53,8 +57,8 @@ export default class CardSectionsComponent extends BaseComponent {
     this.componentSectionRated.unrender();
     this.componentSectionTopComment.unrender();
 
-    this.componentSectionRated.update(this._filterCardsByRating(this._data.cards).slice(0, 2));
-    this.componentSectionTopComment.update(this._filterCardsByComments(this._data.cards).slice(0, 2));
+    this.componentSectionRated.update(this._filterCardsByRating(this._data.cards).slice(0, COUNT_EXTRA_CARDS));
+    this.componentSectionTopComment.update(this._filterCardsByComments(this._data.cards).slice(0, COUNT_EXTRA_CARDS));
 
     this.element.replaceChild(this.componentSectionRated.render(), prevElementRated);
     this.element.replaceChild(this.componentSectionTopComment.render(), prevElementComment);
@@ -68,18 +72,19 @@ export default class CardSectionsComponent extends BaseComponent {
   render() {
     const element = super.render();
     const {cards} = this._data;
+    const allCards = this._getFilteredCards();
 
-    this.componentSectionAll = new CardSection(this._getFilteredCards(), {
+    this.componentSectionAll = new CardSection(allCards, {
       title: `All Movies`,
       showMore: true
     });
 
-    this.componentSectionRated = new CardSection(this._filterCardsByRating(cards).slice(0, 2), {
+    this.componentSectionRated = new CardSection(this._filterCardsByRating(cards).slice(0, COUNT_EXTRA_CARDS), {
       title: `Top rated`,
       isExtra: true
     });
 
-    this.componentSectionTopComment = new CardSection(this._filterCardsByComments(cards).slice(0, 2), {
+    this.componentSectionTopComment = new CardSection(this._filterCardsByComments(cards).slice(0, COUNT_EXTRA_CARDS), {
       title: `Top Comment`,
       isExtra: true
     });
@@ -93,7 +98,7 @@ export default class CardSectionsComponent extends BaseComponent {
         this._cardsChangeCallback(this._data.cards, updatedCard);
       }
 
-      this.componentSectionAll.update(this._getFilteredCards());
+      this.componentSectionAll.update(allCards);
     };
 
     const submitComment = (newData, showCommentSubmitError, enableCommentForm) => {
@@ -117,11 +122,17 @@ export default class CardSectionsComponent extends BaseComponent {
     };
 
     this.componentSectionAll.onCardChange = onCardChange;
-    this.componentSectionRated.onCardChange = onCardChange;
-    this.componentSectionTopComment.onCardChange = onCardChange;
-
     this.componentSectionAll.onCommentSubmit = submitComment;
     this.componentSectionAll.onRatingSubmit = submitRating;
+
+    this.componentSectionRated.onCardChange = onCardChange;
+    this.componentSectionRated.onCommentSubmit = submitComment;
+    this.componentSectionRated.onRatingSubmit = submitRating;
+
+    this.componentSectionTopComment.onCardChange = onCardChange;
+    this.componentSectionTopComment.onCommentSubmit = submitComment;
+    this.componentSectionTopComment.onRatingSubmit = submitRating;
+
 
     element.appendChild(this.componentSectionAll.render());
     element.appendChild(this.componentSectionRated.render());

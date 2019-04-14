@@ -38,6 +38,11 @@ export default class CardPopupComponent extends BaseComponent {
     this._onAddToWatchListButtonClick = this._onAddToWatchListButtonClick.bind(this);
     this._onAddToFavoriteButtonClick = this._onAddToFavoriteButtonClick.bind(this);
 
+    this._addToWatchListCallback = null;
+    this._markAsWatchedCallback = null;
+    this._markAsFavoriteCallback = null;
+
+
     this.showCommentSubmitError = this.showCommentSubmitError.bind(this);
     this.enableCommentForm = this.enableCommentForm.bind(this);
     this.showRatingSubmitError = this.showRatingSubmitError.bind(this);
@@ -77,28 +82,46 @@ export default class CardPopupComponent extends BaseComponent {
     this._onRatingSubmit = fn;
   }
 
+  set onAddToWatchList(fn) {
+    this._addToWatchListCallback = fn;
+  }
+  set onMarkAsWatched(fn) {
+    this._markAsWatchedCallback = fn;
+  }
+  set onMarkAsFavorite(fn) {
+    this._markAsFavoriteCallback = fn;
+  }
+
   _onMarkAsWatchedButtonClick() {
     this._data.isWatched = !this._data.isWatched;
     this._element.querySelector(`.film-details__watched-status`).innerHTML = (
       this._data.isWatched ? `Already watched` : `Will watch`
     );
+    this._markAsWatchedCallback(this._data.isWatched);
   }
   _onAddToWatchListButtonClick() {
     this._data.isAddedToWatched = !this._data.isAddedToWatched;
+    this._addToWatchListCallback(this._data.isAddedToWatched);
   }
   _onAddToFavoriteButtonClick() {
     this._data.isFavorite = !this._data.isFavorite;
+    this._markAsFavoriteCallback(this._data.isFavorite);
   }
 
   showCommentSubmitError() {
     const inputElement = this._element.querySelector(`.film-details__comment-input`);
+    const commentsSectionElement = this._element.querySelector(`.film-details__comments-wrap`);
+    const commentsElements = commentsSectionElement.querySelectorAll(`.film-details__comment`);
+    const commentsCountElement = commentsSectionElement.querySelector(`.film-details__comments-count`);
 
     inputElement.classList.add(`shake`);
     inputElement.style.border = CommentBorder.ERROR;
     inputElement.disabled = false;
 
     this._data.comments.pop();
-    this._syncForm();
+    commentsSectionElement.removeChild(commentsElements[commentsElements.length - 1]);
+    commentsCountElement.textContent = this._data.comments.length;
+    // this._syncForm();
   }
 
   enableCommentForm() {
@@ -108,7 +131,7 @@ export default class CardPopupComponent extends BaseComponent {
     inputElement.value = ``;
     inputElement.classList.remove(`shake`);
 
-    this._toggleStateInput(true);
+    this._toggleStateInput(false);
   }
 
   showRatingSubmitError() {

@@ -36,7 +36,7 @@ export default class CardSectionComponent extends BaseComponent {
   render() {
     const sectionElement = super.render();
     const containerElement = sectionElement.querySelector(`.films-list__container`);
-    
+
 
     this.components = this._data.map((data) => {
       this._options.withOption = sectionElement.classList.contains(`films-list--extra`);
@@ -82,7 +82,7 @@ export default class CardSectionComponent extends BaseComponent {
       };
 
       popupComponent.onSubmit = (popupData, showCommentSubmitError, enablePopup) => {
-        updateCardComponent(popupData);
+        // updateCardComponent(popupData);
         if (typeof this._onCommentSubmit === `function`) {
           this._onCommentSubmit(popupData, showCommentSubmitError, enablePopup);
         } else {
@@ -90,10 +90,25 @@ export default class CardSectionComponent extends BaseComponent {
         }
       };
 
-      popupComponent.onClose = (popupData) => {
-        updateCardComponent(popupData);
+      popupComponent.onClose = () => {
+        // updateCardComponent(popupData);
         document.body.removeChild(popupComponent.element);
         popupComponent.unrender();
+      };
+
+      popupComponent.onMarkAsFavorite = (isFavorite) => {
+        updateCardComponent({isFavorite});
+        cardComponent.update(data);
+      };
+
+      popupComponent.onAddToWatchList = (isAddedToWatched) => {
+        updateCardComponent({isAddedToWatched});
+        cardComponent.update(data);
+      };
+
+      popupComponent.onMarkAsWatched = (isWatched) => {
+        updateCardComponent({isWatched});
+        cardComponent.update(data);
       };
 
       popupComponent.onRatingSubmit = (popupData, showRatingSubmitError, showNewRating) => {
