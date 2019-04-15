@@ -2,6 +2,8 @@ import BaseComponent from 'app/components/base';
 import {createStatisticTemplate, createStatisticListTemplate} from '../templates/statistics';
 import {createElement} from 'app/lib/create-element';
 import ChartComponent from 'app/components/chart';
+import {setUserRang} from 'app/lib/user-rang';
+
 import moment from 'moment';
 
 const BAR_HEIGHT = 50;
@@ -32,30 +34,20 @@ export default class StatisticComponent extends BaseComponent {
     };
   }
 
-  _getTotalDuration(cards) { // @TODO: static - читай критерии
+  static getTotalDuration(cards) { 
     return cards.reduce((accumulator, card) => accumulator + card.duration, 0);
   }
 
-  _sortObject(obj) {
-    return Object.entries(obj).sort((a, b) => b[1] - a[1]);
-  }
-
   show() {
-    // this._renderChart();
+    // this._updateChart(`statistic-all-time`);
     this.element.classList.remove(`visually-hidden`);
   }
 
   hide() {
-    // this._unrenderChart();
+    this._unrenderChart();
     this.element.classList.add(`visually-hidden`);
   }
 
-  _createLabels(data) {
-    return this._sortObject(data).map((item) => item[0]);
-  }
-  _createValues(data) {
-    return this._sortObject(data).map((item) => item[1]);
-  }
 
   static getGenres(data) {
     const genres = new Set();
@@ -81,16 +73,16 @@ export default class StatisticComponent extends BaseComponent {
     const prevElem = this._element.querySelector(`.statistic__text-list`);
     const ctx = this._element.querySelector(`canvas`);
     const data = this._getDataByPeriod()[filter]();
-    const labels = StatisticComponent.getGenres(data);
-    const values = StatisticComponent.getGenresCounts(data);
+    const labels = StatisticComponent.getGenres(data).sort();
+    const values = StatisticComponent.getGenresCounts(data).sort((a, b) => b - a);
 
     ctx.getContext(`2d`);
-    ctx.height = BAR_HEIGHT * labels.length;
 
     this._element.replaceChild(createElement(createStatisticListTemplate(this._getCardsStatistics(data))), prevElem);
 
     this._chart = new ChartComponent({ctx, labels, values});
     this._chart.render();
+    ctx.height = BAR_HEIGHT * labels.length;
   }
 
   _getCardsStatistics(cards) {
@@ -106,13 +98,17 @@ export default class StatisticComponent extends BaseComponent {
       }
     });
 
-    const labels = this._sortObject(genresStats).map((item) => item[0]);
-
     statistics.watchedAmount = filteredCards.length;
-    statistics.watchedDuration = this._getTotalDuration(filteredCards);
-    statistics.mostWatchedGenre = labels[0];
+    statistics.watchedDuration = StatisticComponent.getTotalDuration(filteredCards);
+    statistics.mostWatchedGenre = StatisticComponent.getTopGenre(filteredCards);
 
     return statistics;
+  }
+
+  static getTopGenre(data) {
+    const counts = StatisticComponent.getGenresCounts(data);
+    const index = counts.indexOf(Math.max(...counts));
+    return StatisticComponent.getGenres(data)[index];
   }
 
   _createListeners() {
@@ -135,7 +131,7 @@ export default class StatisticComponent extends BaseComponent {
 
   _onPeriodChange(evt) {
     evt.preventDefault();
-    this._chart.unrender();
+    this._unrenderChart();
     this._updateChart(evt.target.id);
   }
 
@@ -149,6 +145,7 @@ export default class StatisticComponent extends BaseComponent {
   render() {
     const element = super.render();
     this._updateChart(`statistic-all-time`);
+    element.querySelector(`.statistic__rank-label`).innerHTML = setUserRang(this._filteredData.length);
     return element;
   }
 

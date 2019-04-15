@@ -19,7 +19,7 @@ export default class BaseComponent {
     throw new Error(`You have to define template.`);
   }
 
-  _createListeners() { // @TODO: _createListeners
+  _createListeners() {
 
   }
 

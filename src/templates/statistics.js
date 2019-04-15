@@ -18,7 +18,7 @@ export const createStatisticListTemplate = (data) => {
     </li>
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">Top genre</h4>
-      <p class="statistic__item-text">${data.mostWatchedGenre}</p>
+      <p class="statistic__item-text">${data.mostWatchedGenre || `No Genre`}</p>
     </li>
     </ul>`);
 };

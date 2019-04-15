@@ -54,7 +54,7 @@ export default class CardPopupComponent extends BaseComponent {
     this._onSubmit = null;
   }
 
-  _processForm(formData) {
+  static processForm(formData) {
     const entry = {};
 
     const taskEditMapper = CardPopupComponent.createMapper(entry);
@@ -167,22 +167,9 @@ export default class CardPopupComponent extends BaseComponent {
     return typeof this._onClose === `function` && this._onClose(this._data);
   }
 
-  _emojiMapper(key) {
-    switch (key) {
-      case `sleeping`:
-        return `😴`;
-      case `neutral-face`:
-        return `😐`;
-      case `grinning`:
-        return `😀`;
-      default:
-        return ``;
-    }
-  }
-
   _syncForm() {
     const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-    const data = this._processForm(formData);
+    const data = CardPopupComponent.processForm(formData);
 
     const comments = this._data.comments.slice();
 
@@ -261,7 +248,7 @@ export default class CardPopupComponent extends BaseComponent {
     this._prevRating = this._data.personalRating;
     if (evt.target.tagName === `INPUT`) {
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-      const newData = this._processForm(formData);
+      const newData = CardPopupComponent.processForm(formData);
 
       this._removeListeners();
       this.update(newData);
