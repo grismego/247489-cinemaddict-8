@@ -11,6 +11,8 @@ export default class CardSectionComponent extends BaseComponent {
 
     this.components = null;
     this._changeCardCallback = null;
+
+    this._onShowMoreClick = this._onShowMoreClick.bind(this);
   }
 
   get template() {
@@ -36,7 +38,6 @@ export default class CardSectionComponent extends BaseComponent {
   render() {
     const sectionElement = super.render();
     const containerElement = sectionElement.querySelector(`.films-list__container`);
-
 
     this.components = this._data.map((data) => {
       this._options.withOption = sectionElement.classList.contains(`films-list--extra`);

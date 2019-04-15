@@ -40,7 +40,8 @@ api.getCards().then((data) => {
   addCards();
   addFilters();
   userRangElement.innerHTML = setUserRang(cards.filter((card) => card.isWatched).length);
-}).catch(() => {
+}).catch((err) => {
+  console.log(err);
   mainElement.innerHTML = ``;
   mainElement.appendChild(errorComponent.render());
 });
@@ -123,11 +124,10 @@ const addFilters = () => {
 
     mainElement.replaceChild(cardSectionsComponent.render(), prevElement);
 
-    if (filterName === `all`) {
-      // statisticComponent.hide();
-      // mainElement.removeChild(mainElement.lastChild);
-      // statisticComponent.unrender();
-      // cardSectionsComponent.show();
+
+    if (statisticComponent.element) {
+      mainElement.removeChild(statisticComponent.element);
+      statisticComponent.unrender();
     }
 
     if (filterName === `stats`) {

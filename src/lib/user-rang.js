@@ -2,19 +2,14 @@ const NOVICE_RANG_MIN_VALUE = 10;
 const MOVIE_RANG_MAX_VALUE = 20;
 
 export const setUserRang = (data) => {
-  let rank;
   switch (true) {
     case data <= NOVICE_RANG_MIN_VALUE:
-      rank = `novice`;
-      break;
+      return `novice`;
     case data > NOVICE_RANG_MIN_VALUE && data < MOVIE_RANG_MAX_VALUE:
-      rank = `fan`;
-      break;
+      return `fan`;
     case data >= MOVIE_RANG_MAX_VALUE:
-      rank = `movie buff`;
-      break;
+      return `movie buff`;
     default:
-      rank = `No rang`;
+      return `No rang`;
   }
-  return rank;
 };

@@ -81,8 +81,8 @@ export default class StatisticComponent extends BaseComponent {
     this._element.replaceChild(createElement(createStatisticListTemplate(this._getCardsStatistics(data))), prevElem);
 
     this._chart = new ChartComponent({ctx, labels, values});
-    this._chart.render();
     ctx.height = BAR_HEIGHT * labels.length;
+    this._chart.render(); 
   }
 
   _getCardsStatistics(cards) {

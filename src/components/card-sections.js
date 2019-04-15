@@ -1,9 +1,9 @@
 import BaseComponent from 'app/components/base';
 import CardSection from 'app/components/card-section';
 
-// const DEFAULT_COUNT_ALL_CARDS = 5;
+const DEFAULT_COUNT_ALL_CARDS = 5;
 const COUNT_EXTRA_CARDS = 2;
-// const SHOW_MORE_STEP = 5;
+const SHOW_MORE_STEP = 5;
 
 export default class CardSectionsComponent extends BaseComponent {
   constructor(data) {
@@ -14,6 +14,9 @@ export default class CardSectionsComponent extends BaseComponent {
 
     this._cardsChangeCallback = null;
     this._data.filterBy = null;
+
+    this._onShowMoreClick = this._onShowMoreClick.bind(this);
+
   }
 
   get template() {
@@ -32,6 +35,10 @@ export default class CardSectionsComponent extends BaseComponent {
 
   set onRatingSubmit(fn) {
     this._onRatingSubmit = fn;
+  }
+
+  _onShowMoreClick() {
+
   }
 
   _filterCardsByComments(cards) {
@@ -138,6 +145,8 @@ export default class CardSectionsComponent extends BaseComponent {
     element.appendChild(this.componentSectionRated.render());
     element.appendChild(this.componentSectionTopComment.render());
 
+    this._createListeners();
+
     return element;
   }
 
@@ -156,4 +165,15 @@ export default class CardSectionsComponent extends BaseComponent {
 
     super.unrender();
   }
+
+  _createListeners() {
+    this._element.querySelector(`.films-list__show-more`)
+      .addEventListener(`click`, this._onShowMoreClick);
+  }
+
+  _removeListeners() {
+    this._element.querySelector(`.films-list__show-more`)
+      .removeEventListener(`click`, this._onShowMoreClick);
+  }
+
 }
