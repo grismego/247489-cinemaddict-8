@@ -1,5 +1,5 @@
 import BaseComponent from 'app/components/base';
-import {createFilterTemplate} from '../templates/filters';
+import {createFilterTemplate} from 'app/templates/filters';
 
 export default class FilterComponent extends BaseComponent {
   constructor(data) {

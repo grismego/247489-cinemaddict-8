@@ -121,7 +121,6 @@ export default class CardPopupComponent extends BaseComponent {
     this._data.comments.pop();
     commentsSectionElement.removeChild(commentsElements[commentsElements.length - 1]);
     commentsCountElement.textContent = this._data.comments.length;
-    // this._syncForm();
   }
 
   enableCommentForm() {

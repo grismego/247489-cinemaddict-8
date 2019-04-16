@@ -39,7 +39,7 @@ export default class StatisticComponent extends BaseComponent {
   }
 
   show() {
-    // this._updateChart(`statistic-all-time`);
+    this._updateChart(`statistic-all-time`);
     this.element.classList.remove(`visually-hidden`);
   }
 
@@ -82,7 +82,7 @@ export default class StatisticComponent extends BaseComponent {
 
     this._chart = new ChartComponent({ctx, labels, values});
     ctx.height = BAR_HEIGHT * labels.length;
-    this._chart.render(); 
+    this._chart.render();
   }
 
   _getCardsStatistics(cards) {
@@ -144,7 +144,7 @@ export default class StatisticComponent extends BaseComponent {
 
   render() {
     const element = super.render();
-    this._updateChart(`statistic-all-time`);
+    
     element.querySelector(`.statistic__rank-label`).innerHTML = setUserRang(this._filteredData.length);
     return element;
   }

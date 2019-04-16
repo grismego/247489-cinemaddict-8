@@ -1,22 +1,55 @@
 import BaseComponent from 'app/components/base';
 import CardSection from 'app/components/card-section';
 
-const DEFAULT_COUNT_ALL_CARDS = 5;
-const COUNT_EXTRA_CARDS = 2;
-const SHOW_MORE_STEP = 5;
+const CARDS_EXTRA_LIMIT = 2;
+const PAGE_SIZE = 5;
+
+const defaultData = {
+  cards: [],
+  filterBy: null
+};
 
 export default class CardSectionsComponent extends BaseComponent {
-  constructor(data) {
-    super(data);
+  constructor(data = defaultData) {
+    super(Object.assign({}, defaultData, data));
+
     this.componentSectionAll = null;
     this.componentSectionRated = null;
     this.componentSectionTopComment = null;
 
+    this._components = null;
+
     this._cardsChangeCallback = null;
-    this._data.filterBy = null;
+    //this._onShowMoreClick = this._onShowMoreClick.bind(this);
+  }
 
-    this._onShowMoreClick = this._onShowMoreClick.bind(this);
-
+  static get sections() {
+    return [
+      {
+        filterFunction: CardSectionsComponent.filterCardsByCustomFilter,
+        options: {
+          title: `All Movies`,
+          showMore: true,
+          cardsLimit: PAGE_SIZE,
+        }
+      },
+      {
+        filterFunction: CardSectionsComponent.filterCardsByRating,
+        options: {
+          title: `Top rated`,
+          isExtra: true,
+          cardsLimit: CARDS_EXTRA_LIMIT,
+        }
+      },
+      {
+        filterFunction: CardSectionsComponent.filterCardsByComments,
+        options: {
+          title: `Top Comment`,
+          isExtra: true,
+          cardsLimit: CARDS_EXTRA_LIMIT,
+        }
+      }
+    ];
   }
 
   get template() {
@@ -37,16 +70,16 @@ export default class CardSectionsComponent extends BaseComponent {
     this._onRatingSubmit = fn;
   }
 
-  _onShowMoreClick() {
-
-  }
-
-  _filterCardsByComments(cards) {
+  static filterCardsByComments(cards) {
     return cards.slice().sort((a, b) => b.comments.length - a.comments.length);
   }
 
-  _filterCardsByRating(cards) {
+  static filterCardsByRating(cards) {
     return cards.slice().sort((a, b) => b.rating - a.rating);
+  }
+
+  static filterCardsByCustomFilter(cards, filterBy) {
+    return filterBy ? cards.filter(filterBy) : cards.slice();
   }
 
   show() {
@@ -58,54 +91,33 @@ export default class CardSectionsComponent extends BaseComponent {
   }
 
   updatePartial() {
-    const prevElementRated = this.componentSectionRated.element;
-    const prevElementComment = this.componentSectionTopComment.element;
+    this.components.forEach((component, index) => {
+      const prevElement = component.element;
+      const section = CardSectionsComponent.sections[index];
+      const cards = section.filterFunction(this._data.cards, this._data.filterBy);
+      component.unrender();
+      component.update({cards});
 
-    this.componentSectionRated.unrender();
-    this.componentSectionTopComment.unrender();
-
-    this.componentSectionRated.update(this._filterCardsByRating(this._data.cards).slice(0, COUNT_EXTRA_CARDS));
-    this.componentSectionTopComment.update(this._filterCardsByComments(this._data.cards).slice(0, COUNT_EXTRA_CARDS));
-
-    this.element.replaceChild(this.componentSectionRated.render(), prevElementRated);
-    this.element.replaceChild(this.componentSectionTopComment.render(), prevElementComment);
-  }
-
-  _getFilteredCards() {
-    const {cards, filterBy} = this._data;
-    return filterBy ? cards.filter(filterBy) : cards;
+      this.element.replaceChild(component.render(), prevElement);
+    });
   }
 
   render() {
     const element = super.render();
-    const {cards} = this._data;
-    const allCards = this._getFilteredCards();
-
-    this.componentSectionAll = new CardSection(allCards, {
-      title: `All Movies`,
-      showMore: true
-    });
-
-    this.componentSectionRated = new CardSection(this._filterCardsByRating(cards).slice(0, COUNT_EXTRA_CARDS), {
-      title: `Top rated`,
-      isExtra: true
-    });
-
-    this.componentSectionTopComment = new CardSection(this._filterCardsByComments(cards).slice(0, COUNT_EXTRA_CARDS), {
-      title: `Top Comment`,
-      isExtra: true
-    });
 
     const onCardChange = (updatedCard) => {
-      this._data.cards = this._data.cards.map((card) => {
-        return card.id === updatedCard.id ? updatedCard : card;
-      });
+      this._data.cards = this._data.cards.map((card) => (
+        card.id === updatedCard.id ? updatedCard : card
+      ));
 
       if (typeof this._cardsChangeCallback === `function`) {
         this._cardsChangeCallback(this._data.cards, updatedCard);
       }
 
-      this.componentSectionAll.update(allCards);
+      this.components.forEach((component) => {
+        component.update(this._data.cards)
+      });
+      // this.componentSectionAll.update(this._data.cards);
     };
 
     const submitComment = (newData, showCommentSubmitError, enableCommentForm) => {
@@ -128,52 +140,29 @@ export default class CardSectionsComponent extends BaseComponent {
       }
     };
 
-    this.componentSectionAll.onCardChange = onCardChange;
-    this.componentSectionAll.onCommentSubmit = submitComment;
-    this.componentSectionAll.onRatingSubmit = submitRating;
+    this.components = CardSectionsComponent.sections.map((section) => {
+      const cards = section.filterFunction(this._data.cards, this._data.filterBy);
+      const component = new CardSection({cards}, section.options);
 
-    this.componentSectionRated.onCardChange = onCardChange;
-    this.componentSectionRated.onCommentSubmit = submitComment;
-    this.componentSectionRated.onRatingSubmit = submitRating;
+      component.onCardChange = onCardChange;
+      component.onCommentSubmit = submitComment;
+      component.onRatingSubmit = submitRating;
 
-    this.componentSectionTopComment.onCardChange = onCardChange;
-    this.componentSectionTopComment.onCommentSubmit = submitComment;
-    this.componentSectionTopComment.onRatingSubmit = submitRating;
+      element.appendChild(component.render());
 
-
-    element.appendChild(this.componentSectionAll.render());
-    element.appendChild(this.componentSectionRated.render());
-    element.appendChild(this.componentSectionTopComment.render());
-
-    this._createListeners();
+      return component;
+    });
 
     return element;
   }
 
   unrender() {
-    const prevElementAll = this.componentSectionAll.element;
-    const prevElementRated = this.componentSectionRated.element;
-    const prevElementTopComment = this.componentSectionTopComment.element;
-
-    this.componentSectionAll.unrender();
-    this.componentSectionRated.unrender();
-    this.componentSectionTopComment.unrender();
-
-    this.element.removeChild(prevElementAll);
-    this.element.removeChild(prevElementRated);
-    this.element.removeChild(prevElementTopComment);
+    this.components.forEach((component) => {
+      const prevElement = component.element;
+      this.element.removeChild(prevElement);
+      component.unrender();
+    });
 
     super.unrender();
   }
-
-  _createListeners() {
-    this._element.querySelector(`.films-list__show-more`)
-      .addEventListener(`click`, this._onShowMoreClick);
-  }
-
-  _removeListeners() {
-    this._element.querySelector(`.films-list__show-more`)
-      .removeEventListener(`click`, this._onShowMoreClick);
-  }
-
 }

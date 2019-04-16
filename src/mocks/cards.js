@@ -2,7 +2,7 @@ import {
   generateRandomNumber,
   getRandomArrayElement,
   getRandomArrayElements
-} from '../lib/random';
+} from 'app/lib/random';
 
 import moment from 'moment';
 
