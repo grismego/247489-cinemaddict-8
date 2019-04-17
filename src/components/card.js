@@ -15,6 +15,7 @@ export default class CardComponent extends BaseComponent {
     this._options = options;
 
     this._commentsElement = null;
+    this._controlsElement = null;
   }
 
   get template() {
@@ -28,6 +29,7 @@ export default class CardComponent extends BaseComponent {
   set onAddToWatchList(fn) {
     this._addToWatchListCallback = fn;
   }
+
   set onMarkAsWatched(fn) {
     this._markAsWatchedCallback = fn;
   }
@@ -62,9 +64,8 @@ export default class CardComponent extends BaseComponent {
     this._commentsElement.addEventListener(`click`, this._onClick);
 
     if (this._options) {
-      this._element
-      .querySelector(`.film-card__controls`)
-      .addEventListener(`click`, this._onControlFormClick);
+      this._controlsElement = this._element.querySelector(`.film-card__controls`);
+      this._controlsElement.addEventListener(`click`, this._onControlFormClick);
     }
   }
 
@@ -73,9 +74,8 @@ export default class CardComponent extends BaseComponent {
     this._commentsElement = null;
 
     if (this._options) {
-      this._element
-        .querySelector(`.film-card__controls`)
-        .removeEventListener(`click`, this._onControlFormClick);
+      this._controlsElement.removeEventListener(`click`, this._onControlFormClick);
+      this._controlsElement = null;
     }
   }
 }

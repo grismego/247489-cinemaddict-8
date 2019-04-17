@@ -13,14 +13,10 @@ export default class CardSectionsComponent extends BaseComponent {
   constructor(data = defaultData) {
     super(Object.assign({}, defaultData, data));
 
-    this.componentSectionAll = null;
-    this.componentSectionRated = null;
-    this.componentSectionTopComment = null;
-
     this._components = null;
-
     this._cardsChangeCallback = null;
-    //this._onShowMoreClick = this._onShowMoreClick.bind(this);
+
+    this.updatePartial = this.updatePartial.bind(this);
   }
 
   static get sections() {
@@ -63,11 +59,11 @@ export default class CardSectionsComponent extends BaseComponent {
   }
 
   set onCommentSubmit(fn) {
-    this._onCommentSubmit = fn;
+    this._commentSubmitCallback = fn;
   }
 
   set onRatingSubmit(fn) {
-    this._onRatingSubmit = fn;
+    this._ratingSubmitCallback = fn;
   }
 
   static filterCardsByComments(cards) {
@@ -95,6 +91,7 @@ export default class CardSectionsComponent extends BaseComponent {
       const prevElement = component.element;
       const section = CardSectionsComponent.sections[index];
       const cards = section.filterFunction(this._data.cards, this._data.filterBy);
+
       component.unrender();
       component.update({cards});
 
@@ -115,32 +112,35 @@ export default class CardSectionsComponent extends BaseComponent {
       }
 
       this.components.forEach((component) => {
-        component.update(this._data.cards)
+        component.update(this._data.cards);
       });
-      // this.componentSectionAll.update(this._data.cards);
+    };
+
+    const updateCard = (newData) => {
+      const index = this._data.cards.findIndex((item) => item.id === newData.id);
+      if (index !== -1) {
+        return false;
+      }
+
+      this._data.cards[index] = Object.assign({}, newData);
+
+      return true;
     };
 
     const submitComment = (newData, showCommentSubmitError, enableCommentForm) => {
-      const index = this._data.cards.findIndex((item) => item.id === newData.id);
-      if (index !== -1) {
-        this._data[index] = Object.assign({}, newData);
-        if (typeof this._onCommentSubmit === `function`) {
-          this._onCommentSubmit(this._data[index], showCommentSubmitError, enableCommentForm);
-        }
+      if (updateCard(newData) && typeof this._commentSubmitCallback === `function`) {
+        this._commentSubmitCallback(newData, showCommentSubmitError, enableCommentForm);
       }
     };
 
     const submitRating = (newData, showRatingSubmitError, showNewRating) => {
-      const index = this._data.cards.findIndex((item) => item.id === newData.id);
-      if (index !== -1) {
-        this._data.cards[index] = Object.assign({}, newData);
-        if (typeof this._onRatingSubmit === `function`) {
-          this._onRatingSubmit(this._data.cards[index], showRatingSubmitError, showNewRating);
-        }
+      if (updateCard(newData) && typeof this._ratingSubmitCallback === `function`) {
+        this._ratingSubmitCallback(newData, showRatingSubmitError, showNewRating);
       }
     };
 
     this.components = CardSectionsComponent.sections.map((section) => {
+
       const cards = section.filterFunction(this._data.cards, this._data.filterBy);
       const component = new CardSection({cards}, section.options);
 

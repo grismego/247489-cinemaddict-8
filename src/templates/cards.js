@@ -25,7 +25,7 @@ const countDuration = (duration) => (
   ]
 );
 
-export const createCardSectionTemplate = (title, isExtra = false, showMore = false) => (
+export const createCardSectionTemplate = ({title, isExtra = false, showMore = false}) => (
   `<section class="films-list${isExtra ? `--extra` : ``}">
     <h2 class="films-list__title ${isExtra ? `` : `visually-hidden`}">${title}</h2>
     <div class="films-list__container"></div>

@@ -1,3 +1,5 @@
+import BaseComponent from 'app/components/base';
+import {createElement} from 'app/lib/create-element';
 import {
   createPopupTemplate,
   createScoreTemplate,
@@ -5,19 +7,17 @@ import {
   createCommentsSectionTemplate
 } from 'app/templates/popup';
 
-import {createElement} from 'app/lib/create-element';
-import BaseComponent from 'app/components/base';
-
 const KEYCODE_ENTER = 13;
 const KEYCODE_ESC = 27;
 
-const CURRENT_USER = `Yo`;
+const TEXT_CURRENT_USER = `Yo`;
 const TEXT_RATE = `Your Rate`;
 
 const CommentBorder = {
   ERROR: `3px solid #8B0000`,
   DEFAULT: `1px solid #979797`
 };
+
 const RatingElementColor = {
   DEFAULT: `#d8d8d8`,
   ERROR: `#8B0000`,
@@ -27,6 +27,7 @@ const RatingElementColor = {
 export default class CardPopupComponent extends BaseComponent {
   constructor(data) {
     super(data);
+
     this._onCloseClick = this._onCloseClick.bind(this);
     this._onFormSubmit = this._onFormSubmit.bind(this);
     this._onChangeRating = this._onChangeRating.bind(this);
@@ -42,7 +43,6 @@ export default class CardPopupComponent extends BaseComponent {
     this._markAsWatchedCallback = null;
     this._markAsFavoriteCallback = null;
 
-
     this.showCommentSubmitError = this.showCommentSubmitError.bind(this);
     this.enableCommentForm = this.enableCommentForm.bind(this);
     this.showRatingSubmitError = this.showRatingSubmitError.bind(this);
@@ -50,8 +50,8 @@ export default class CardPopupComponent extends BaseComponent {
 
     this._toggleStateInput = this._toggleStateInput.bind(this);
 
-    this._onClose = null;
-    this._onSubmit = null;
+    this._closeCallback = null;
+    this._submitCallback = null;
   }
 
   static processForm(formData) {
@@ -71,15 +71,15 @@ export default class CardPopupComponent extends BaseComponent {
   }
 
   set onClose(fn) {
-    this._onClose = fn;
+    this._closeCallback = fn;
   }
 
   set onSubmit(fn) {
-    this._onSubmit = fn;
+    this._submitCallback = fn;
   }
 
   set onRatingSubmit(fn) {
-    this._onRatingSubmit = fn;
+    this._submitRatingCallback = fn;
   }
 
   set onAddToWatchList(fn) {
@@ -93,32 +93,34 @@ export default class CardPopupComponent extends BaseComponent {
   }
 
   _onMarkAsWatchedButtonClick() {
-    this._data.isWatched = !this._data.isWatched;
-    this._element.querySelector(`.film-details__watched-status`).innerHTML = (
-      this._data.isWatched ? `Already watched` : `Will watch`
-    );
-    this._markAsWatchedCallback(this._data.isWatched);
+    const value = !this._data.isWatched;
+    this._data.isWatched = value;
+    this._markAsWatchedCallback(value);
   }
+
   _onAddToWatchListButtonClick() {
-    this._data.isAddedToWatched = !this._data.isAddedToWatched;
-    this._addToWatchListCallback(this._data.isAddedToWatched);
+    const value = !this._data.isAddedToWatched;
+    this._data.isAddedToWatched = value;
+    this._addToWatchListCallback(value);
   }
+
   _onAddToFavoriteButtonClick() {
-    this._data.isFavorite = !this._data.isFavorite;
-    this._markAsFavoriteCallback(this._data.isFavorite);
+    const value = !this._data.isFavorite;
+    this._data.isFavorite = !value;
+    this._markAsFavoriteCallback(value);
   }
 
   showCommentSubmitError() {
-    const inputElement = this._element.querySelector(`.film-details__comment-input`);
     const commentsSectionElement = this._element.querySelector(`.film-details__comments-wrap`);
     const commentsElements = commentsSectionElement.querySelectorAll(`.film-details__comment`);
     const commentsCountElement = commentsSectionElement.querySelector(`.film-details__comments-count`);
 
-    inputElement.classList.add(`shake`);
-    inputElement.style.border = CommentBorder.ERROR;
-    inputElement.disabled = false;
+    this._commentInputElement.disabled.classList.add(`shake`);
+    this._commentInputElement.disabled.style.border = CommentBorder.ERROR;
+    this._commentInputElement.disabled.disabled = false;
 
     this._data.comments.pop();
+
     commentsSectionElement.removeChild(commentsElements[commentsElements.length - 1]);
     commentsCountElement.textContent = this._data.comments.length;
   }
@@ -163,7 +165,7 @@ export default class CardPopupComponent extends BaseComponent {
 
   _onCloseClick() {
     this._syncForm();
-    return typeof this._onClose === `function` && this._onClose(this._data);
+    return typeof this._closeCallback === `function` && this._closeCallback(this._data);
   }
 
   _syncForm() {
@@ -174,7 +176,7 @@ export default class CardPopupComponent extends BaseComponent {
 
     if (data.comment.length) {
       comments.push({
-        author: CURRENT_USER,
+        author: TEXT_CURRENT_USER,
         date: Date.now(),
         comment: data.comment,
         emotion: data.emotion
@@ -190,8 +192,8 @@ export default class CardPopupComponent extends BaseComponent {
 
   _onFormSubmit() {
     this._syncForm();
-    if (typeof this._onSubmit === `function`) {
-      this._onSubmit(
+    if (typeof this._submitCallback === `function`) {
+      this._submitCallback(
           this._data,
           this.showCommentSubmitError,
           this.enableCommentForm
@@ -200,9 +202,7 @@ export default class CardPopupComponent extends BaseComponent {
   }
 
   _toggleStateInput(value) {
-    const inputElement = this._element.querySelector(`.film-details__comment-input`);
-
-    inputElement.disabled = value;
+    this._commentInputElement.disabled = value;
   }
 
   _onCommentInputKeydown(evt) {
@@ -215,7 +215,7 @@ export default class CardPopupComponent extends BaseComponent {
   }
 
   _isYourComment() {
-    return this._data.comments.some((comment) => comment.author === CURRENT_USER);
+    return this._data.comments.some((comment) => comment.author === TEXT_CURRENT_USER);
   }
 
   _onCommentRemove() {
@@ -244,6 +244,7 @@ export default class CardPopupComponent extends BaseComponent {
   }
 
   _onChangeRating(evt) {
+    debugger;
     this._prevRating = this._data.personalRating;
     if (evt.target.tagName === `INPUT`) {
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
@@ -254,9 +255,8 @@ export default class CardPopupComponent extends BaseComponent {
       this._partialUpdate();
       this._createListeners();
       this._disableRatingInput(true);
-      if (typeof this._onRatingSubmit === `function`) {
-        this._onRatingSubmit(
-            this._data, this.showRatingSubmitError, this.showNewRating);
+      if (typeof this._submitRatingCallback === `function`) {
+        this._submitRatingCallback(this._data, this.showRatingSubmitError, this.showNewRating);
       }
     }
 
@@ -266,13 +266,20 @@ export default class CardPopupComponent extends BaseComponent {
     if (evt.keyCode === KEYCODE_ESC) {
       this._syncForm();
 
-      if (typeof this._onClose === `function`) {
-        this._onClose(this._data);
+      if (typeof this._closeCallback === `function`) {
+        this._closeCallback(this._data);
       }
     }
   }
 
   _createListeners() {
+
+    this._commentInputElement = this._element.querySelector(`.film-details__comment-input`);
+
+
+    ////
+
+
     this._element
       .querySelector(`.film-details__inner`)
       .addEventListener(`submit`, this._onFormSubmit);
@@ -307,6 +314,8 @@ export default class CardPopupComponent extends BaseComponent {
   }
 
   _removeListeners() {
+    this._commentInputElement = null;
+    ////
     this._element
       .querySelector(`.film-details__close-btn`)
       .removeEventListener(`click`, this._onCloseClick);

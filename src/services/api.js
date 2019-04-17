@@ -26,7 +26,6 @@ export default class ApiService {
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
-
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(this._checkStatus)
       .catch((err) => {

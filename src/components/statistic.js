@@ -21,20 +21,18 @@ export default class StatisticComponent extends BaseComponent {
   }
 
   _getDataByPeriod() {
+    const createFilterFunction = (value, period) => (item) => moment(item.watchingDate).isAfter(moment().subtract(value, period));
+
     return {
       'statistic-all-time': () => this._filteredData,
-      'statistic-today': () => this._filteredData
-        .filter((item) => moment(item.watchingDate) === moment()),
-      'statistic-week': () => this._filteredData
-        .filter((item) => moment(item.watchingDate).isAfter(moment().subtract(7, `days`))),
-      'statistic-month': () => this._filteredData
-        .filter((item) => moment(item.watchingDate).isAfter(moment().subtract(1, `month`))),
-      'statistic-year': () => this._filteredData
-        .filter((item) => moment(item.watchingDate).isAfter(moment().subtract(1, `year`)))
+      'statistic-today': () => this._filteredData.filter((item) => moment(item.watchingDate) === moment()),
+      'statistic-week': () => this._filteredData.filter(createFilterFunction(7, `days`)),
+      'statistic-month': () => this._filteredData.filter(createFilterFunction(1, `month`)),
+      'statistic-year': () => this._filteredData.filter(createFilterFunction(1, `year`))
     };
   }
 
-  static getTotalDuration(cards) { 
+  static getTotalDuration(cards) {
     return cards.reduce((accumulator, card) => accumulator + card.duration, 0);
   }
 
@@ -48,41 +46,45 @@ export default class StatisticComponent extends BaseComponent {
     this.element.classList.add(`visually-hidden`);
   }
 
+  static getGenreStatistics(cards) {
+    return cards
+      .reduce((counters, card) => {
+        card.genre.forEach((genre) => {
+          counters[genre] = counters[genre] ? 1 : counters[genre] + 1;
+        });
 
-  static getGenres(data) {
-    const genres = new Set();
-    data.forEach((item) => {
-      item.genre.forEach((genre) => {
-        genres.add(genre);
-      });
-    });
-    return Array.from(genres);
-  }
-
-  static getGenresCounts(data) {
-    const counts = [];
-    StatisticComponent.getGenres(data).forEach((genre, index) => {
-      counts[index] = data.filter((item) => {
-        return item.genre.some((it) => it === genre);
-      }).length;
-    });
-    return counts;
+        return counters;
+      }, {});
   }
 
   _updateChart(filter) {
     const prevElem = this._element.querySelector(`.statistic__text-list`);
     const ctx = this._element.querySelector(`canvas`);
     const data = this._getDataByPeriod()[filter]();
+
+    const genreStatistics = this.getGenreStatistics(data);
+/*
+    {a:1, b:2} -> map ->
+    [['a', 1], ['b',2]] -> sort
+    [['b',2], ['a', 1]]
+      -> map key1 = labels
+      -> map key = values
+/*
+
+    Object.keys(genreStatistics)
+
     const labels = StatisticComponent.getGenres(data).sort();
     const values = StatisticComponent.getGenresCounts(data).sort((a, b) => b - a);
+*/
 
-    ctx.getContext(`2d`);
+    const labels = Object.keys(genreStatistics);
+    const values = Object.values(genreStatistics);
 
     this._element.replaceChild(createElement(createStatisticListTemplate(this._getCardsStatistics(data))), prevElem);
-
     this._chart = new ChartComponent({ctx, labels, values});
-    ctx.height = BAR_HEIGHT * labels.length;
     this._chart.render();
+
+    ctx.height = BAR_HEIGHT * labels.length;
   }
 
   _getCardsStatistics(cards) {
@@ -144,7 +146,7 @@ export default class StatisticComponent extends BaseComponent {
 
   render() {
     const element = super.render();
-    
+
     element.querySelector(`.statistic__rank-label`).innerHTML = setUserRang(this._filteredData.length);
     return element;
   }

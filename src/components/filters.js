@@ -24,6 +24,7 @@ export default class FiltersComponent extends BaseComponent {
 
     this.components = this._data.filters.map((filterData) => {
       const component = new FilterComponent(filterData);
+
       element.appendChild(component.render());
 
       component.onSelect = (filterName) => {
@@ -48,13 +49,4 @@ export default class FiltersComponent extends BaseComponent {
 
     super.unrender();
   }
-
-  _createListeners() {
-
-  }
-
-  _removeListeners() {
-
-  }
-
 }
