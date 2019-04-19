@@ -71,8 +71,9 @@ export default class CardSectionComponent extends BaseComponent {
       cardComponent.unrender();
       cardComponent.update(props);
 
+      // this._cardsContainerElement.appendChild(cardComponent.render());
       this._cardsContainerElement.replaceChild(cardComponent.render(), prevElement);
-
+      
       if (typeof this._changeCardCallback === `function`) {
         this._changeCardCallback(cardComponent._data);
       }
@@ -120,13 +121,13 @@ export default class CardSectionComponent extends BaseComponent {
     };
 
     popupComponent.onSubmit = (popupData, showCommentSubmitError, enablePopup) => {
-      if (typeof this._onCommentSubmit === `function`) {
+      if (typeof this._сommentSubmitCallback === `function`) {
         this._сommentSubmitCallback(popupData, showCommentSubmitError, enablePopup);
       }
     };
 
     popupComponent.onRatingSubmit = (popupData, showRatingSubmitError, showNewRating) => {
-      if (typeof this._onRatingSubmit === `function`) {
+      if (typeof this._ratingSubmitCallback === `function`) {
         this._ratingSubmitCallback(popupData, showRatingSubmitError, showNewRating);
       }
     };
@@ -145,7 +146,6 @@ export default class CardSectionComponent extends BaseComponent {
       this._cardsContainerElement.appendChild(component.render());
       return component;
     });
-
     return sectionElement;
   }
 
@@ -164,16 +164,16 @@ export default class CardSectionComponent extends BaseComponent {
   }
 
   unrender() {
+    // debugger
     const containerElement = this.element.querySelector(`.films-list__container`);
 
     this._components.forEach((component) => {
-      containerElement.removeChild(component._element);
+      containerElement.removeChild(component.element);
       component.unrender();
     });
 
-    this._components = null;
+    // this._components = null;
     this._cardsContainerElement = null;
-
     super.unrender();
   }
 }

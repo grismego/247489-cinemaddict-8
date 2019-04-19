@@ -164,34 +164,34 @@ export default class CardPopupComponent extends BaseComponent {
   }
 
   _onCloseClick() {
-    this._syncForm();
+    // this._syncForm();
     return typeof this._closeCallback === `function` && this._closeCallback(this._data);
   }
 
-  _syncForm() {
-    const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-    const data = CardPopupComponent.processForm(formData);
+  // _syncForm() {
+  //   const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+  //   const data = CardPopupComponent.processForm(formData);
 
-    const comments = this._data.comments.slice();
+  //   const comments = this._data.comments.slice();
 
-    if (data.comment.length) {
-      comments.push({
-        author: TEXT_CURRENT_USER,
-        date: Date.now(),
-        comment: data.comment,
-        emotion: data.emotion
-      });
-    }
-    this._data.personalRating = data.personalRating;
+  //   if (data.comment.length) {
+  //     comments.push({
+  //       author: TEXT_CURRENT_USER,
+  //       date: Date.now(),
+  //       comment: data.comment,
+  //       emotion: data.emotion
+  //     });
+  //   }
+  //   this._data.personalRating = data.personalRating;
 
-    this._removeListeners();
-    this.update({comments});
-    this._partialUpdate();
-    this._createListeners();
-  }
+  //   this._removeListeners();
+  //   this.update({comments});
+  //   this._partialUpdate();
+  //   this._createListeners();
+  // }
 
   _onFormSubmit() {
-    this._syncForm();
+    // this._syncForm();
     if (typeof this._submitCallback === `function`) {
       this._submitCallback(
           this._data,
@@ -209,8 +209,16 @@ export default class CardPopupComponent extends BaseComponent {
     const inputElement = this._element.querySelector(`.film-details__comment-input`);
 
     if ((evt.keyCode === KEYCODE_ENTER && evt.ctrlKey) && inputElement.value) {
-      this._onFormSubmit();
-      this._toggleStateInput(true);
+      this._addComment(inputElement.value);
+      this._partialUpdate();
+
+      if (typeof this._submitCallback === `function`) {
+        this._submitCallback(
+            this._data,
+            this.showCommentSubmitError,
+            this.enableCommentForm
+        );
+      }
     }
   }
 
@@ -221,7 +229,7 @@ export default class CardPopupComponent extends BaseComponent {
   _onCommentRemove() {
     if (this._isYourComment()) {
       this._data.comments.pop();
-      this._syncForm();
+      // this._syncForm();
       this._removeListeners();
       // TODO - this.update(this._data);
       this._partialUpdate();
@@ -229,29 +237,28 @@ export default class CardPopupComponent extends BaseComponent {
     }
   }
 
-  static createMapper(target) {
-    return {
-      score: (value) => {
-        target.personalRating = value;
-      },
-      comment: (value) => {
-        target.comment = value;
-      },
-      [`comment-emoji`]: (value) => {
-        target.emotion = value;
-      }
-    };
+
+  _getEmoji() {
+    const emojiElement = this._element.querySelector(`.film-details__emoji-list`);
+    const inputElements = emojiElement.querySelectorAll(`input`);
+    const checkedElement = Array.from(inputElements).find((element) => element.checked);
+    return checkedElement.value;
+  }
+
+  _addComment(comment) {
+    this._data.comments.push({
+      comment,
+      author: TEXT_CURRENT_USER,
+      date: new Date(),
+      emotion: this._getEmoji()
+    });
   }
 
   _onChangeRating(evt) {
-    debugger;
     this._prevRating = this._data.personalRating;
     if (evt.target.tagName === `INPUT`) {
-      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-      const newData = CardPopupComponent.processForm(formData);
-
+      this._data.personalRating = evt.target.value;
       this._removeListeners();
-      this.update(newData);
       this._partialUpdate();
       this._createListeners();
       this._disableRatingInput(true);
@@ -264,7 +271,7 @@ export default class CardPopupComponent extends BaseComponent {
 
   _onEscClick(evt) {
     if (evt.keyCode === KEYCODE_ESC) {
-      this._syncForm();
+      // this._syncForm();
 
       if (typeof this._closeCallback === `function`) {
         this._closeCallback(this._data);

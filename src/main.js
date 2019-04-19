@@ -85,6 +85,7 @@ const createCardSectionsComponent = (cards) => {
   };
 
   cardSectionsComponent.onCommentSubmit = (updatedCard, showPopupError, enablePopup) => {
+    debugger
     api
       .updateCard({
         id: updatedCard.id,

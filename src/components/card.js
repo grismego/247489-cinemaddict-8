@@ -78,4 +78,5 @@ export default class CardComponent extends BaseComponent {
       this._controlsElement = null;
     }
   }
+
 }

@@ -118,17 +118,16 @@ export default class CardSectionsComponent extends BaseComponent {
 
     const updateCard = (newData) => {
       const index = this._data.cards.findIndex((item) => item.id === newData.id);
-      if (index !== -1) {
+      if (index === -1) {
         return false;
       }
-
       this._data.cards[index] = Object.assign({}, newData);
 
       return true;
     };
 
     const submitComment = (newData, showCommentSubmitError, enableCommentForm) => {
-      if (updateCard(newData) && typeof this._commentSubmitCallback === `function`) {
+      if (updateCard(newData) && (typeof this._commentSubmitCallback === `function`)) {
         this._commentSubmitCallback(newData, showCommentSubmitError, enableCommentForm);
       }
     };
@@ -144,10 +143,11 @@ export default class CardSectionsComponent extends BaseComponent {
       const cards = section.filterFunction(this._data.cards, this._data.filterBy);
       const component = new CardSection({cards}, section.options);
 
-      component.onCardChange = onCardChange;
       component.onCommentSubmit = submitComment;
+      component.onCardChange = onCardChange;
+      // component.onCommentSubmit = submitComment;
       component.onRatingSubmit = submitRating;
-
+      
       element.appendChild(component.render());
 
       return component;
