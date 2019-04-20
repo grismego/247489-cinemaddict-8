@@ -28,7 +28,7 @@ export const createRankTempalte = (data) => (`
 );
 
 export const createStatisticTemplate = (data) => {
-  return (`<section class="statistic visually-hidden">
+  return (`<section class="statistic">
     ${createRankTempalte(data)}
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
     <p class="statistic__filters-description">Show stats:</p>

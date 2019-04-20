@@ -26,12 +26,20 @@ export default class CardSectionComponent extends BaseComponent {
     return createCardSectionTemplate(this._options);
   }
 
+  set currentPage(pageNumber) {
+    this._currentPage = pageNumber;
+  }
+
   set onCardChange(fn) {
     this._changeCardCallback = fn;
   }
 
   set onCommentSubmit(fn) {
     this._сommentSubmitCallback = fn;
+  }
+
+  set onCommentRemove(fn) {
+    this._сommentRemoveCallback = fn;
   }
 
   set onRatingSubmit(fn) {
@@ -57,6 +65,9 @@ export default class CardSectionComponent extends BaseComponent {
       this._cardsContainerElement.appendChild(component.render());
     });
 
+    if (this._components.length >= this._data.cards.length) {
+      this._showMoreButtonElement.classList.add(`visually-hidden`);
+    }
   }
 
   _createCardComponent(card) {
@@ -71,14 +82,12 @@ export default class CardSectionComponent extends BaseComponent {
       cardComponent.unrender();
       cardComponent.update(props);
 
-      // this._cardsContainerElement.appendChild(cardComponent.render());
       this._cardsContainerElement.replaceChild(cardComponent.render(), prevElement);
-      
+
       if (typeof this._changeCardCallback === `function`) {
         this._changeCardCallback(cardComponent._data);
       }
     };
-
 
     cardComponent.onCommentsClick = () => {
       popupComponent.render();
@@ -90,14 +99,21 @@ export default class CardSectionComponent extends BaseComponent {
       popupComponent.update(card);
     };
 
-    cardComponent.onMarkAsWatched = (isWatched) => {
-      updateCardComponent({isWatched});
+    cardComponent.onMarkAsWatched = (isWatched, watchingDate) => {
+      updateCardComponent({isWatched, watchingDate});
       popupComponent.update(card);
     };
 
     cardComponent.onMarkAsFavorite = (isFavorite) => {
       updateCardComponent({isFavorite});
       popupComponent.update(card);
+    };
+
+    popupComponent.onCommentRemove = () => {
+      cardComponent.update(card);
+      if (typeof this._сommentRemoveCallback === `function`) {
+        this._сommentRemoveCallback(card);
+      }
     };
 
     popupComponent.onClose = () => {
@@ -115,8 +131,8 @@ export default class CardSectionComponent extends BaseComponent {
       cardComponent.update(card);
     };
 
-    popupComponent.onMarkAsWatched = (isWatched) => {
-      updateCardComponent({isWatched});
+    popupComponent.onMarkAsWatched = (isWatched, watchingDate) => {
+      updateCardComponent({isWatched, watchingDate});
       cardComponent.update(card);
     };
 
@@ -146,6 +162,11 @@ export default class CardSectionComponent extends BaseComponent {
       this._cardsContainerElement.appendChild(component.render());
       return component;
     });
+
+    if (this._components.length >= this._data.cards.length) {
+      this._showMoreButtonElement.classList.add(`visually-hidden`);
+    }
+
     return sectionElement;
   }
 
@@ -164,7 +185,6 @@ export default class CardSectionComponent extends BaseComponent {
   }
 
   unrender() {
-    // debugger
     const containerElement = this.element.querySelector(`.films-list__container`);
 
     this._components.forEach((component) => {
@@ -172,7 +192,7 @@ export default class CardSectionComponent extends BaseComponent {
       component.unrender();
     });
 
-    // this._components = null;
+    this._components = null;
     this._cardsContainerElement = null;
     super.unrender();
   }

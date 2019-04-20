@@ -378,15 +378,31 @@ a:hover {
 }
 
 .error {
-  display: flex;
+  display: block;
   text-align: center;  
   margin: auto;
+  flex-wrap: wrap;
   justify-content: center;
 }
 .error__text {
   font-size: 40px;
-  display: flex;
+  display: block;
   align-self: center;
+  color: red;
+}
+
+.error__message {
+  font-size: 20px;
+  display: block;
+  align-self: center;
+  color: red;
+}
+
+.error__stack {
+  font-size: 16px;
+  display: block;
+  align-self: center;
+  white-space: pre;
   color: red;
 }
 

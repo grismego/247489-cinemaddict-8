@@ -6,7 +6,8 @@ const PAGE_SIZE = 5;
 
 const defaultData = {
   cards: [],
-  filterBy: null
+  filterBy: null,
+  searchBy: null
 };
 
 export default class CardSectionsComponent extends BaseComponent {
@@ -54,7 +55,7 @@ export default class CardSectionsComponent extends BaseComponent {
     );
   }
 
-  set onCardsChange(fn) {
+  set onCardChange(fn) {
     this._cardsChangeCallback = fn;
   }
 
@@ -74,8 +75,18 @@ export default class CardSectionsComponent extends BaseComponent {
     return cards.slice().sort((a, b) => b.rating - a.rating);
   }
 
-  static filterCardsByCustomFilter(cards, filterBy) {
-    return filterBy ? cards.filter(filterBy) : cards.slice();
+  static filterCardsByCustomFilter(originalCards, filterBy, searchBy) {
+    let cards = originalCards.slice();
+
+    if (filterBy) {
+      cards = cards.filter(filterBy);
+    }
+
+    if (searchBy) {
+      cards = cards.filter(searchBy);
+    }
+
+    return cards;
   }
 
   show() {
@@ -90,7 +101,7 @@ export default class CardSectionsComponent extends BaseComponent {
     this.components.forEach((component, index) => {
       const prevElement = component.element;
       const section = CardSectionsComponent.sections[index];
-      const cards = section.filterFunction(this._data.cards, this._data.filterBy);
+      const cards = section.filterFunction(this._data.cards, this._data.filterBy, this._data.searchBy);
 
       component.unrender();
       component.update({cards});
@@ -139,15 +150,14 @@ export default class CardSectionsComponent extends BaseComponent {
     };
 
     this.components = CardSectionsComponent.sections.map((section) => {
-
-      const cards = section.filterFunction(this._data.cards, this._data.filterBy);
+      const cards = section.filterFunction(this._data.cards, this._data.filterBy, this._data.searchBy);
       const component = new CardSection({cards}, section.options);
 
       component.onCommentSubmit = submitComment;
+      component.onCommentRemove = onCardChange;
       component.onCardChange = onCardChange;
-      // component.onCommentSubmit = submitComment;
       component.onRatingSubmit = submitRating;
-      
+
       element.appendChild(component.render());
 
       return component;

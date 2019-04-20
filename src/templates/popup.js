@@ -16,6 +16,8 @@ const EMOJI = [
   }
 ];
 
+const TEXT_CURRENT_USER = `Yo`;
+
 const EMOJIES = {
   'sleeping': `😴`,
   'neutral-face': `😐`,
@@ -30,6 +32,11 @@ const createEmojiTemplate = () => (
   )).join(``)}
   </div>`
 );
+
+export const createUserContorlsTemplate = (data) => (`<div class="film-details__user-rating-controls">
+    <span class="film-details__watched-status film-details__watched-status--active"></span>
+    <button class="film-details__watched-reset ${data.comments.some((comment) => comment.author === TEXT_CURRENT_USER) ? `` : `visually-hidden`}" type="button">undo</button>
+  </div>`);
 
 export const createCommentsTemplate = (data) => (
   data.comments.map((comment) => (
@@ -189,10 +196,8 @@ export const createPopupTemplate = (data) => (
     ${createCommentsSectionTemplate(data)}
 
     <section class="film-details__user-rating-wrap">
-      <div class="film-details__user-rating-controls">
-        <span class="film-details__watched-status film-details__watched-status--active">Already watched</span>
-        <button class="film-details__watched-reset" type="button">undo</button>
-      </div>
+    
+      ${createUserContorlsTemplate(data)}
 
       <div class="film-details__user-score">
         <div class="film-details__user-rating-poster">

@@ -45,7 +45,8 @@ export default class CardComponent extends BaseComponent {
     evt.preventDefault();
     if (typeof this._markAsWatchedCallback === `function` && evt.target.classList.contains(`film-card__controls-item--mark-as-watched`)) {
       this._data.isWatched = !this._data.isWatched;
-      this._markAsWatchedCallback(this._data.isWatched);
+      this._data.watchingDate = Date.now();
+      this._markAsWatchedCallback(this._data.isWatched, this._data.watchingDate);
     }
 
     if (typeof this._markAsFavoriteCallback === `function` && evt.target.classList.contains(`film-card__controls-item--favorite`)) {

@@ -4,7 +4,8 @@ import {
   createPopupTemplate,
   createScoreTemplate,
   createRatingTemplate,
-  createCommentsSectionTemplate
+  createCommentsSectionTemplate,
+  createUserContorlsTemplate
 } from 'app/templates/popup';
 
 const KEYCODE_ENTER = 13;
@@ -82,6 +83,10 @@ export default class CardPopupComponent extends BaseComponent {
     this._submitRatingCallback = fn;
   }
 
+  set onCommentRemove(fn) {
+    this._commentRemoveCallback = fn;
+  }
+
   set onAddToWatchList(fn) {
     this._addToWatchListCallback = fn;
   }
@@ -95,7 +100,8 @@ export default class CardPopupComponent extends BaseComponent {
   _onMarkAsWatchedButtonClick() {
     const value = !this._data.isWatched;
     this._data.isWatched = value;
-    this._markAsWatchedCallback(value);
+    this._data.watchingDate = Date.now();
+    this._markAsWatchedCallback(value, this._data.watchingDate);
   }
 
   _onAddToWatchListButtonClick() {
@@ -112,27 +118,26 @@ export default class CardPopupComponent extends BaseComponent {
 
   showCommentSubmitError() {
     const commentsSectionElement = this._element.querySelector(`.film-details__comments-wrap`);
-    const commentsElements = commentsSectionElement.querySelectorAll(`.film-details__comment`);
     const commentsCountElement = commentsSectionElement.querySelector(`.film-details__comments-count`);
 
-    this._commentInputElement.disabled.classList.add(`shake`);
-    this._commentInputElement.disabled.style.border = CommentBorder.ERROR;
-    this._commentInputElement.disabled.disabled = false;
+    this._commentInputElement.classList.add(`shake`);
+    this._commentInputElement.style.border = CommentBorder.ERROR;
+    this._commentInputElement.disabled = false;
 
-    this._data.comments.pop();
-
-    commentsSectionElement.removeChild(commentsElements[commentsElements.length - 1]);
     commentsCountElement.textContent = this._data.comments.length;
+    this._commentInputElement.addEventListener(`input`, this._onCommentFormInput);
   }
 
   enableCommentForm() {
     const inputElement = this._element.querySelector(`.film-details__comment-input`);
-
+    this._partialUpdate();
+    this._createListeners();
     inputElement.style.border = CommentBorder.DEFAULT;
     inputElement.value = ``;
     inputElement.classList.remove(`shake`);
+    this._commentStatusElement.textContent = `Comment Added`;
+    this._commentInputElement.disabled = false;
 
-    this._toggleStateInput(false);
   }
 
   showRatingSubmitError() {
@@ -164,34 +169,10 @@ export default class CardPopupComponent extends BaseComponent {
   }
 
   _onCloseClick() {
-    // this._syncForm();
     return typeof this._closeCallback === `function` && this._closeCallback(this._data);
   }
 
-  // _syncForm() {
-  //   const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-  //   const data = CardPopupComponent.processForm(formData);
-
-  //   const comments = this._data.comments.slice();
-
-  //   if (data.comment.length) {
-  //     comments.push({
-  //       author: TEXT_CURRENT_USER,
-  //       date: Date.now(),
-  //       comment: data.comment,
-  //       emotion: data.emotion
-  //     });
-  //   }
-  //   this._data.personalRating = data.personalRating;
-
-  //   this._removeListeners();
-  //   this.update({comments});
-  //   this._partialUpdate();
-  //   this._createListeners();
-  // }
-
   _onFormSubmit() {
-    // this._syncForm();
     if (typeof this._submitCallback === `function`) {
       this._submitCallback(
           this._data,
@@ -210,8 +191,6 @@ export default class CardPopupComponent extends BaseComponent {
 
     if ((evt.keyCode === KEYCODE_ENTER && evt.ctrlKey) && inputElement.value) {
       this._addComment(inputElement.value);
-      this._partialUpdate();
-
       if (typeof this._submitCallback === `function`) {
         this._submitCallback(
             this._data,
@@ -229,11 +208,13 @@ export default class CardPopupComponent extends BaseComponent {
   _onCommentRemove() {
     if (this._isYourComment()) {
       this._data.comments.pop();
-      // this._syncForm();
       this._removeListeners();
-      // TODO - this.update(this._data);
+      this.update(this._data);
       this._partialUpdate();
       this._createListeners();
+      if (typeof this._commentRemoveCallback === `function`) {
+        this._commentRemoveCallback(this._data);
+      }
     }
   }
 
@@ -271,8 +252,6 @@ export default class CardPopupComponent extends BaseComponent {
 
   _onEscClick(evt) {
     if (evt.keyCode === KEYCODE_ESC) {
-      // this._syncForm();
-
       if (typeof this._closeCallback === `function`) {
         this._closeCallback(this._data);
       }
@@ -282,77 +261,59 @@ export default class CardPopupComponent extends BaseComponent {
   _createListeners() {
 
     this._commentInputElement = this._element.querySelector(`.film-details__comment-input`);
+    this._commentRemoveButtonElemet = this._element.querySelector(`.film-details__watched-reset`);
+    this._commentStatusElement = this._element.querySelector(`.film-details__watched-status`);
+    this._formDetailsElement = this._element.querySelector(`.film-details__inner`);
+    this._formDetailsCloseButton = this._element.querySelector(`.film-details__close-btn`);
+    this._userScoreElement = this._element.querySelector(`.film-details__user-rating-score`);
+    this._watchlistButtonElement = this._element.querySelector(`#watchlist`);
+    this._watchedButtonElement = this._element.querySelector(`#watched`);
+    this._favoriteButtonElement = this._element.querySelector(`#favorite`);
 
 
-    ////
+    this._formDetailsElement.addEventListener(`submit`, this._onFormSubmit);
 
+    this._formDetailsCloseButton.addEventListener(`click`, this._onCloseClick);
 
-    this._element
-      .querySelector(`.film-details__inner`)
-      .addEventListener(`submit`, this._onFormSubmit);
-
-    this._element
-      .querySelector(`.film-details__close-btn`)
-      .addEventListener(`click`, this._onCloseClick);
-
-    this._element
-      .querySelector(`.film-details__user-rating-score`)
-      .addEventListener(`click`, this._onChangeRating);
+    this._userScoreElement.addEventListener(`click`, this._onChangeRating);
 
     document.addEventListener(`keydown`, this._onEscClick);
 
-    this._element
-      .querySelector(`.film-details__comment-input`)
-      .addEventListener(`keydown`, this._onCommentInputKeydown);
+    this._commentInputElement.addEventListener(`keydown`, this._onCommentInputKeydown);
 
-    this._element
-      .querySelector(`.film-details__watched-reset`)
-      .addEventListener(`click`, this._onCommentRemove);
+    this._commentRemoveButtonElemet.addEventListener(`click`, this._onCommentRemove);
 
-    this
-      ._element.querySelector(`#watchlist`)
-      .addEventListener(`change`, this._onAddToWatchListButtonClick);
-    this
-      ._element.querySelector(`#watched`)
-      .addEventListener(`change`, this._onMarkAsWatchedButtonClick);
-    this
-      ._element.querySelector(`#favorite`)
-      .addEventListener(`change`, this._onAddToFavoriteButtonClick);
+    this._watchlistButtonElement.addEventListener(`change`, this._onAddToWatchListButtonClick);
+    this._watchedButtonElement.addEventListener(`change`, this._onMarkAsWatchedButtonClick);
+    this._favoriteButtonElement.addEventListener(`change`, this._onAddToFavoriteButtonClick);
   }
 
   _removeListeners() {
-    this._commentInputElement = null;
-    ////
-    this._element
-      .querySelector(`.film-details__close-btn`)
-      .removeEventListener(`click`, this._onCloseClick);
-
-    this._element
-      .querySelector(`.film-details__inner`)
-      .removeEventListener(`click`, this._onChangeRating);
-
-    this._element
-      .querySelector(`.film-details__comment-input`)
-      .removeEventListener(`keydown`, this._onCommentInputKeydown);
+    this._formDetailsCloseButton.removeEventListener(`click`, this._onCloseClick);
+    this._formDetailsElement.removeEventListener(`click`, this._onChangeRating);
+    this._commentInputElement.removeEventListener(`keydown`, this._onCommentInputKeydown);
+    this._commentRemoveButtonElemet.removeEventListener(`click`, this._onCommentRemove);
+    this._watchlistButtonElement.removeEventListener(`change`, this._onAddToWatchListButtonClick);
+    this._watchedButtonElement.removeEventListener(`change`, this._onMarkAsWatchedButtonClick);
+    this._favoriteButtonElement.removeEventListener(`change`, this._onAddToFavoriteButtonClick);
 
     document.removeEventListener(`keydown`, this._onEscClick);
 
-    this
-      ._element.querySelector(`.film-details__watched-reset`)
-      .removeEventListener(`click`, this._onCommentRemove);
-
-    this
-      ._element.querySelector(`#watchlist`)
-      .removeEventListener(`change`, this._onAddToWatchListButtonClick);
-    this
-      ._element.querySelector(`#watched`)
-      .removeEventListener(`change`, this._onMarkAsWatchedButtonClick);
-    this
-      ._element.querySelector(`#favorite`)
-      .removeEventListener(`change`, this._onAddToFavoriteButtonClick);
+    this._commentInputElement = null;
+    this._commentRemoveButtonElemet = null;
+    this._commentStatusElement = null;
+    this._formDetailsElement = null;
+    this._formDetailsCloseButton = null;
+    this._userScoreElement = null;
+    this._watchlistButtonElement = null;
+    this._watchedButtonElement = null;
+    this._favoriteButtonElement = null;
   }
 
   _partialUpdate() {
+    const nextUserControlElement = createElement(createUserContorlsTemplate(this._data));
+    const prevUserControlElement = this._element.querySelector(`.film-details__user-rating-controls`);
+
     const nextScoreElement = createElement(createScoreTemplate(this._data));
     const prevScoreElement = this._element.querySelector(`.film-details__user-rating-score`);
 
@@ -365,5 +326,6 @@ export default class CardPopupComponent extends BaseComponent {
     prevScoreElement.parentNode.replaceChild(nextScoreElement, prevScoreElement);
     prevRatingElement.parentNode.replaceChild(nextRatingElement, prevRatingElement);
     prevCommentsElement.parentNode.replaceChild(nextCommentsElement, prevCommentsElement);
+    prevUserControlElement.parentNode.replaceChild(nextUserControlElement, prevUserControlElement);
   }
 }

@@ -2,9 +2,13 @@ import BaseComponent from 'app/components/base';
 import {createFiltersTemplate} from '../templates/filters';
 import FilterComponent from 'app/components/filter';
 
-export default class FiltersComponent extends BaseComponent {
+const defaultData = {
+  cards: [],
+  filters: []
+};
 
-  constructor(data) {
+export default class FiltersComponent extends BaseComponent {
+  constructor(data = defaultData) {
     super(data);
 
     this.components = null;
@@ -29,7 +33,7 @@ export default class FiltersComponent extends BaseComponent {
 
       component.onSelect = (filterName) => {
         if (typeof this._onChange === `function`) {
-          this._onChange({filterName, filterBy: filterData.filterBy});
+          this._onChange(filterName, filterData.filterBy);
         }
       };
 

@@ -27,6 +27,17 @@ export default class BaseComponent {
 
   }
 
+  rerender(data) {
+    const prevElement = this.element;
+
+    this.unrender();
+    this.update(data);
+
+    const nextElement = this.render();
+
+    return {prevElement, nextElement};
+  }
+
   render() {
     this._element = createElement(this.template);
     this._createListeners();

@@ -11,7 +11,7 @@ import {setUserRang} from 'app/lib/user-rang';
 import ModelCard from 'app/models/card';
 import ApiService from 'app/services/api';
 
-const AUTHORIZATION = `Basic aadasd123asxc=`;
+const AUTHORIZATION = `Basic aadasdadsasdxc=`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 
 const mainElement = document.querySelector(`.main`);
@@ -24,121 +24,99 @@ const api = new ApiService({
   authorization: AUTHORIZATION
 });
 
-let cardSectionsComponent;
-let filtersComponent;
-let statisticComponent;
-
+const loadingComponent = new LoadingComponent();
+const cardSectionsComponent = new CardSectionsComponent();
 const searchComponent = new SearchComponent();
-let loadingComponent = new LoadingComponent();
 const errorComponent = new ErrorComponent();
+const filtersComponent = new FiltersComponent();
+const statisticComponent = new StatisticComponent();
 
-const createFilterBySearch = (value) => (card) => card.title.toLowerCase().search(value) !== -1;
-const updateUserRank = (cards) => userRangElement.innerHTML = setUserRang(cards.filter((card) => card.isWatched).length); // @TODO
-
-searchComponent.onSearch = (value) => {
-  cardSectionsComponent.update({
-    filterBy: value ? createFilterBySearch(value.toLowerCase()) : null
-  });
-  cardSectionsComponent.updatePartial();
+const updateUserRank = (cards) => {
+  userRangElement.innerHTML = setUserRang(cards.filter((card) => card.isWatched).length);
 };
 
-api.getCards().then((cards) => {
-  mainElement.removeChild(loadingComponent.element);
-  loadingComponent.unrender();
-  loadingComponent = null;
-
-  createCardSectionsComponent(cards);
-  createFiltersComponents(cards, generateFilters(cards));
-  updateUserRank(cards);
-}).catch((err) => {
-  console.log(err);
-  mainElement.innerHTML = ``;
-  mainElement.appendChild(errorComponent.render());
-});
-
-const createCardSectionsComponent = (cards) => {
-  cardSectionsComponent = new CardSectionsComponent({cards});
-
-  cardSectionsComponent.onCardsChange = (updatedCards, updatedCard) => {
-    api
-      .updateCard({
-        id: updatedCard.id,
-        newData: ModelCard.toRAW(updatedCard)
-      })
-      .then(() => updateUserRank(updatedCards))
-      .then(() => {
-        const prevFiltersElement = filtersComponent.element;
-
-        filtersComponent.unrender();
-        filtersComponent.update({
-          cards: updatedCards,
-          filters: generateFilters(updatedCards)
-        });
-        mainElement.replaceChild(filtersComponent.render(), prevFiltersElement);
-
-        statisticComponent.unrender();
-        statisticComponent.update(updatedCards);
-        // @TODO: render statictic
-
-        cardSectionsComponent.updatePartial();
-      });
-  };
-
-  cardSectionsComponent.onCommentSubmit = (updatedCard, showPopupError, enablePopup) => {
-    debugger
-    api
-      .updateCard({
-        id: updatedCard.id,
-        newData: ModelCard.toRAW(updatedCard)
-      })
-      .then(cardSectionsComponent.updatePartial)
-      .then(enablePopup)
-      .catch((err) => {
-        showPopupError();
-        console.log(err);
-      });
-  };
-
-  cardSectionsComponent.onRatingSubmit = (updatedCard, showPopupError, enableRating) => {
-    api
-      .updateCard({
-        id: updatedCard.id,
-        newData: ModelCard.toRAW(updatedCard)
-      })
-      .then(enableRating)
-      .catch(showPopupError);
-  };
-
-  mainElement.appendChild(cardSectionsComponent.render());
-};
-
-const createFiltersComponents = (cards, filters) => {
-  filtersComponent = new FiltersComponent({filters, cards});
-  statisticComponent = new StatisticComponent(cards);
-
-  filtersComponent.onChange = ({filterName, filterBy}) => {
-    const prevElement = cardSectionsComponent.element;
-
-    cardSectionsComponent.unrender();
-    cardSectionsComponent.update({filterBy});
-
-    mainElement.replaceChild(cardSectionsComponent.render(filterBy), prevElement);
+filtersComponent.onChange = (filterName, filterBy) => {
+  if (filterName === `stats`) {
+    cardSectionsComponent.hide();
+    if (!statisticComponent.element) {
+      mainElement.appendChild(statisticComponent.render());
+    }
+  } else {
+    const {prevElement, nextElement} = cardSectionsComponent.rerender({filterBy}); // @TODO
+    mainElement.replaceChild(nextElement, prevElement);
 
     if (statisticComponent.element) {
       mainElement.removeChild(statisticComponent.element);
       statisticComponent.unrender();
     }
-
-    if (filterName === `stats`) {
-      mainElement.appendChild(statisticComponent.render());
-      statisticComponent.show();
-      cardSectionsComponent.hide();
-    }
-  };
-
-  mainElement.insertAdjacentElement(`afterbegin`, filtersComponent.render());
+  }
 };
 
-// addSearch();
+searchComponent.onSearch = (value) => {
+  const createFilterBySearch = (card) => (
+    card.title.toLowerCase().search(value.toLowerCase()) !== -1
+  );
+
+  cardSectionsComponent.update({
+    searchBy: value ? createFilterBySearch : null});
+  cardSectionsComponent.updatePartial();
+};
+
+cardSectionsComponent.onCardChange = (cards, card) => {
+  api
+    .updateCard({
+      id: card.id,
+      newData: ModelCard.toRAW(card)
+    })
+    .then(() => updateUserRank(cards))
+    .then(() => {
+      const {prevElement, nextElement} = filtersComponent.rerender({
+        cards,
+        filters: generateFilters(cards)
+      });
+
+      mainElement.replaceChild(nextElement, prevElement);
+      statisticComponent.update({cards});
+    });
+};
+
+cardSectionsComponent.onCommentSubmit = (card, showPopupError, enablePopup) => {
+  api
+    .updateCard({
+      id: card.id,
+      newData: ModelCard.toRAW(card)
+    })
+    .then(enablePopup)
+    .catch(showPopupError);
+};
+
+cardSectionsComponent.onRatingSubmit = (card, showPopupError, enableRating) => {
+  api
+    .updateCard({
+      id: card.id,
+      newData: ModelCard.toRAW(card)
+    })
+    .then(enableRating)
+    .catch(showPopupError);
+};
+
+api.getCards().then((cards) => {
+  mainElement.removeChild(loadingComponent.element);
+  loadingComponent.unrender();
+
+  cardSectionsComponent.update({cards});
+  statisticComponent.update({cards});
+  filtersComponent.update({cards, filters: generateFilters(cards)});
+
+  updateUserRank(cards);
+
+  mainElement.insertAdjacentElement(`afterbegin`, filtersComponent.render());
+  mainElement.appendChild(cardSectionsComponent.render());
+}).catch((error) => {
+  mainElement.innerHTML = ``;
+  errorComponent.update({error});
+  mainElement.appendChild(errorComponent.render());
+});
+
 mainElement.appendChild(loadingComponent.render());
 headerElement.insertBefore(searchComponent.render(), profileElement);
