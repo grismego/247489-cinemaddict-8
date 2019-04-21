@@ -57,18 +57,6 @@ export default class CardPopupComponent extends BaseComponent {
     this._submitCallback = null;
   }
 
-  static processForm(formData) {
-    const entry = {};
-
-    const taskEditMapper = CardPopupComponent.createMapper(entry);
-
-    Array.from(formData.entries()).forEach(
-        ([property, value]) => taskEditMapper[property] && taskEditMapper[property](value)
-    );
-
-    return entry;
-  }
-
   get template() {
     return createPopupTemplate(this._data);
   }
@@ -99,25 +87,6 @@ export default class CardPopupComponent extends BaseComponent {
     this._markAsFavoriteCallback = fn;
   }
 
-  _onMarkAsWatchedButtonClick() {
-    const value = !this._data.isWatched;
-    this._data.isWatched = value;
-    this._data.watchingDate = Date.now();
-    this._markAsWatchedCallback(value, this._data.watchingDate);
-  }
-
-  _onAddToWatchListButtonClick() {
-    const value = !this._data.isAddedToWatched;
-    this._data.isAddedToWatched = value;
-    this._addToWatchListCallback(value);
-  }
-
-  _onAddToFavoriteButtonClick() {
-    const value = !this._data.isFavorite;
-    this._data.isFavorite = !value;
-    this._markAsFavoriteCallback(value);
-  }
-
   showCommentSubmitError() {
     const commentsSectionElement = this._element.querySelector(`.film-details__comments-wrap`);
     const commentsCountElement = commentsSectionElement.querySelector(`.film-details__comments-count`);
@@ -142,6 +111,15 @@ export default class CardPopupComponent extends BaseComponent {
 
   }
 
+  showNewRating() {
+    this._element.querySelector(`.film-details__user-rating`).textContent = `${TEXT_RATE} ${this._data.personalRating}`;
+
+    this._disableRatingInput(false);
+
+    this._element.querySelector(`[for="rating-${this._data.personalRating}"]`)
+      .style.backgroundColor = RatingElementColor.CHECKED;
+  }
+
   showRatingSubmitError() {
     const labelElement = this._element
     .querySelector(`[for="rating-${this._data.personalRating}"]`);
@@ -154,6 +132,25 @@ export default class CardPopupComponent extends BaseComponent {
     labelElement.classList.add(`shake`);
   }
 
+  _onMarkAsWatchedButtonClick() {
+    const value = !this._data.isWatched;
+    this._data.isWatched = value;
+    this._data.watchingDate = Date.now();
+    this._markAsWatchedCallback(value, this._data.watchingDate);
+  }
+
+  _onAddToWatchListButtonClick() {
+    const value = !this._data.isAddedToWatched;
+    this._data.isAddedToWatched = value;
+    this._addToWatchListCallback(value);
+  }
+
+  _onAddToFavoriteButtonClick() {
+    const value = !this._data.isFavorite;
+    this._data.isFavorite = !value;
+    this._markAsFavoriteCallback(value);
+  }
+
   _disableRatingInput(value) {
     this._element.querySelectorAll(`.film-details__user-rating-input`)
       .forEach((item) => {
@@ -161,14 +158,6 @@ export default class CardPopupComponent extends BaseComponent {
       });
   }
 
-  showNewRating() {
-    this._element.querySelector(`.film-details__user-rating`).textContent = `${TEXT_RATE} ${this._data.personalRating}`;
-
-    this._disableRatingInput(false);
-
-    this._element.querySelector(`[for="rating-${this._data.personalRating}"]`)
-      .style.backgroundColor = RatingElementColor.CHECKED;
-  }
 
   _onCloseClick() {
     return typeof this._closeCallback === `function` && this._closeCallback(this._data);
