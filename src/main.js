@@ -1,60 +1,122 @@
-import FiltersComponent from './components/Filters';
-import CardSectionsComponent from './components/CardSections';
-import StatisticComponent from './components/Statistic';
+import FiltersComponent from 'app/components/filters';
+import CardSectionsComponent from 'app/components/card-sections';
+import LoadingComponent from 'app/components/loading';
+import ErrorComponent from 'app/components/error';
+import StatisticComponent from 'app/components/statistic';
+import SearchComponent from 'app/components/search';
+import {generateFilters} from 'app/mocks/filters';
 
-import {generateFilters} from './mocks/filters';
-import {generateCards} from './mocks/cards';
+import {setUserRang} from 'app/lib/user-rang';
 
-const CARD_LIMIT_DEFAULT = 10;
+import ModelCard from 'app/models/card';
+import ApiService from 'app/services/api';
+
+const AUTHORIZATION = `Basic aadasdadsasdxc=`;
+const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 
 const mainElement = document.querySelector(`.main`);
+const userRangElement = document.querySelector(`.profile__rating`);
+const headerElement = document.querySelector(`.header`);
+const profileElement = headerElement.querySelector(`.profile`);
 
-let cards = generateCards(CARD_LIMIT_DEFAULT);
-let filters = generateFilters(cards);
+const api = new ApiService({
+  endPoint: END_POINT,
+  authorization: AUTHORIZATION
+});
 
-const filtersComponent = new FiltersComponent({filters, cards});
-const cardSectionsComponent = new CardSectionsComponent({cards});
+const loadingComponent = new LoadingComponent();
+const cardSectionsComponent = new CardSectionsComponent();
+const searchComponent = new SearchComponent();
+const errorComponent = new ErrorComponent();
+const filtersComponent = new FiltersComponent();
+const statisticComponent = new StatisticComponent();
 
-const statisticComponent = new StatisticComponent(cards);
+const updateUserRank = (cards) => {
+  userRangElement.innerHTML = setUserRang(cards.filter((card) => card.isWatched).length);
+};
 
-filtersComponent.onChange = ({filterName, filterBy}) => {
-  const prevElement = cardSectionsComponent.element;
-
-  cardSectionsComponent.unrender();
-  cardSectionsComponent.update({filterBy});
-
-  mainElement.replaceChild(cardSectionsComponent.render(), prevElement);
-
-  if (filterName === `all`) {
-    statisticComponent.hide();
-    cardSectionsComponent.show();
-  }
-
+filtersComponent.onChange = (filterName, filterBy) => {
   if (filterName === `stats`) {
-    statisticComponent.show();
     cardSectionsComponent.hide();
+    if (!statisticComponent.element) {
+      mainElement.appendChild(statisticComponent.render());
+    }
+  } else {
+    const {prevElement, nextElement} = cardSectionsComponent.rerender({filterBy});
+    mainElement.replaceChild(nextElement, prevElement);
+
+    if (statisticComponent.element) {
+      mainElement.removeChild(statisticComponent.element);
+      statisticComponent.unrender();
+    }
   }
 };
 
-cardSectionsComponent.onCardsChange = (updatedCards) => {
-  const prevFiltersElement = filtersComponent.element;
-  filtersComponent.unrender();
-  filtersComponent.update({
-    cards: updatedCards,
-    filters: generateFilters(updatedCards)
-  });
+searchComponent.onSearch = (value) => {
+  const createFilterBySearch = (card) => (
+    card.title.toLowerCase().search(value.toLowerCase()) !== -1
+  );
 
-  mainElement.replaceChild(filtersComponent.render(), prevFiltersElement);
-
-  const prevStatisticElement = statisticComponent.element;
-  statisticComponent.unrender();
-  statisticComponent.update(updatedCards);
-
+  cardSectionsComponent.update({
+    searchBy: value ? createFilterBySearch : null});
   cardSectionsComponent.updatePartial();
-
-  mainElement.replaceChild(statisticComponent.render(), prevStatisticElement);
 };
 
-mainElement.appendChild(cardSectionsComponent.render());
-mainElement.insertAdjacentElement(`afterbegin`, filtersComponent.render());
-mainElement.appendChild(statisticComponent.render());
+cardSectionsComponent.onCardChange = (cards, card) => {
+  api
+    .updateCard({
+      id: card.id,
+      newData: ModelCard.toRAW(card)
+    })
+    .then(() => updateUserRank(cards))
+    .then(() => {
+      const {prevElement, nextElement} = filtersComponent.rerender({
+        cards,
+        filters: generateFilters(cards)
+      });
+
+      mainElement.replaceChild(nextElement, prevElement);
+      statisticComponent.update({cards});
+    });
+};
+
+cardSectionsComponent.onCommentSubmit = (card, showPopupError, enablePopup) => {
+  api
+    .updateCard({
+      id: card.id,
+      newData: ModelCard.toRAW(card)
+    })
+    .then(enablePopup)
+    .catch(showPopupError);
+};
+
+cardSectionsComponent.onRatingSubmit = (card, showPopupError, enableRating) => {
+  api
+    .updateCard({
+      id: card.id,
+      newData: ModelCard.toRAW(card)
+    })
+    .then(enableRating)
+    .catch(showPopupError);
+};
+
+api.getCards().then((cards) => {
+  mainElement.removeChild(loadingComponent.element);
+  loadingComponent.unrender();
+
+  cardSectionsComponent.update({cards});
+  statisticComponent.update({cards});
+  filtersComponent.update({cards, filters: generateFilters(cards)});
+
+  updateUserRank(cards);
+
+  mainElement.insertAdjacentElement(`afterbegin`, filtersComponent.render());
+  mainElement.appendChild(cardSectionsComponent.render());
+}).catch((error) => {
+  mainElement.innerHTML = ``;
+  errorComponent.update({error});
+  mainElement.appendChild(errorComponent.render());
+});
+
+mainElement.appendChild(loadingComponent.render());
+headerElement.insertBefore(searchComponent.render(), profileElement);

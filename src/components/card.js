@@ -1,5 +1,5 @@
-import {createTemplate} from '../templates/cards';
-import BaseComponent from './Base';
+import {createTemplate} from 'app/templates/cards';
+import BaseComponent from 'app/components/base';
 
 export default class CardComponent extends BaseComponent {
   constructor(data, options = {}) {
@@ -11,7 +11,11 @@ export default class CardComponent extends BaseComponent {
     this._addToWatchListCallback = null;
     this._markAsWatchedCallback = null;
     this._markAsFavoriteCallback = null;
+
     this._options = options;
+
+    this._commentsElement = null;
+    this._controlsElement = null;
   }
 
   get template() {
@@ -25,6 +29,7 @@ export default class CardComponent extends BaseComponent {
   set onAddToWatchList(fn) {
     this._addToWatchListCallback = fn;
   }
+
   set onMarkAsWatched(fn) {
     this._markAsWatchedCallback = fn;
   }
@@ -40,7 +45,8 @@ export default class CardComponent extends BaseComponent {
     evt.preventDefault();
     if (typeof this._markAsWatchedCallback === `function` && evt.target.classList.contains(`film-card__controls-item--mark-as-watched`)) {
       this._data.isWatched = !this._data.isWatched;
-      this._markAsWatchedCallback(this._data.isWatched);
+      this._data.watchingDate = Date.now();
+      this._markAsWatchedCallback(this._data.isWatched, this._data.watchingDate);
     }
 
     if (typeof this._markAsFavoriteCallback === `function` && evt.target.classList.contains(`film-card__controls-item--favorite`)) {
@@ -54,25 +60,24 @@ export default class CardComponent extends BaseComponent {
     }
   }
 
-  _bind() {
-    this._element
-      .querySelector(`.film-card__comments`)
-      .addEventListener(`click`, this._onClick);
+  _createListeners() {
+    this._commentsElement = this._element.querySelector(`.film-card__comments`);
+    this._commentsElement.addEventListener(`click`, this._onClick);
+
     if (this._options) {
-      this._element
-      .querySelector(`.film-card__controls`)
-      .addEventListener(`click`, this._onControlFormClick);
+      this._controlsElement = this._element.querySelector(`.film-card__controls`);
+      this._controlsElement.addEventListener(`click`, this._onControlFormClick);
     }
   }
 
-  _unbind() {
-    this._element
-      .querySelector(`.film-card__comments`)
-      .removeEventListener(`click`, this._onClick);
+  _removeListeners() {
+    this._commentsElement.removeEventListener(`click`, this._onClick);
+    this._commentsElement = null;
+
     if (this._options) {
-      this._element
-        .querySelector(`.film-card__controls`)
-        .removeEventListener(`click`, this._onControlFormClick);
+      this._controlsElement.removeEventListener(`click`, this._onControlFormClick);
+      this._controlsElement = null;
     }
   }
+
 }

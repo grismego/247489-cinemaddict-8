@@ -1,4 +1,4 @@
-import {createElement} from '../lib/create-element';
+import {createElement} from 'app/lib/create-element';
 import cloneDeep from 'lodash.clonedeep';
 
 export default class BaseComponent {
@@ -19,23 +19,26 @@ export default class BaseComponent {
     throw new Error(`You have to define template.`);
   }
 
-  _bind() {
+  rerender(data) {
+    const prevElement = this.element;
 
-  }
+    this.unrender();
+    this.update(data);
 
-  _unbind() {
+    const nextElement = this.render();
 
+    return {prevElement, nextElement};
   }
 
   render() {
     this._element = createElement(this.template);
-    this._bind();
+    this._createListeners();
 
     return this._element;
   }
 
   unrender() {
-    this._unbind();
+    this._removeListeners();
     this._element = null;
   }
 
@@ -43,5 +46,13 @@ export default class BaseComponent {
     Object.keys(data).filter((property) => this._data.hasOwnProperty(property)).forEach((key) => {
       this._data[key] = data[key];
     });
+  }
+
+  _createListeners() {
+
+  }
+
+  _removeListeners() {
+
   }
 }

@@ -1,39 +1,37 @@
 import moment from 'moment';
 
-const EMOJI = [
-  {
-    icon: `😴`,
-    name: `sleeping`
-  },
-  {
-    icon: `😐`,
-    name: `neutral-face`,
-    isChecked: true
-  },
-  {
-    icon: `😀`,
-    name: `grinning`
-  }
-];
+const DEFAULT_EMOJI_VALUE = `neutral-face`;
+const TEXT_CURRENT_USER = `Yo`;
+
+const EMOJIES = {
+  'sleeping': `😴`,
+  'neutral-face': `😐`,
+  'grinning': `😀`
+};
 
 const createEmojiTemplate = () => (
   `<div class="film-details__emoji-list">
-    ${EMOJI.map((emoji) => (
-    `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji.name}" value="${emoji.name}" ${emoji.isChecked ? `checked` : ``}>
-    <label class="film-details__emoji-label" for="emoji-${emoji.name}">${emoji.icon}</label>`
-  )).join(``)}
+  ${Object.keys(EMOJIES).map((value) => (`<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${value}" value="${value}" ${value === DEFAULT_EMOJI_VALUE ? `checked` : ``}>
+    <label class="film-details__emoji-label" for="emoji-${value}">${EMOJIES[value]}</label>`))
+  .join(``)}
   </div>`
 );
+
+export const createUserContorlsTemplate = (data) => (`<div class="film-details__user-rating-controls">
+    <span class="film-details__watched-status film-details__watched-status--active"></span>
+    <button class="film-details__watched-reset ${data.comments.some((comment) => comment.author === TEXT_CURRENT_USER) ? `` : `visually-hidden`}" type="button">undo</button>
+  </div>`);
 
 export const createCommentsTemplate = (data) => (
   data.comments.map((comment) => (
     `<li class="film-details__comment">
-      <span class="film-details__comment-emoji">${comment.emoji}</span>
+      <span class="film-details__comment-emoji">${EMOJIES[comment.emotion]}</span>
       <div>
         <p class="film-details__comment-text">${comment.comment}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comment.author}</span>
-          <span class="film-details__comment-day">${moment(comment.time).fromNow()}</span>
+          
+          <span class="film-details__comment-day">${moment(comment.date).fromNow()}</span>
         </p>
       </div>
     </li>`)
@@ -46,7 +44,8 @@ export const createCommentTemplate = (data) => (`
         <p class="film-details__comment-text">${data.comments.comment}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${data.comments.author}</span>
-          <span class="film-details__comment-day">${moment(data.comments.time).fromNow()}</span>
+          
+          <span class="film-details__comment-day">${moment(data.comments.date).fromNow()}</span>
         </p>
       </div>
     </li>
@@ -57,7 +56,7 @@ export const createScoreTemplate = (data) => {
 
   for (let i = 1; i < 10; i++) {
     items.push(`
-      <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${i}" id="rating-${i}" ${i === Math.floor(data.rating) ? `checked` : ``}>
+      <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${i}" id="rating-${i}" ${i === Math.floor(data.personalRating) ? `checked` : ``}>
       <label class="film-details__user-rating-label" for="rating-${i}">${i}</label>
     `);
   }
@@ -72,7 +71,7 @@ export const createScoreTemplate = (data) => {
 const createGenresTemplate = (card) => {
   const block = [...(card.genre)].map((genre) => (
     `<span class="film-details__genre">${genre}</span>`
-  )).join(``).split(` `);
+  )).join(``);
 
   return (
     `<tr class="film-details__row">
@@ -109,7 +108,7 @@ export const createCommentsSectionTemplate = (data) => (
 export const createRatingTemplate = (data) => (
   `<div class="film-details__rating">
   <p class="film-details__total-rating">${data.rating}</p>
-  <p class="film-details__user-rating">Your rate ${Math.floor(data.rating)}</p>
+  <p class="film-details__user-rating">Your rate ${data.personalRating}</p>
 </div>`
 );
 
@@ -129,7 +128,7 @@ export const createPopupTemplate = (data) => (
           <div class="film-details__info-head">
             <div class="film-details__title-wrap">
               <h3 class="film-details__title">${data.title}</h3>
-              <p class="film-details__title-original">Original: ${data.title}</p>
+              <p class="film-details__title-original">Original: ${data.alternativeTitle}</p>
             </div>
             ${createRatingTemplate(data)}
           </div>
@@ -144,11 +143,11 @@ export const createPopupTemplate = (data) => (
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Actors</td>
-              <td class="film-details__cell">${data.actors}</td>
+              <td class="film-details__cell">${data.actors.join(`, `)}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${data.year} (${data.country})</td>
+              <td class="film-details__cell">${moment(data.year).format(`D MMMM YYYY`)} (${data.country})</td>
             </tr>
             ${createRuntimeTemplate(data)}
             <tr class="film-details__row">
@@ -173,18 +172,14 @@ export const createPopupTemplate = (data) => (
         
         <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${data.isFavorite ? `checked` : ``}>
         <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
-
-        
       </section>
 
   
     ${createCommentsSectionTemplate(data)}
 
     <section class="film-details__user-rating-wrap">
-      <div class="film-details__user-rating-controls">
-        <span class="film-details__watched-status film-details__watched-status--active">Already watched</span>
-        <button class="film-details__watched-reset" type="button">undo</button>
-      </div>
+    
+      ${createUserContorlsTemplate(data)}
 
       <div class="film-details__user-score">
         <div class="film-details__user-rating-poster">
@@ -196,7 +191,6 @@ export const createPopupTemplate = (data) => (
 
           <p class="film-details__user-rating-feelings">How you feel it?</p>
 
-          
           ${createScoreTemplate(data)}
         </section>
       </div>

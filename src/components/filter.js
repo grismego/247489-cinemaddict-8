@@ -1,5 +1,5 @@
-import BaseComponent from './Base';
-import {createFilterTemplate} from '../templates/filters';
+import BaseComponent from 'app/components/base';
+import {createFilterTemplate} from 'app/templates/filters';
 
 export default class FilterComponent extends BaseComponent {
   constructor(data) {
@@ -22,11 +22,11 @@ export default class FilterComponent extends BaseComponent {
     }
   }
 
-  _bind() {
+  _createListeners() {
     this._element.addEventListener(`click`, this._onFilterClick);
   }
 
-  _unbind() {
+  _removeListeners() {
     this._element.removeEventListener(`click`, this._onFilterClick);
   }
 }

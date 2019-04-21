@@ -18,15 +18,19 @@ export const createStatisticListTemplate = (data) => {
     </li>
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">Top genre</h4>
-      <p class="statistic__item-text">${data.mostWatchedGenre}</p>
+      <p class="statistic__item-text">${data.mostWatchedGenre || `No Genre`}</p>
     </li>
     </ul>`);
 };
 
+export const createRankTempalte = (data) => (`
+<p class="statistic__rank">Your rank <span class="statistic__rank-label">${data.mostWatchedGenre}</span></p>`
+);
+
 export const createStatisticTemplate = (data) => {
-  return (`<section class="statistic visually-hidden">
-  <p class="statistic__rank">Your rank <span class="statistic__rank-label">${data.mostWatchedGenre}</span></p>
-  <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
+  return (`<section class="statistic">
+    ${createRankTempalte(data)}
+    <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
     <p class="statistic__filters-description">Show stats:</p>
 
     <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>

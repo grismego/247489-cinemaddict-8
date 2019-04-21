@@ -1,10 +1,14 @@
-import BaseComponent from './Base';
+import BaseComponent from 'app/components/base';
 import {createFiltersTemplate} from '../templates/filters';
-import FilterComponent from './Filter';
+import FilterComponent from 'app/components/filter';
+
+const defaultData = {
+  cards: [],
+  filters: []
+};
 
 export default class FiltersComponent extends BaseComponent {
-
-  constructor(data) {
+  constructor(data = defaultData) {
     super(data);
 
     this.components = null;
@@ -21,14 +25,17 @@ export default class FiltersComponent extends BaseComponent {
 
   render() {
     const element = super.render();
+    const documentFragment = document.createDocumentFragment();
 
     this.components = this._data.filters.map((filterData) => {
       const component = new FilterComponent(filterData);
-      element.appendChild(component.render());
+
+      documentFragment.appendChild(component.render());
+      element.appendChild(documentFragment);
 
       component.onSelect = (filterName) => {
         if (typeof this._onChange === `function`) {
-          this._onChange({filterName, filterBy: filterData.filterBy});
+          this._onChange(filterName, filterData.filterBy);
         }
       };
 
@@ -49,12 +56,10 @@ export default class FiltersComponent extends BaseComponent {
     super.unrender();
   }
 
-  _bind() {
-
+  _createListeners() {
+    this._navElements = this._element.querySelectorAll(`.main-navigation__item`);
   }
-
-  _unbind() {
-
+  _removeListeners() {
+    this._navElements = null;
   }
-
 }
