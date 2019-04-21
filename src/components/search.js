@@ -4,7 +4,7 @@ import BaseComponent from 'app/components/base';
 export default class SearchComponent extends BaseComponent {
   constructor(data) {
     super(data);
-    this._onSearchChange = this._onSearchChange.bind(this);
+    this._onSearchInput = this._onSearchInput.bind(this);
   }
 
   get template() {
@@ -27,13 +27,13 @@ export default class SearchComponent extends BaseComponent {
       this._inputSearchElement = this._element.querySelector(`input`);
 
       this._inputSearchElement
-        .addEventListener(`input`, this._onSearchChange);
+        .addEventListener(`input`, this._onSearchInput);
     }
   }
 
   _removeListeners() {
     if (this._element) {
-      this._inputSearchElement.removeEventListener(`input`, this._onSearchChange);
+      this._inputSearchElement.removeEventListener(`input`, this._onSearchInput);
       this._inputSearchElement = null;
     }
   }
