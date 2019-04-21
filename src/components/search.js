@@ -15,7 +15,7 @@ export default class SearchComponent extends BaseComponent {
     this._searchCallback = fn;
   }
 
-  _onSearchChange(evt) {
+  _onSearchInput(evt) {
     evt.preventDefault();
     if (typeof this._searchCallback === `function`) {
       this._searchCallback(evt.target.value);
