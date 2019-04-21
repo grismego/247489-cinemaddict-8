@@ -42,7 +42,7 @@ filtersComponent.onChange = (filterName, filterBy) => {
       mainElement.appendChild(statisticComponent.render());
     }
   } else {
-    const {prevElement, nextElement} = cardSectionsComponent.rerender({filterBy}); // @TODO
+    const {prevElement, nextElement} = cardSectionsComponent.rerender({filterBy});
     mainElement.replaceChild(nextElement, prevElement);
 
     if (statisticComponent.element) {

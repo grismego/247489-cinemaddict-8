@@ -1,21 +1,6 @@
 import moment from 'moment';
 
-const EMOJI = [
-  {
-    icon: `😴`,
-    name: `sleeping`
-  },
-  {
-    icon: `😐`,
-    name: `neutral-face`,
-    isChecked: true
-  },
-  {
-    icon: `😀`,
-    name: `grinning`
-  }
-];
-
+const DEFAULT_EMOJI_VALUE = `neutral-face`;
 const TEXT_CURRENT_USER = `Yo`;
 
 const EMOJIES = {
@@ -26,10 +11,9 @@ const EMOJIES = {
 
 const createEmojiTemplate = () => (
   `<div class="film-details__emoji-list">
-    ${EMOJI.map((emoji) => (
-    `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji.name}" value="${emoji.name}" ${emoji.isChecked ? `checked` : ``}>
-    <label class="film-details__emoji-label" for="emoji-${emoji.name}">${emoji.icon}</label>`
-  )).join(``)}
+  ${Object.keys(EMOJIES).map((value) => (`<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${value}" value="${value}" ${value === DEFAULT_EMOJI_VALUE ? `checked` : ``}>
+    <label class="film-details__emoji-label" for="emoji-${value}">${EMOJIES[value]}</label>`))
+  .join(``)}
   </div>`
 );
 

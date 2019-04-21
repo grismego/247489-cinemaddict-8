@@ -112,6 +112,7 @@ export default class CardSectionsComponent extends BaseComponent {
 
   render() {
     const element = super.render();
+    const documentFragment = document.createDocumentFragment();
 
     const onCardChange = (updatedCard) => {
       this._data.cards = this._data.cards.map((card) => (
@@ -158,7 +159,9 @@ export default class CardSectionsComponent extends BaseComponent {
       component.onCardChange = onCardChange;
       component.onRatingSubmit = submitRating;
 
-      element.appendChild(component.render());
+      documentFragment.appendChild(component.render());
+
+      element.appendChild(documentFragment);
 
       return component;
     });

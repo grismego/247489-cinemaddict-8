@@ -25,11 +25,13 @@ export default class FiltersComponent extends BaseComponent {
 
   render() {
     const element = super.render();
+    const documentFragment = document.createDocumentFragment();
 
     this.components = this._data.filters.map((filterData) => {
       const component = new FilterComponent(filterData);
 
-      element.appendChild(component.render());
+      documentFragment.appendChild(component.render());
+      element.appendChild(documentFragment);
 
       component.onSelect = (filterName) => {
         if (typeof this._onChange === `function`) {
@@ -52,5 +54,12 @@ export default class FiltersComponent extends BaseComponent {
     this.components = null;
 
     super.unrender();
+  }
+
+  _createListeners() {
+    this._navElements = this._element.querySelectorAll(`.main-navigation__item`);
+  }
+  _removeListeners() {
+    this._navElements = null;
   }
 }

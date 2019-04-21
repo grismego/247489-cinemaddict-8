@@ -13,6 +13,8 @@ const KEYCODE_ESC = 27;
 
 const TEXT_CURRENT_USER = `Yo`;
 const TEXT_RATE = `Your Rate`;
+const TEXT_COMMENT_ADDED = `Comment added`;
+const TEXT_COMMENT_REMOVED = `Comment removed`;
 
 const CommentBorder = {
   ERROR: `3px solid #8B0000`,
@@ -135,7 +137,7 @@ export default class CardPopupComponent extends BaseComponent {
     inputElement.style.border = CommentBorder.DEFAULT;
     inputElement.value = ``;
     inputElement.classList.remove(`shake`);
-    this._commentStatusElement.textContent = `Comment Added`;
+    this._commentStatusElement.textContent = TEXT_COMMENT_ADDED;
     this._commentInputElement.disabled = false;
 
   }
@@ -212,6 +214,7 @@ export default class CardPopupComponent extends BaseComponent {
       this.update(this._data);
       this._partialUpdate();
       this._createListeners();
+      this._commentStatusElement.textContent = TEXT_COMMENT_REMOVED;
       if (typeof this._commentRemoveCallback === `function`) {
         this._commentRemoveCallback(this._data);
       }
@@ -258,6 +261,25 @@ export default class CardPopupComponent extends BaseComponent {
     }
   }
 
+  _partialUpdate() {
+    const nextUserControlElement = createElement(createUserContorlsTemplate(this._data));
+    const prevUserControlElement = this._element.querySelector(`.film-details__user-rating-controls`);
+
+    const nextScoreElement = createElement(createScoreTemplate(this._data));
+    const prevScoreElement = this._element.querySelector(`.film-details__user-rating-score`);
+
+    const nextRatingElement = createElement(createRatingTemplate(this._data));
+    const prevRatingElement = this._element.querySelector(`.film-details__rating`);
+
+    const nextCommentsElement = createElement(createCommentsSectionTemplate(this._data));
+    const prevCommentsElement = this._element.querySelector(`.film-details__comments-wrap`);
+
+    prevScoreElement.parentNode.replaceChild(nextScoreElement, prevScoreElement);
+    prevRatingElement.parentNode.replaceChild(nextRatingElement, prevRatingElement);
+    prevCommentsElement.parentNode.replaceChild(nextCommentsElement, prevCommentsElement);
+    prevUserControlElement.parentNode.replaceChild(nextUserControlElement, prevUserControlElement);
+  }
+
   _createListeners() {
 
     this._commentInputElement = this._element.querySelector(`.film-details__comment-input`);
@@ -272,20 +294,14 @@ export default class CardPopupComponent extends BaseComponent {
 
 
     this._formDetailsElement.addEventListener(`submit`, this._onFormSubmit);
-
     this._formDetailsCloseButton.addEventListener(`click`, this._onCloseClick);
-
     this._userScoreElement.addEventListener(`click`, this._onChangeRating);
-
-    document.addEventListener(`keydown`, this._onEscClick);
-
     this._commentInputElement.addEventListener(`keydown`, this._onCommentInputKeydown);
-
     this._commentRemoveButtonElemet.addEventListener(`click`, this._onCommentRemove);
-
     this._watchlistButtonElement.addEventListener(`change`, this._onAddToWatchListButtonClick);
     this._watchedButtonElement.addEventListener(`change`, this._onMarkAsWatchedButtonClick);
     this._favoriteButtonElement.addEventListener(`change`, this._onAddToFavoriteButtonClick);
+    document.addEventListener(`keydown`, this._onEscClick);
   }
 
   _removeListeners() {
@@ -308,24 +324,5 @@ export default class CardPopupComponent extends BaseComponent {
     this._watchlistButtonElement = null;
     this._watchedButtonElement = null;
     this._favoriteButtonElement = null;
-  }
-
-  _partialUpdate() {
-    const nextUserControlElement = createElement(createUserContorlsTemplate(this._data));
-    const prevUserControlElement = this._element.querySelector(`.film-details__user-rating-controls`);
-
-    const nextScoreElement = createElement(createScoreTemplate(this._data));
-    const prevScoreElement = this._element.querySelector(`.film-details__user-rating-score`);
-
-    const nextRatingElement = createElement(createRatingTemplate(this._data));
-    const prevRatingElement = this._element.querySelector(`.film-details__rating`);
-
-    const nextCommentsElement = createElement(createCommentsSectionTemplate(this._data));
-    const prevCommentsElement = this._element.querySelector(`.film-details__comments-wrap`);
-
-    prevScoreElement.parentNode.replaceChild(nextScoreElement, prevScoreElement);
-    prevRatingElement.parentNode.replaceChild(nextRatingElement, prevRatingElement);
-    prevCommentsElement.parentNode.replaceChild(nextCommentsElement, prevCommentsElement);
-    prevUserControlElement.parentNode.replaceChild(nextUserControlElement, prevUserControlElement);
   }
 }

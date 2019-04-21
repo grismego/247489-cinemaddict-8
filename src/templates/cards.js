@@ -25,6 +25,16 @@ const countDuration = (duration) => (
   ]
 );
 
+const createRatingClassModificator = (data) => {
+  if (data.rating < 5) {
+    return `film-card__rating--poor`;
+  } else if (data.rating > 5 && data.rating < 7) {
+    return `film-card__rating--average`;
+  } else {
+    return `film-card__rating--good`;
+  }
+};
+
 export const createCardSectionTemplate = ({title, isExtra = false, showMore = false}) => (
   `<section class="films-list${isExtra ? `--extra` : ``}">
     <h2 class="films-list__title ${isExtra ? `` : `visually-hidden`}">${title}</h2>
@@ -49,35 +59,12 @@ const createControlsTemplate = (card) => (
   </form>`
 );
 
-export const createTemplates = (cards, withOptions = false) => (
-  cards
-    .map((card) => {
-      const [hour, min] = countDuration(card.duration);
-      return (
-        `<article class="film-card ${withOptions ? `` : `film-card--no-controls`}">
-          <h3 class="film-card__title">${card.title}</h3>
-          <p class="film-card__rating">${card.rating}</p>
-          <p class="film-card__info">
-            <span class="film-card__year">${moment(card.year).format(`YYYY`)}</span>
-            <span class="film-card__duration">${hour}h ${min}m</span>
-            <span class="film-card__genre">${card.genre.join(` `)}</span>
-          </p>
-          <img src="${card.poster}" alt="" class="film-card__poster">
-          <p class="film-card__description">${card.description}</p>
-          <button class="film-card__comments">${card.comments.length} comments</button>
-          ${withOptions ? createControlsTemplate() : ``}
-        </article>`
-      );
-    })
-    .join(``)
-);
-
 export const createTemplate = (card, withOptions = false) => {
   const [hour, min] = countDuration(card.duration);
   return (
     `<article class="film-card ${withOptions ? `` : `film-card--no-controls`}">
       <h3 class="film-card__title">${card.title}</h3>
-      <p class="film-card__rating">${card.rating}</p>
+      <p class="film-card__rating ${createRatingClassModificator(card)}">${card.rating}</p>
       <p class="film-card__info">
         <span class="film-card__year">${moment(card.year).format(`YYYY`)}</span>
         <span class="film-card__duration">${hour}h ${min}m</span>

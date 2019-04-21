@@ -19,14 +19,6 @@ export default class BaseComponent {
     throw new Error(`You have to define template.`);
   }
 
-  _createListeners() {
-
-  }
-
-  _removeListeners() {
-
-  }
-
   rerender(data) {
     const prevElement = this.element;
 
@@ -54,5 +46,13 @@ export default class BaseComponent {
     Object.keys(data).filter((property) => this._data.hasOwnProperty(property)).forEach((key) => {
       this._data[key] = data[key];
     });
+  }
+
+  _createListeners() {
+
+  }
+
+  _removeListeners() {
+
   }
 }

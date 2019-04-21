@@ -154,12 +154,14 @@ export default class CardSectionComponent extends BaseComponent {
   render() {
     const sectionElement = super.render();
     const cards = this._getCurrentCards();
+    const documentFragment = document.createDocumentFragment();
 
     this._cardsContainerElement = sectionElement.querySelector(`.films-list__container`);
 
     this._components = cards.map((card) => {
       const component = this._createCardComponent(card);
-      this._cardsContainerElement.appendChild(component.render());
+      documentFragment.appendChild(component.render());
+      this._cardsContainerElement.appendChild(documentFragment);
       return component;
     });
 
@@ -168,6 +170,19 @@ export default class CardSectionComponent extends BaseComponent {
     }
 
     return sectionElement;
+  }
+
+  unrender() {
+    const containerElement = this.element.querySelector(`.films-list__container`);
+
+    this._components.forEach((component) => {
+      containerElement.removeChild(component.element);
+      component.unrender();
+    });
+
+    this._components = null;
+    this._cardsContainerElement = null;
+    super.unrender();
   }
 
   _createListeners() {
@@ -182,18 +197,5 @@ export default class CardSectionComponent extends BaseComponent {
       this._showMoreButtonElement.removeEventListener(`click`, this._onShowMoreClick);
       this._showMoreButtonElement = null;
     }
-  }
-
-  unrender() {
-    const containerElement = this.element.querySelector(`.films-list__container`);
-
-    this._components.forEach((component) => {
-      containerElement.removeChild(component.element);
-      component.unrender();
-    });
-
-    this._components = null;
-    this._cardsContainerElement = null;
-    super.unrender();
   }
 }
