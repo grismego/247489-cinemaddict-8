@@ -3,7 +3,7 @@ import moment from 'moment';
 const DEFAULT_EMOJI_VALUE = `neutral-face`;
 const TEXT_CURRENT_USER = `Yo`;
 
-const EMOJIES = {
+const Emojies = {
   'sleeping': `😴`,
   'neutral-face': `😐`,
   'grinning': `😀`
@@ -11,8 +11,8 @@ const EMOJIES = {
 
 const createEmojiTemplate = () => (
   `<div class="film-details__emoji-list">
-  ${Object.keys(EMOJIES).map((value) => (`<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${value}" value="${value}" ${value === DEFAULT_EMOJI_VALUE ? `checked` : ``}>
-    <label class="film-details__emoji-label" for="emoji-${value}">${EMOJIES[value]}</label>`))
+  ${Object.keys(Emojies).map((value) => (`<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${value}" value="${value}" ${value === DEFAULT_EMOJI_VALUE ? `checked` : ``}>
+    <label class="film-details__emoji-label" for="emoji-${value}">${Emojies[value]}</label>`))
   .join(``)}
   </div>`
 );
@@ -25,7 +25,7 @@ export const createUserContorlsTemplate = (data) => (`<div class="film-details__
 export const createCommentsTemplate = (data) => (
   data.comments.map((comment) => (
     `<li class="film-details__comment">
-      <span class="film-details__comment-emoji">${EMOJIES[comment.emotion]}</span>
+      <span class="film-details__comment-emoji">${Emojies[comment.emotion]}</span>
       <div>
         <p class="film-details__comment-text">${comment.comment}</p>
         <p class="film-details__comment-info">

@@ -56,7 +56,7 @@ export default class CardSectionComponent extends BaseComponent {
     const cards = this._getCurrentCards();
 
     cards.forEach((card) => {
-      let component = this._createCardComponent(card);
+      const component = this._createCardComponent(card);
       this._components.push(component);
       documentFragment.appendChild(component.render());
 
@@ -159,9 +159,10 @@ export default class CardSectionComponent extends BaseComponent {
     this._components = cards.map((card) => {
       const component = this._createCardComponent(card);
       documentFragment.appendChild(component.render());
-      this._cardsContainerElement.appendChild(documentFragment);
       return component;
     });
+
+    this._cardsContainerElement.appendChild(documentFragment);
 
     if (this._components.length >= this._data.cards.length) {
       this._showMoreButtonElement.classList.add(`visually-hidden`);

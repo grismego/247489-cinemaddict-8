@@ -30,9 +30,8 @@ const createRatingClassModificator = (data) => {
     return `film-card__rating--poor`;
   } else if (data.rating > 5 && data.rating < 7) {
     return `film-card__rating--average`;
-  } else {
-    return `film-card__rating--good`;
   }
+  return `film-card__rating--good`;
 };
 
 export const createCardSectionTemplate = ({title, isExtra = false, showMore = false}) => (

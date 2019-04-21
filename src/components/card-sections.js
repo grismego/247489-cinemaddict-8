@@ -20,35 +20,6 @@ export default class CardSectionsComponent extends BaseComponent {
     this.updatePartial = this.updatePartial.bind(this);
   }
 
-  static get sections() {
-    return [
-      {
-        filterFunction: CardSectionsComponent.filterCardsByCustomFilter,
-        options: {
-          title: `All Movies`,
-          showMore: true,
-          cardsLimit: PAGE_SIZE,
-        }
-      },
-      {
-        filterFunction: CardSectionsComponent.filterCardsByRating,
-        options: {
-          title: `Top rated`,
-          isExtra: true,
-          cardsLimit: CARDS_EXTRA_LIMIT,
-        }
-      },
-      {
-        filterFunction: CardSectionsComponent.filterCardsByComments,
-        options: {
-          title: `Top Comment`,
-          isExtra: true,
-          cardsLimit: CARDS_EXTRA_LIMIT,
-        }
-      }
-    ];
-  }
-
   get template() {
     return (
       `<section class="films"></section>`
@@ -65,28 +36,6 @@ export default class CardSectionsComponent extends BaseComponent {
 
   set onRatingSubmit(fn) {
     this._ratingSubmitCallback = fn;
-  }
-
-  static filterCardsByComments(cards) {
-    return cards.slice().sort((a, b) => b.comments.length - a.comments.length);
-  }
-
-  static filterCardsByRating(cards) {
-    return cards.slice().sort((a, b) => b.rating - a.rating);
-  }
-
-  static filterCardsByCustomFilter(originalCards, filterBy, searchBy) {
-    let cards = originalCards.slice();
-
-    if (filterBy) {
-      cards = cards.filter(filterBy);
-    }
-
-    if (searchBy) {
-      cards = cards.filter(searchBy);
-    }
-
-    return cards;
   }
 
   show() {
@@ -156,15 +105,16 @@ export default class CardSectionsComponent extends BaseComponent {
 
       component.onCommentSubmit = submitComment;
       component.onCommentRemove = onCardChange;
+
       component.onCardChange = onCardChange;
       component.onRatingSubmit = submitRating;
 
       documentFragment.appendChild(component.render());
 
-      element.appendChild(documentFragment);
-
       return component;
     });
+
+    element.appendChild(documentFragment);
 
     return element;
   }
@@ -177,5 +127,56 @@ export default class CardSectionsComponent extends BaseComponent {
     });
 
     super.unrender();
+  }
+
+  static get sections() {
+    return [
+      {
+        filterFunction: CardSectionsComponent.filterCardsByCustomFilter,
+        options: {
+          title: `All Movies`,
+          showMore: true,
+          cardsLimit: PAGE_SIZE,
+        }
+      },
+      {
+        filterFunction: CardSectionsComponent.filterCardsByRating,
+        options: {
+          title: `Top rated`,
+          isExtra: true,
+          cardsLimit: CARDS_EXTRA_LIMIT,
+        }
+      },
+      {
+        filterFunction: CardSectionsComponent.filterCardsByComments,
+        options: {
+          title: `Top Comment`,
+          isExtra: true,
+          cardsLimit: CARDS_EXTRA_LIMIT,
+        }
+      }
+    ];
+  }
+
+  static filterCardsByComments(cards) {
+    return cards.slice().sort((a, b) => b.comments.length - a.comments.length);
+  }
+
+  static filterCardsByRating(cards) {
+    return cards.slice().sort((a, b) => b.rating - a.rating);
+  }
+
+  static filterCardsByCustomFilter(originalCards, filterBy, searchBy) {
+    let cards = originalCards.slice();
+
+    if (filterBy) {
+      cards = cards.filter(filterBy);
+    }
+
+    if (searchBy) {
+      cards = cards.filter(searchBy);
+    }
+
+    return cards;
   }
 }

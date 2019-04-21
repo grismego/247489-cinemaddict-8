@@ -36,6 +36,7 @@ const updateUserRank = (cards) => {
 };
 
 filtersComponent.onChange = (filterName, filterBy) => {
+  cardSectionsComponent.update({searchBy: null});
   if (filterName === `stats`) {
     cardSectionsComponent.hide();
     if (!statisticComponent.element) {
@@ -87,6 +88,7 @@ cardSectionsComponent.onCommentSubmit = (card, showPopupError, enablePopup) => {
       newData: ModelCard.toRAW(card)
     })
     .then(enablePopup)
+    .then(cardSectionsComponent.updatePartial())
     .catch(showPopupError);
 };
 
@@ -97,6 +99,7 @@ cardSectionsComponent.onRatingSubmit = (card, showPopupError, enableRating) => {
       newData: ModelCard.toRAW(card)
     })
     .then(enableRating)
+    .then(cardSectionsComponent.updatePartial())
     .catch(showPopupError);
 };
 

@@ -19,9 +19,8 @@ export default class ApiService {
   _checkStatus(response) {
     if (response.status >= 200 && response.status < 300) {
       return response;
-    } else {
-      throw new Error(`${response.status}: ${response.statusText}`);
     }
+    throw new Error(`${response.status}: ${response.statusText}`);
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
