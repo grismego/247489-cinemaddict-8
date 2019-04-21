@@ -172,8 +172,6 @@ export const createPopupTemplate = (data) => (
         
         <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${data.isFavorite ? `checked` : ``}>
         <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
-
-        
       </section>
 
   
@@ -193,7 +191,6 @@ export const createPopupTemplate = (data) => (
 
           <p class="film-details__user-rating-feelings">How you feel it?</p>
 
-          
           ${createScoreTemplate(data)}
         </section>
       </div>

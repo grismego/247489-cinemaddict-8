@@ -26,10 +26,6 @@ export default class CardSectionComponent extends BaseComponent {
     return createCardSectionTemplate(this._options);
   }
 
-  set currentPage(pageNumber) {
-    this._currentPage = pageNumber;
-  }
-
   set onCardChange(fn) {
     this._changeCardCallback = fn;
   }
@@ -56,13 +52,15 @@ export default class CardSectionComponent extends BaseComponent {
   _onShowMoreClick(evt) {
     evt.preventDefault();
     this._currentPage++;
-
+    const documentFragment = document.createDocumentFragment();
     const cards = this._getCurrentCards();
 
     cards.forEach((card) => {
       let component = this._createCardComponent(card);
       this._components.push(component);
-      this._cardsContainerElement.appendChild(component.render());
+      documentFragment.appendChild(component.render());
+
+      this._cardsContainerElement.appendChild(documentFragment);
     });
 
     if (this._components.length >= this._data.cards.length) {
