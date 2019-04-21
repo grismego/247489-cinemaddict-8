@@ -31,7 +31,6 @@ export default class FiltersComponent extends BaseComponent {
       const component = new FilterComponent(filterData);
 
       documentFragment.appendChild(component.render());
-      element.appendChild(documentFragment);
 
       component.onSelect = (filterName) => {
         if (typeof this._onChange === `function`) {
@@ -41,6 +40,8 @@ export default class FiltersComponent extends BaseComponent {
 
       return component;
     });
+
+    element.appendChild(documentFragment);
 
     return element;
   }

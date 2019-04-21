@@ -4,7 +4,7 @@ import BaseComponent from 'app/components/base';
 export default class SearchComponent extends BaseComponent {
   constructor(data) {
     super(data);
-    this._onSearch = this._onSearch.bind(this);
+    this._onSearchChange = this._onSearchChange.bind(this);
   }
 
   get template() {
@@ -15,7 +15,7 @@ export default class SearchComponent extends BaseComponent {
     this._searchCallback = fn;
   }
 
-  _onSearch(evt) {
+  _onSearchChange(evt) {
     evt.preventDefault();
     if (typeof this._searchCallback === `function`) {
       this._searchCallback(evt.target.value);
@@ -24,19 +24,17 @@ export default class SearchComponent extends BaseComponent {
 
   _createListeners() {
     if (this._element) {
-      this
-        ._element
-        .querySelector(`input`)
-        .addEventListener(`input`, this._onSearch);
+      this._inputSearchElement = this._element.querySelector(`input`);
+
+      this._inputSearchElement
+        .addEventListener(`input`, this._onSearchChange);
     }
   }
 
   _removeListeners() {
     if (this._element) {
-      this
-        ._element
-        .querySelector(`input`)
-        .removeEventListener(`input`, this._onSearch);
+      this._inputSearchElement.removeEventListener(`input`, this._onSearchChange);
+      this._inputSearchElement = null;
     }
   }
 }

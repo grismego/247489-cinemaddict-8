@@ -4,7 +4,7 @@ import BaseComponent from 'app/components/base';
 export default class CardComponent extends BaseComponent {
   constructor(data, options = {}) {
     super(data);
-    this._onClick = this._onClick.bind(this);
+    this._onCommentsClick = this._onCommentsClick.bind(this);
     this._onControlFormClick = this._onControlFormClick.bind(this);
 
     this._commentsClickCallback = null;
@@ -37,7 +37,7 @@ export default class CardComponent extends BaseComponent {
     this._markAsFavoriteCallback = fn;
   }
 
-  _onClick() {
+  _onCommentsClick() {
     return typeof this._commentsClickCallback === `function` && this._commentsClickCallback();
   }
 
@@ -62,7 +62,7 @@ export default class CardComponent extends BaseComponent {
 
   _createListeners() {
     this._commentsElement = this._element.querySelector(`.film-card__comments`);
-    this._commentsElement.addEventListener(`click`, this._onClick);
+    this._commentsElement.addEventListener(`click`, this._onCommentsClick);
 
     if (this._options) {
       this._controlsElement = this._element.querySelector(`.film-card__controls`);
@@ -71,7 +71,7 @@ export default class CardComponent extends BaseComponent {
   }
 
   _removeListeners() {
-    this._commentsElement.removeEventListener(`click`, this._onClick);
+    this._commentsElement.removeEventListener(`click`, this._onCommentsClick);
     this._commentsElement = null;
 
     if (this._options) {

@@ -156,15 +156,16 @@ export default class CardSectionsComponent extends BaseComponent {
 
       component.onCommentSubmit = submitComment;
       component.onCommentRemove = onCardChange;
+
       component.onCardChange = onCardChange;
       component.onRatingSubmit = submitRating;
 
       documentFragment.appendChild(component.render());
 
-      element.appendChild(documentFragment);
-
       return component;
     });
+
+    element.appendChild(documentFragment);
 
     return element;
   }
