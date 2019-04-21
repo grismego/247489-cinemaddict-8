@@ -35,7 +35,7 @@ export default class CardPopupComponent extends BaseComponent {
     this._onFormSubmit = this._onFormSubmit.bind(this);
     this._onChangeRating = this._onChangeRating.bind(this);
     this._onCommentInputKeydown = this._onCommentInputKeydown.bind(this);
-    this._onClosePopupKeydown = this._onClosePopupKeydown.bind(this);
+    this._onDocumentKeydown = this._onDocumentKeydown.bind(this);
     this._onCommentRemove = this._onCommentRemove.bind(this);
 
     this._onMarkAsWatchedButtonClick = this._onMarkAsWatchedButtonClick.bind(this);
@@ -253,7 +253,7 @@ export default class CardPopupComponent extends BaseComponent {
 
   }
 
-  _onClosePopupKeydown(evt) {
+  _onDocumentKeydown(evt) {
     if (evt.keyCode === KEYCODE_ESC) {
       if (typeof this._closeCallback === `function`) {
         this._closeCallback(this._data);
@@ -301,7 +301,7 @@ export default class CardPopupComponent extends BaseComponent {
     this._watchlistButtonElement.addEventListener(`change`, this._onAddToWatchListButtonClick);
     this._watchedButtonElement.addEventListener(`change`, this._onMarkAsWatchedButtonClick);
     this._favoriteButtonElement.addEventListener(`change`, this._onAddToFavoriteButtonClick);
-    document.addEventListener(`keydown`, this._onClosePopupKeydown);
+    document.addEventListener(`keydown`, this._onDocumentKeydown);
   }
 
   _removeListeners() {
@@ -313,7 +313,7 @@ export default class CardPopupComponent extends BaseComponent {
     this._watchedButtonElement.removeEventListener(`change`, this._onMarkAsWatchedButtonClick);
     this._favoriteButtonElement.removeEventListener(`change`, this._onAddToFavoriteButtonClick);
 
-    document.removeEventListener(`keydown`, this._onClosePopupKeydown);
+    document.removeEventListener(`keydown`, this._onDocumentKeydown);
 
     this._commentInputElement = null;
     this._commentRemoveButtonElemet = null;
