@@ -18,6 +18,7 @@ const mainElement = document.querySelector(`.main`);
 const userRangElement = document.querySelector(`.profile__rating`);
 const headerElement = document.querySelector(`.header`);
 const profileElement = headerElement.querySelector(`.profile`);
+const footerStatisticsElement = document.querySelector(`.footer__statistics`);
 
 const api = new ApiService({
   endPoint: END_POINT,
@@ -112,7 +113,7 @@ api.getCards().then((cards) => {
   filtersComponent.update({cards, filters: generateFilters(cards)});
 
   updateUserRank(cards);
-
+  footerStatisticsElement.innerHTML = `${cards.length} movies inside`;
   mainElement.insertAdjacentElement(`afterbegin`, filtersComponent.render());
   mainElement.appendChild(cardSectionsComponent.render());
 }).catch((error) => {
