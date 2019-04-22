@@ -114,12 +114,21 @@ importScripts("precache-manifest.29a96a90bced1441cc498743ec233a04.js", "https://
 // //   );
 // // });
 
+workbox.core.skipWaiting();
+workbox.core.clientsClaim();
+
+
 const cacheName = 'CACHE-v1'
 
-workbox.router.registerRoute(/\.(?:js|css|html)$/,
+workbox.router.registerRoute(/\.(?:css|html)$/,
   workbox.strategies.staleWhileRevalidate({
     cacheName: 'static-resources'
   })
+);
+
+workbox.router.registerRoute(
+    new RegExp('bundle.js'),
+    workbox.strategies.networkFirst()
 );
 
 workbox.router.registerRoute(/\.(?:png|gif|jpg|svg)$/,
