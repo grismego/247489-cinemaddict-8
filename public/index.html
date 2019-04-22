@@ -39,10 +39,6 @@
 
 <header class="header">
   <h1 class="header__logo logo">Moowle</h1>
-  <!-- <form class="header__search search">
-    <input type="text" name="search" class="search__field" placeholder="Search">
-    <button type="submit" class="visually-hidden">Search</button>
-  </form> -->
   <section class="header__profile profile">
     <p class="profile__rating">Show adept</p>
   </section>
@@ -56,5 +52,16 @@
     <p>130&thinsp;291 movies inside</p>
   </section>
 </footer>
+<script>
+  navigator.serviceWorker.register('./sw.js')
+    .then(function(reg) {
+      // регистрация сработала
+      console.log('Registration succeeded. Scope is ' + reg.scope);
+    })
+    .catch(function(error) {
+      // регистрация прошла неудачно
+      console.log('Registration failed with ' + error);
+    });
+    </script>
 <script type="text/javascript" src="bundle.js"></script></body>
 </html>

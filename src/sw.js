@@ -1,0 +1,127 @@
+// workbox.core.skipWaiting();
+// workbox.core.clientsClaim();
+
+// // workbox.routing.registerRoute(
+// //   new RegExp(`https://es8-demo-srv.appspot.com/moowle/movies`),
+// //   new workbox.strategies.StaleWhileRevalidate({
+// //   })
+// // );
+
+// if (workbox) {
+//   registerRoutes();
+// } else {
+//   console.log('Oh, workbox did not load')
+// }
+
+// function registerRoutes() {
+//   workbox.routing.registerRoute('.*\.*');
+// }
+
+// workbox.precaching.precacheAndRoute(self.__precacheManifest);
+
+
+// const CACHE = `cache-and-update-v1`;
+
+// // При установке воркера мы должны закешировать часть данных (статику).
+// self.addEventListener(`install`, (evt) => {
+//   evt.waitUntil(
+//       caches.open(CACHE).then((cache) =>
+//         cache.addAll([
+//           `./`,
+//           `./index.html`,
+//           `./bundle.js`,
+//           `./css/main.css`,
+//           `./css/normalize.css`,
+//           `/images/`,
+//           `/images/posters/`
+//         ]))
+//   );
+// });
+
+// self.addEventListener(`activate`, (evt) => {
+//   console.log(`sw`, `activate`, {evt});
+// });
+
+// self.addEventListener(`fetch`, (evt) => {
+//   evt.respondWith(
+//       caches.match(evt.request).then((response) => {
+//         if (response) {
+//           return response;
+//         } else {
+//           return fetch(evt.request)
+//         .then((response) => {
+//           caches.open(CACHE)
+//           .then((cache) => cache.put(evt.request, response.clone()));
+
+//           return response.clone();
+//         });
+//         }
+//       })
+//     .catch((err) => console.error({err}))
+//   );
+// });
+
+// // self.addEventListener('fetch', (evt) => {
+// //   console.log('fetch', {evt, request: evt.request});
+// //   evt.respondWith(
+// //     caches.match(evt.request)
+// //       .then((response) => {
+// //         console.log(`Find in cache`, {response});
+// //         if (response) {
+// //           return response;
+// //         } else {
+// //           return fetch(evt.request)
+// //             .then(function(response) {
+// //               caches.open(CACHE)
+// //                 .then((cache) => cache.put(evt.request, response.clone()));
+
+// //               return response.clone();
+// //             });
+// //         }
+// //       })
+// //       .catch((err) => console.error({err}))
+// //   );
+// // });
+
+// // self.addEventListener('fetch', function(event) {
+// //   // Мы используем `respondWith()`, чтобы мгновенно ответить без ожидания ответа с сервера.
+// //   event.respondWith(fromCache(event.request));
+// //   // `waitUntil()` нужен, чтобы предотвратить прекращение работы worker'a до того как кэш обновиться.
+// //   event.waitUntil(update(event.request));
+// // });
+
+// // self.addEventListener(`fetch`, (evt) => {
+// //   console.log(`fetch`, {evt, request: evt.request});
+// //   evt.respondWith(
+// //     caches.match(evt.request)
+// //       .then((response) => {
+// //         console.log(`Find in cache`, {response});
+// //         if (response) {
+// //           return response;
+// //         } else {
+// //           return fetch(evt.request)
+// //             .then((response) => {
+// //               caches.open(CACHE)
+// //                 .then((cache) => cache.put(evt.request, response.clone()));
+
+// //               return response.clone();
+// //             });
+// //         }
+// //       })
+// //       .catch((err) => console.error({err}))
+// //   );
+// // });
+
+const cacheName = 'CACHE-v1'
+
+workbox.router.registerRoute(/\.(?:js|css|html)$/,
+  workbox.strategies.staleWhileRevalidate({
+    cacheName: 'static-resources'
+  })
+);
+
+workbox.router.registerRoute(/\.(?:png|gif|jpg|svg)$/,
+  workbox.strategies.cacheFirst({
+    cacheName: 'images-cache'
+  })
+);
