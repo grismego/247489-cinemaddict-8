@@ -68,13 +68,15 @@ export default class CardSectionsComponent extends BaseComponent {
         card.id === updatedCard.id ? updatedCard : card
       ));
 
-      if (typeof this._cardsChangeCallback === `function`) {
-        this._cardsChangeCallback(this._data.cards, updatedCard);
-      }
-
       this.components.forEach((component) => {
         component.update(this._data.cards);
       });
+
+      this.updatePartial();
+
+      if (typeof this._cardsChangeCallback === `function`) {
+        this._cardsChangeCallback(this._data.cards, updatedCard);
+      }
     };
 
     const updateCard = (newData) => {

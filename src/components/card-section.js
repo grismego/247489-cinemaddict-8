@@ -107,10 +107,10 @@ export default class CardSectionComponent extends BaseComponent {
       popupComponent.update(card);
     };
 
-    popupComponent.onCommentRemove = () => {
-      cardComponent.update(card);
+    popupComponent.onCommentRemove = (updatedCard) => {
+      cardComponent.update(updatedCard);
       if (typeof this._сommentRemoveCallback === `function`) {
-        this._сommentRemoveCallback(card);
+        this._сommentRemoveCallback(updatedCard);
       }
     };
 
