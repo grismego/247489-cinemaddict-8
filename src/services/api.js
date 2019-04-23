@@ -6,6 +6,9 @@ const Method = {
   PUT: `PUT`
 };
 
+const SYNC_URL = `movies/sync`;
+const CONTENT_TYPE = `application/json`;
+
 const toJSON = (response) => {
   return response.json();
 };
@@ -14,6 +17,16 @@ export default class ApiService {
   constructor({endPoint, authorization}) {
     this._endPoint = endPoint;
     this._authorization = authorization;
+  }
+
+  syncData({data}) {
+    return this._load({
+      url: SYNC_URL,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': CONTENT_TYPE})
+    })
+    .then((response) => response.json);
   }
 
   _checkStatus(response) {
@@ -43,7 +56,7 @@ export default class ApiService {
       url: `movies/${id}`,
       method: `PUT`,
       body: JSON.stringify(newData),
-      headers: new Headers({'Content-Type': `application/json`})
+      headers: new Headers({'Content-Type': CONTENT_TYPE})
     })
     .then(toJSON)
     .then(ModelCard.parseData);

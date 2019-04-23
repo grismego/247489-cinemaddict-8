@@ -17,7 +17,7 @@ module.exports = {
   resolve: {
     alias: {
       app: path.join(__dirname, `src`),
-    }
+    },
   },
   devtool: `source-map`,
   devServer: {

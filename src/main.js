@@ -4,6 +4,8 @@ import LoadingComponent from 'app/components/loading';
 import ErrorComponent from 'app/components/error';
 import StatisticComponent from 'app/components/statistic';
 import SearchComponent from 'app/components/search';
+import Provider from 'app/services/provider';
+import Store from 'app/services/store';
 import {generateFilters} from 'app/mocks/filters';
 
 import {setUserRang} from 'app/lib/user-rang';
@@ -11,8 +13,9 @@ import {setUserRang} from 'app/lib/user-rang';
 import ModelCard from 'app/models/card';
 import ApiService from 'app/services/api';
 
-const AUTHORIZATION = `Basic aadasdadsasdxc=`;
+const AUTHORIZATION = `Basic aadas1231231sdxc=`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
+const DATA_STORE_KEY = `Moowle`;
 
 const mainElement = document.querySelector(`.main`);
 const userRangElement = document.querySelector(`.profile__rating`);
@@ -31,6 +34,9 @@ const searchComponent = new SearchComponent();
 const errorComponent = new ErrorComponent();
 const filtersComponent = new FiltersComponent();
 const statisticComponent = new StatisticComponent();
+
+const store = new Store({key: DATA_STORE_KEY, storage: localStorage});
+const provider = new Provider({api, store});
 
 const updateUserRank = (cards) => {
   userRangElement.innerHTML = setUserRang(cards.filter((card) => card.isWatched).length);
@@ -65,7 +71,7 @@ searchComponent.onSearch = (value) => {
 };
 
 cardSectionsComponent.onCardChange = (cards, card) => {
-  api
+  provider
     .updateCard({
       id: card.id,
       newData: ModelCard.toRAW(card)
@@ -83,7 +89,7 @@ cardSectionsComponent.onCardChange = (cards, card) => {
 };
 
 cardSectionsComponent.onCommentSubmit = (card, showPopupError, enablePopup) => {
-  api
+  provider
     .updateCard({
       id: card.id,
       newData: ModelCard.toRAW(card)
@@ -94,7 +100,7 @@ cardSectionsComponent.onCommentSubmit = (card, showPopupError, enablePopup) => {
 };
 
 cardSectionsComponent.onRatingSubmit = (card, showPopupError, enableRating) => {
-  api
+  provider
     .updateCard({
       id: card.id,
       newData: ModelCard.toRAW(card)
@@ -104,7 +110,7 @@ cardSectionsComponent.onRatingSubmit = (card, showPopupError, enableRating) => {
     .catch(showPopupError);
 };
 
-api.getCards().then((cards) => {
+provider.getCards().then((cards) => {
   mainElement.removeChild(loadingComponent.element);
   loadingComponent.unrender();
 
@@ -120,6 +126,14 @@ api.getCards().then((cards) => {
   mainElement.innerHTML = ``;
   errorComponent.update({error});
   mainElement.appendChild(errorComponent.render());
+});
+
+window.addEventListener(`offline`, () => {
+  document.title = `${document.title} [OFFLINE]`;
+});
+window.addEventListener(`online`, () => {
+  document.title = document.title.split(`[OFFLINE]`)[0];
+  provider.syncData();
 });
 
 mainElement.appendChild(loadingComponent.render());
