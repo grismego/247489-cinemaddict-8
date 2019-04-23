@@ -124,3 +124,32 @@ api.getCards().then((cards) => {
 
 mainElement.appendChild(loadingComponent.render());
 headerElement.insertBefore(searchComponent.render(), profileElement);
+
+// init();
+
+// if (`serviceWorker` in navigator) {
+//   // Весь код регистрации у нас асинхронный.
+//   navigator.serviceWorker.register(`sw.js`)
+//     .then(() => navigator.serviceWorker.ready.then((worker) => {
+//       worker.sync.register(`syncdata`);
+//     }))
+//     .catch((err) => console.log(err));
+// }
+
+// navigator.serviceWorker.register(`sw.js`)
+//   .then((reg) => {
+//   console.log(`reg succes ${reg.scope}`);
+// }).catch((err) => {
+//   console.log(`reg fail ${err}`);
+// });
+
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register(`/sw.js`).then((registration) => {
+      console.log('SW registered: ', registration);
+    }).catch((registrationError) => {
+      console.log('SW registration failed: ', registrationError);
+    });
+  });
+}
