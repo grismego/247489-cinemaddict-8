@@ -143,12 +143,13 @@ export default class StatisticComponent extends BaseComponent {
 
   static getTopGenre(data) {
     const counts = StatisticComponent.getGenresCounts(data);
-    const index = counts.indexOf(Math.max(...counts));
-
+    const maxCount = Math.max(...counts);
+    const index = counts.indexOf(maxCount);
     return StatisticComponent.getGenres(data)[index];
   }
 
   static getGenres(data) {
+
     const genres = new Set();
     data.forEach((item) => {
       item.genre.forEach((genre) => {
