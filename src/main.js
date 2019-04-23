@@ -35,7 +35,11 @@ const errorComponent = new ErrorComponent();
 const filtersComponent = new FiltersComponent();
 const statisticComponent = new StatisticComponent();
 
-const store = new Store({key: DATA_STORE_KEY, storage: localStorage});
+const store = new Store({
+  key: DATA_STORE_KEY,
+  storage: localStorage
+});
+
 const provider = new Provider({api, store});
 
 const updateUserRank = (cards) => {
@@ -65,8 +69,7 @@ searchComponent.onSearch = (value) => {
     card.title.toLowerCase().search(value.toLowerCase()) !== -1
   );
 
-  cardSectionsComponent.update({
-    searchBy: value ? createFilterBySearch : null});
+  cardSectionsComponent.update({searchBy: value ? createFilterBySearch : null});
   cardSectionsComponent.updatePartial();
 };
 
@@ -138,32 +141,3 @@ window.addEventListener(`online`, () => {
 
 mainElement.appendChild(loadingComponent.render());
 headerElement.insertBefore(searchComponent.render(), profileElement);
-
-// init();
-
-// if (`serviceWorker` in navigator) {
-//   // Весь код регистрации у нас асинхронный.
-//   navigator.serviceWorker.register(`sw.js`)
-//     .then(() => navigator.serviceWorker.ready.then((worker) => {
-//       worker.sync.register(`syncdata`);
-//     }))
-//     .catch((err) => console.log(err));
-// }
-
-// navigator.serviceWorker.register(`sw.js`)
-//   .then((reg) => {
-//   console.log(`reg succes ${reg.scope}`);
-// }).catch((err) => {
-//   console.log(`reg fail ${err}`);
-// });
-
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register(`/sw.js`).then((registration) => {
-      console.log('SW registered: ', registration);
-    }).catch((registrationError) => {
-      console.log('SW registration failed: ', registrationError);
-    });
-  });
-}

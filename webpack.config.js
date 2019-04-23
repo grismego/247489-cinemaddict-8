@@ -1,15 +1,8 @@
 const path = require(`path`);
-const WorkboxPlugin = require(`workbox-webpack-plugin`);
 
 module.exports = {
   mode: `development`,
   entry: `./src/main.js`,
-  plugins: [
-    new WorkboxPlugin.InjectManifest({
-      swSrc: `./src/sw.js`,
-      swDest: `sw.js`
-    })
-  ],
   output: {
     filename: `bundle.js`,
     path: path.join(__dirname, `public`),

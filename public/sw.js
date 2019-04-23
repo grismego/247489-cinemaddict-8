@@ -1,25 +1,45 @@
-importScripts("precache-manifest.aff507252d63ed67b81e52fd398a11e2.js", "https://storage.googleapis.com/workbox-cdn/releases/4.3.0/workbox-sw.js");
+const CACHE_NAME = `myCache`;
 
-workbox.core.skipWaiting();
-workbox.core.clientsClaim();
+const regExpWebpack = /sockjs-node/g;
 
+const urlCanBeCached = (url) => {
+  return !regExpWebpack.test(url);
+};
 
-const cacheName = 'CACHE-v1'
+self.addEventListener(`install`, (evt) => {
+  evt.waitUntil(
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => cache.addAll([
+        `./bundle.js`,
+        `./index.html`,
+        `./css/main.css`,
+        `./css/normalize.css`,
+        `./images/background.png`,
+        `./images/icon-favorite.png`,
+        `./images/icon-favorite.svg`,
+        `./images/icon-watched.png`,
+        `./images/icon-watched.svg`,
+        `./images/icon-watchlist.png`,
+        `./images/icon-watchlist.svg`,
+        `./images/posters/accused.jpg`,
+        `./images/posters/blackmail.jpg`,
+        `./images/posters/blue-blazes.jpg`,
+        `./images/posters/fuga-da-new-york.jpg`,
+        `./images/posters/moonrise.jpg`,
+        `./images/posters/three-friends.jpg`
+      ]))
+      .catch((err) => {
+        throw err;
+      })
+  );
+});
 
-workbox.router.registerRoute(/\.(?:css|html)$/,
-  workbox.strategies.staleWhileRevalidate({
-    cacheName: 'static-resources'
-  })
+self.addEventListener(`fetch`, (event) =>
+  event.respondWith(
+      caches
+        .open(CACHE_NAME)
+        .then((cache) => cache.match(event.request, {ignoreSearch: true}))
+        .then((response) => response || fetch(event.request))
+  )
 );
-
-workbox.router.registerRoute(
-    new RegExp('bundle.js'),
-    workbox.strategies.networkFirst()
-);
-
-workbox.router.registerRoute(/\.(?:png|gif|jpg|svg)$/,
-  workbox.strategies.cacheFirst({
-    cacheName: 'images-cache'
-  })
-);
-
